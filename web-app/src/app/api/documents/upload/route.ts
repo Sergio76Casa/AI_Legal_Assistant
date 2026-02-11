@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-// @ts-ignore
-const pdf = require('pdf-parse');
+
 
 // Configurar clientes
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -82,16 +81,27 @@ export async function POST(req: NextRequest) {
 
         const documentId = docData.id;
 
+        const PDFParser = require('pdf2json');
+
         // 4. Extraer texto (Solo PDF por ahora)
         let text = '';
         if (file.type === 'application/pdf') {
             try {
-                const pdfData = await pdf(buffer);
-                text = pdfData.text;
+                // Promisify pdf2json
+                text = await new Promise<string>((resolve, reject) => {
+                    const pdfParser = new PDFParser(null, 1);
+                    pdfParser.on("pdfParser_dataError", (errData: any) => reject(errData.parserError));
+                    pdfParser.on("pdfParser_dataReady", (pdfData: any) => {
+                        resolve(pdfParser.getRawTextContent());
+                    });
+                    // pdf2json expects a buffer, but parseBuffer implementation might vary.
+                    // It explicitly takes a buffer in newer versions.
+                    pdfParser.parseBuffer(buffer);
+                });
             } catch (e) {
                 console.error('PDF Parse Error:', e);
                 await supabase.from('documents').update({ status: 'failed' }).eq('id', documentId);
-                return NextResponse.json({ error: 'Failed to parse PDF' }, { status: 500 });
+                return NextResponse.json({ error: 'Failed to parse PDF', details: e }, { status: 500 });
             }
         } else {
             // TODO: Implementar OCR para imágenes o lectura de TXT/MD
