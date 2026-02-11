@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 // @ts-ignore
-import pdf from 'pdf-parse';
+const pdf = require('pdf-parse');
 
 // Configurar clientes
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
