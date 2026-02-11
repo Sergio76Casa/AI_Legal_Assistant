@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Asistencia legal y administrativa para la comunidad musulmana y expatriados en España.",
 };
 
+import { Providers } from "./providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -14,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="antialiased">
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

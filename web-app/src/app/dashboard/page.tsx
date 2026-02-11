@@ -1,15 +1,34 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, FileText, LayoutDashboard, Settings, User, LogOut, CheckCircle, Clock } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import ChatWidget from '@/components/ChatWidget';
 
 export default function Dashboard() {
+    const { user, session, loading, signOut } = useAuth();
+    const router = useRouter();
     const [isUploading, setIsUploading] = useState(false);
-    const [files, setFiles] = useState([
-        { id: 1, name: 'Contrato_Alquiler_Madrid.pdf', status: 'Analizado', date: '10 Feb 2026' },
-        { id: 2, name: 'Permiso_Residencia.jpg', status: 'Pendiente', date: '11 Feb 2026' },
+    const [files, setFiles] = useState<Array<{ id: number | string, name: string, status: string, date: string }>>([
+        { id: 'demo-1', name: 'Contrato_Alquiler_Madrid.pdf', status: 'Analizado', date: '10 Feb 2026' },
+        { id: 'demo-2', name: 'Permiso_Residencia.jpg', status: 'Pendiente', date: '11 Feb 2026' },
     ]);
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push('/login');
+        }
+    }, [user, loading, router]);
+
+    if (loading || !user) {
+        return (
+            <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border-2 border-purple-500 border-t-transparent animate-spin"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-screen bg-[#050505] text-white">
@@ -39,7 +58,10 @@ export default function Dashboard() {
                         <p className="text-purple-400 font-bold mb-1">Plan Free</p>
                         <p className="text-gray-400">Te quedan 3 consultas gratis este mes.</p>
                     </div>
-                    <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400/70 hover:text-red-400 transition-colors">
+                    <button
+                        onClick={signOut}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-red-400/70 hover:text-red-400 transition-colors"
+                    >
                         <LogOut className="w-5 h-5" /> Salir
                     </button>
                 </div>
@@ -52,7 +74,7 @@ export default function Dashboard() {
 
                 <header className="flex justify-between items-end mb-12">
                     <div>
-                        <h1 className="text-4xl font-bold mb-2">Bienvenido, Sergio</h1>
+                        <h1 className="text-4xl font-bold mb-2">Bienvenido, {user.email?.split('@')[0]}</h1>
                         <p className="text-gray-400">Gestiona tus documentos y obtén análisis legal instantáneo.</p>
                     </div>
                     <button
@@ -76,11 +98,54 @@ export default function Dashboard() {
                                 <Upload className="w-10 h-10 text-purple-400" />
                             </div>
                             <h2 className="text-2xl font-bold mb-2">Sube tus documentos</h2>
-                            <p className="text-gray-400 mb-8 text-sm">Arrastra aquí tus PDFs o imágenes para que nuestra IA los analice de forma segura y privada.</p>
-                            <div className="border-2 border-dashed border-white/10 rounded-2xl py-12 mb-8 hover:border-purple-500/30 transition-colors cursor-pointer">
-                                <span className="text-gray-500">Haz clic o arrastra archivos aquí</span>
-                            </div>
-                            <button className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors">Analizar Documentos</button>
+                            <p className="text-gray-400 mb-8 text-sm">Arrastra aquí tus PDFs para que nuestra IA los analice.</p>
+
+                            <input
+                                type="file"
+                                accept=".pdf"
+                                onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    if (!file) return;
+
+                                    // Upload logic
+                                    const formData = new FormData();
+                                    formData.append('file', file);
+
+                                    try {
+                                        // Update UI to show processing
+                                        const newFile = { id: Date.now(), name: file.name, status: 'Procesando...', date: new Date().toLocaleDateString() };
+                                        setFiles(prev => [newFile, ...prev]);
+                                        setIsUploading(false);
+
+                                        const res = await fetch('/api/documents/upload', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Authorization': `Bearer ${session?.access_token || ''}`
+                                            },
+                                            body: formData
+                                        });
+
+                                        if (res.ok) {
+                                            setFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: 'Analizado' } : f));
+                                        } else {
+                                            setFiles(prev => prev.map(f => f.id === newFile.id ? { ...f, status: 'Error' } : f));
+                                            console.error('Upload failed');
+                                        }
+                                    } catch (error) {
+                                        console.error('Error uploading:', error);
+                                    }
+                                }}
+                                className="hidden"
+                                id="file-upload"
+                            />
+                            <label
+                                htmlFor="file-upload"
+                                className="block border-2 border-dashed border-white/10 rounded-2xl py-12 mb-8 hover:border-purple-500/30 transition-colors cursor-pointer"
+                            >
+                                <span className="text-gray-500">Haz clic para seleccionar un PDF</span>
+                            </label>
+
+                            {/* Old button removed or repurposed */}
                         </motion.div>
                     </div>
                 )}
@@ -127,7 +192,22 @@ export default function Dashboard() {
                                         </td>
                                         <td className="px-6 py-4 text-gray-400">{file.date}</td>
                                         <td className="px-6 py-4">
-                                            <button className="text-purple-400 hover:text-purple-300 font-bold">Ver Análisis</button>
+                                            <button
+                                                onClick={async () => {
+                                                    // Simulation of Edge Function Call
+                                                    alert(`Iniciando análisis de contrato para: ${file.name}\n(Esta funcionalidad requiere desplegar la Edge Function 'analyze-contract')`);
+
+                                                    // Real call would be:
+                                                    /*
+                                                    const { data, error } = await supabase.functions.invoke('analyze-contract', {
+                                                        body: { documentId: file.id }
+                                                    });
+                                                    */
+                                                }}
+                                                className="text-purple-400 hover:text-purple-300 font-bold flex items-center gap-2"
+                                            >
+                                                <Settings className="w-4 h-4" /> Analizar
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
@@ -135,6 +215,8 @@ export default function Dashboard() {
                         </table>
                     </div>
                 </section>
+
+                <ChatWidget />
             </main>
         </div>
     );

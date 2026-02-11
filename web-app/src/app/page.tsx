@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Send, ArrowRight, ShieldCheck, Globe, Scale, Upload } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Scale, Upload } from 'lucide-react';
+import ChatWidget from '@/components/ChatWidget';
 
 /**
  * Landing Page: Dark Space Edition
  * Estética: Negro profundo, Mesh Gradients, Efectos Neón y Glassmorphism.
  */
 export default function LandingPage() {
-  const [chatOpen, setChatOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
 
@@ -53,10 +52,10 @@ export default function LandingPage() {
         <div className="hidden md:flex items-center gap-10 text-sm font-medium text-gray-400">
           <a href="#" className="hover:text-purple-400 transition-all duration-300">Servicios</a>
           <a href="#" className="hover:text-purple-400 transition-all duration-300">Cumplimiento</a>
-          <a href="#" className="hover:text-purple-400 transition-all duration-300">Dashboard</a>
+          <a href="/dashboard" className="hover:text-purple-400 transition-all duration-300">Dashboard</a>
         </div>
 
-        <button className="relative group px-6 py-2 rounded-full font-bold text-sm overflow-hidden">
+        <button className="relative group px-6 py-2 rounded-full font-bold text-sm overflow-hidden" onClick={() => window.location.href = '/login'}>
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 group-hover:opacity-80 transition-opacity"></div>
           <span className="relative z-10">Iniciar Sesión</span>
         </button>
@@ -114,38 +113,7 @@ export default function LandingPage() {
         </motion.div>
       </main>
 
-      {/* Floating Chat Widget */}
-      <div className="fixed bottom-8 right-8 z-[100]">
-        <AnimatePresence>
-          {chatOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              className="absolute bottom-16 right-0 w-[350px] h-[450px] bg-[#0d0d0d] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col"
-            >
-              <div className="p-4 bg-gradient-to-r from-purple-600 to-blue-600 font-bold flex justify-between items-center">
-                <span>Asistente HalalLegal</span>
-                <button onClick={() => setChatOpen(false)} className="text-xs opacity-70 hover:opacity-100">Cerrar</button>
-              </div>
-              <div className="flex-1 p-4 overflow-y-auto space-y-4">
-                <div className="bg-white/5 p-3 rounded-xl text-sm">Salam Alaikom. Soy tu asesor legal inteligente. ¿En qué puedo ayudarte hoy?</div>
-              </div>
-              <div className="p-4 border-t border-white/5 flex gap-2">
-                <input type="text" placeholder="Escribe tu duda..." className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-purple-500" />
-                <button className="bg-purple-600 p-2 rounded-full"><Send className="w-4 h-4" /></button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <button
-          onClick={() => setChatOpen(!chatOpen)}
-          className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
-        >
-          <MessageSquare className="w-7 h-7" />
-        </button>
-      </div>
+      <ChatWidget />
 
       <footer className="relative z-10 py-12 border-t border-white/5 text-center text-xs text-gray-600 tracking-widest">
         &copy; 2026 HALAL LEGAL. INTELIGENCIA PARA LA COMUNIDAD.

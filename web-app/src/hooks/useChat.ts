@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 
 export function useChat() {
+    const { user } = useAuth();
     const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
     const [loading, setLoading] = useState(false);
 
-    const sendMessage = async (content: string, userId?: string) => {
+    const sendMessage = async (content: string) => {
         try {
             setLoading(true);
             const newMessages = [...messages, { role: 'user', content }];
@@ -15,17 +16,20 @@ export function useChat() {
             // En una implementación real, esto llamaría a una Edge Function
 
             // 2. Simular respuesta de IA (Integración real con Gemini vía Edge Function)
-            // Por ahora simulamos la llamada al endpoint de backend
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: content, userId }),
+                body: JSON.stringify({
+                    message: content,
+                    userId: user?.id // Enviar ID de usuario autenticado
+                }),
             });
 
             const data = await response.json();
             setMessages([...newMessages, { role: 'assistant', content: data.answer }]);
         } catch (error) {
             console.error("Error in chat:", error);
+            setMessages([...messages, { role: 'user', content }, { role: 'assistant', content: "Lo siento, hubo un error al procesar tu consulta." }]);
         } finally {
             setLoading(false);
         }
