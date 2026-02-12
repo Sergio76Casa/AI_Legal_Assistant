@@ -1,0 +1,73 @@
+{
+    "Hero": {
+        "title": "Votre pont vers une vie",
+        "titleHighlight": "tranquille",
+        "titleSuffix": "en Espagne.",
+        "subtitle": "Assistance juridique, administrative et culturelle pour les communautés en quête de clarté et de confiance.",
+        "searchPlaceholder": "Demandez-moi sur le NIE, la résidence ou le Halal...",
+        "searchButton": "Consulter"
+    },
+    "BentoGrid": {
+        "services": {
+            "legal": {
+                "title": "Procédures Légales",
+                "description": "Guide étape par étape pour NIE, TIE et permis de séjour."
+            },
+            "culture": {
+                "title": "Intégration Culturelle",
+                "description": "Connaissez vos droits et devoirs dans la société espagnole."
+            },
+            "halal": {
+                "title": "Vérification Halal",
+                "description": "Trouvez des services et produits certifiés près de chez vous."
+            },
+            "aid": {
+                "title": "Aides Publiques",
+                "description": "Découvrez les subventions et soutiens disponibles pour votre profil."
+            }
+        }
+    },
+    "ChatDrawer": {
+        "title": "Assistant Juridique",
+        "subtitle": "IA spécialisée dans la bureaucratie espagnole",
+        "welcomeMessage": "Bonjour. Je suis votre assistant spécialisé. Quelle procédure légale ou question culturelle puis-je vous aider aujourd'hui?",
+        "inputPlaceholder": "Écrivez votre requête...",
+        "disclaimer": "L'IA peut commettre des erreurs. Vérifiez les informations juridiques importantes."
+    },
+    "Footer": {
+        "copyright": "© 2026 Trust & Clarity. Tous droits réservés.",
+        "privacyLink": "Politique de Confidentialité"
+    },
+    "Legal": {
+        "cookieBanner": "Nous utilisons des cookies pour améliorer votre expérience et analyser le trafic. En cliquant sur \"Accepter\", vous consentez à notre utilisation de cookies.",
+        "readPolicy": "Lire notre",
+        "privacyButton": "Politique de Confidentialité",
+        "accept": "Accepter",
+        "decline": "Refuser"
+    },
+    "PrivacyPolicy": {
+        "title": "Politique de Confidentialité",
+        "section1_title": "Collecte de Données",
+        "section1_content": "Nous collectons votre email et des données d'utilisation pour améliorer notre service.",
+        "section2_title": "Utilisation des Données",
+        "section2_content": "Vos données sont utilisées pour personnaliser votre expérience et ne sont pas vendues à des tiers.",
+        "section3_title": "Protection des Données",
+        "section3_content": "Nous utilisons des mesures de sécurité standard pour protéger vos informations.",
+        "section4_title": "Vos Droits",
+        "section4_content": "Vous avez le droit d'accéder, de rectifier ou de supprimer vos données à tout moment.",
+        "section5_title": "Politique de Cookies",
+        "section5_content": "Nous utilisons des cookies pour améliorer l'expérience utilisateur et l'analyse du trafic. Vous pouvez gérer vos préférences dans les paramètres de votre navigateur.",
+        "last_updated": "Dernière mise à jour"
+    },
+    "UpgradeModal": {
+        "title": "Passer à Pro",
+        "subtitle": "Débloquez toute la puissance de l'IA Juridique",
+        "feature1": "Requêtes IA illimitées",
+        "feature2": "Analyse PDF détaillée",
+        "feature3": "Accès au Bot Telegram",
+        "feature4": "Support Prioritaire",
+        "pricing": "mois",
+        "subscribeButton": "S'abonner maintenant",
+        "dismissButton": "Non merci, peut-être plus tard"
+    }
+}

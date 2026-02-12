@@ -1,0 +1,87 @@
+{
+    "Hero": {
+        "title": "Your bridge to a",
+        "titleHighlight": "peaceful",
+        "titleSuffix": "life in Spain.",
+        "subtitle": "Legal, administrative and cultural assistance for communities seeking clarity and trust.",
+        "searchPlaceholder": "Ask me about NIE, residency or Halal food...",
+        "searchButton": "Consult"
+    },
+    "BentoGrid": {
+        "services": {
+            "legal": {
+                "title": "Legal Procedures",
+                "description": "Step-by-step guide for NIE, TIE and residency permits."
+            },
+            "culture": {
+                "title": "Cultural Integration",
+                "description": "Know your rights and duties in Spanish society."
+            },
+            "halal": {
+                "title": "Halal Verification",
+                "description": "Find certified services and products near you."
+            },
+            "aid": {
+                "title": "Public Aid",
+                "description": "Discover grants and support available for your profile."
+            }
+        }
+    },
+    "ChatDrawer": {
+        "title": "Legal Assistant",
+        "subtitle": "AI specialized in Spanish bureaucracy",
+        "welcomeMessage": "Hello. I am your specialized assistant. What legal procedure or cultural question can I help you with today?",
+        "inputPlaceholder": "Type your query...",
+        "disclaimer": "AI can make mistakes. Verify important legal info.",
+        "teaserButton": "Sign up to see full answer"
+    },
+    "Footer": {
+        "copyright": "© 2026 Trust & Clarity. All rights reserved.",
+        "privacyLink": "Privacy Policy"
+    },
+    "Legal": {
+        "cookieBanner": "We use cookies to improve your experience and analyze traffic. By clicking \"Accept\", you consent to our use of cookies.",
+        "readPolicy": "Read our",
+        "privacyButton": "Privacy Policy",
+        "accept": "Accept",
+        "decline": "Decline"
+    },
+    "Auth": {
+        "welcomeBack": "Welcome Back",
+        "createAccount": "Create Account",
+        "continueWithGoogle": "Continue with Google",
+        "orContinueWithEmail": "Or continue with email",
+        "emailLabel": "Email",
+        "passwordLabel": "Password",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "checkEmail": "Check your email for the confirmation link!",
+        "dontHaveAccount": "Don't have an account? ",
+        "alreadyHaveAccount": "Already have an account? "
+    },
+    "PrivacyPolicy": {
+        "title": "Privacy Policy",
+        "section1_title": "Data Collection",
+        "section1_content": "We collect email and usage data to improve our service.",
+        "section2_title": "Data Usage",
+        "section2_content": "Your data is used to personalize your experience and is not sold to third parties.",
+        "section3_title": "Data Protection",
+        "section3_content": "We use industry-standard security measures to protect your information.",
+        "section4_title": "Your Rights",
+        "section4_content": "You have the right to access, rectify, or delete your data at any time.",
+        "section5_title": "Cookie Policy",
+        "section5_content": "We use cookies to improve user experience and traffic analysis. You can manage your preferences in your browser settings.",
+        "last_updated": "Last Updated"
+    },
+    "UpgradeModal": {
+        "title": "Upgrade to Pro",
+        "subtitle": "Unlock the full power of Legal AI",
+        "feature1": "Unlimited AI Queries",
+        "feature2": "Detailed PDF Analysis",
+        "feature3": "Telegram Bot Access",
+        "feature4": "Priority Support",
+        "pricing": "month",
+        "subscribeButton": "Subscribe Now",
+        "dismissButton": "No thanks, maybe later"
+    }
+}

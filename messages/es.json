@@ -1,0 +1,87 @@
+{
+  "Hero": {
+    "title": "Tu puente hacia una vida",
+    "titleHighlight": "tranquila",
+    "titleSuffix": "en España.",
+    "subtitle": "Asistencia legal, administrativa y cultural para comunidades que buscan claridad y confianza.",
+    "searchPlaceholder": "Pregúntame sobre el NIE, la residencia o comida Halal...",
+    "searchButton": "Consultar"
+  },
+  "BentoGrid": {
+    "services": {
+      "legal": {
+        "title": "Trámites Legales",
+        "description": "Guía paso a paso para NIE, TIE y permisos de residencia."
+      },
+      "culture": {
+        "title": "Integración Cultural",
+        "description": "Conoce tus derechos y deberes en la sociedad española."
+      },
+      "halal": {
+        "title": "Verificación Halal",
+        "description": "Encuentra servicios y productos certificados cerca de ti."
+      },
+      "aid": {
+        "title": "Ayudas Públicas",
+        "description": "Descubre subvenciones y apoyos disponibles para tu perfil."
+      }
+    }
+  },
+  "ChatDrawer": {
+    "title": "Asistente Legal",
+    "subtitle": "IA especializada en burocracia española",
+    "welcomeMessage": "Hola. Soy tu asistente especializado. ¿En qué trámite legal o duda cultural puedo ayudarte hoy?",
+    "inputPlaceholder": "Escribe tu consulta...",
+    "disclaimer": "La IA puede cometer errores. Verifica la información legal importante.",
+    "teaserButton": "Regístrate para ver la respuesta completa"
+  },
+  "Footer": {
+    "copyright": "© 2026 Trust & Clarity. Todos los derechos reservados.",
+    "privacyLink": "Política de Privacidad"
+  },
+  "PrivacyPolicy": {
+    "title": "Política de Privacidad",
+    "section1_title": "Recopilación de Datos",
+    "section1_content": "Recopilamos correo electrónico y datos de uso para mejorar nuestro servicio.",
+    "section2_title": "Uso de Datos",
+    "section2_content": "Sus datos se utilizan para personalizar su experiencia y no se venden a terceros.",
+    "section3_title": "Protección de Datos",
+    "section3_content": "Utilizamos medidas de seguridad estándar de la industria para proteger su información.",
+    "section4_title": "Sus Derechos",
+    "section4_content": "Tiene derecho a acceder, rectificar o eliminar sus datos en cualquier momento.",
+    "section5_title": "Política de Cookies",
+    "section5_content": "Utilizamos cookies para mejorar la experiencia del usuario y el análisis de tráfico. Puede gestionar sus preferencias en la configuración de su navegador.",
+    "last_updated": "Última actualización"
+  },
+  "Legal": {
+    "cookieBanner": "Utilizamos cookies para mejorar tu experiencia y analizar el tráfico. Al hacer clic en \"Aceptar\", consientes nuestro uso de cookies.",
+    "readPolicy": "Lee nuestra",
+    "privacyButton": "Política de Privacidad",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
+  },
+  "Auth": {
+    "welcomeBack": "Bienvenido de nuevo",
+    "createAccount": "Crear Cuenta",
+    "continueWithGoogle": "Continuar con Google",
+    "orContinueWithEmail": "O continuar con email",
+    "emailLabel": "Correo electrónico",
+    "passwordLabel": "Contraseña",
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "checkEmail": "¡Revisa tu correo para el enlace de confirmación!",
+    "dontHaveAccount": "¿No tienes cuenta? ",
+    "alreadyHaveAccount": "¿Ya tienes cuenta? "
+  },
+  "UpgradeModal": {
+    "title": "Mejora a Pro",
+    "subtitle": "Desbloquea todo el poder de la IA Legal",
+    "feature1": "Consultas de IA ilimitadas",
+    "feature2": "Análisis detallado de PDF",
+    "feature3": "Acceso al Bot de Telegram",
+    "feature4": "Soporte Prioritario",
+    "pricing": "mes",
+    "subscribeButton": "Suscribirse Ahora",
+    "dismissButton": "No gracias, quizás luego"
+  }
+}

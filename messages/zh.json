@@ -1,0 +1,73 @@
+{
+    "Hero": {
+        "title": "通往西班牙",
+        "titleHighlight": "宁静",
+        "titleSuffix": "生活的桥梁。",
+        "subtitle": "为寻求清晰和信任的社区提供法律、行政和文化援助。",
+        "searchPlaceholder": "询问关于 NIE、居留或许可食品...",
+        "searchButton": "咨询"
+    },
+    "BentoGrid": {
+        "services": {
+            "legal": {
+                "title": "法律手续",
+                "description": "NIE、TIE 和居留许可的分步指南。"
+            },
+            "culture": {
+                "title": "文化融合",
+                "description": "了解您在西班牙社会的权利和义务。"
+            },
+            "halal": {
+                "title": "清真认证",
+                "description": "查找您附近的认证服务和产品。"
+            },
+            "aid": {
+                "title": "公共援助",
+                "description": "发现适合您个人情况的补助和支持。"
+            }
+        }
+    },
+    "ChatDrawer": {
+        "title": "法律助理",
+        "subtitle": "专注于西班牙官僚机构的人工智能",
+        "welcomeMessage": "你好。我是您的专业助理。今天有什么法律程序或文化问题可以帮您吗？",
+        "inputPlaceholder": "输入您的查询...",
+        "disclaimer": "人工智能可能会犯错。请核实重要的法律信息。"
+    },
+    "Footer": {
+        "copyright": "© 2026 Trust & Clarity. 版权所有。",
+        "privacyLink": "隐私政策"
+    },
+    "Legal": {
+        "cookieBanner": "我们要使用cookie来改善您的体验并分析流量。点击“接受”，即表示您同意我们使用cookie。",
+        "readPolicy": "阅读我们的",
+        "privacyButton": "隐私政策",
+        "accept": "接受",
+        "decline": "拒绝"
+    },
+    "PrivacyPolicy": {
+        "title": "隐私政策",
+        "section1_title": "数据收集",
+        "section1_content": "我们收集电子邮件和使用数据以改进我们的服务。",
+        "section2_title": "数据使用",
+        "section2_content": "您的数据用于个性化体验，不会出售给第三方。",
+        "section3_title": "数据保护",
+        "section3_content": "我们使用行业标准的安全措施来保护您的信息。",
+        "section4_title": "您的权利",
+        "section4_content": "您有权随时访问、更正或删除您的数据。",
+        "section5_title": "Cookie 政策",
+        "section5_content": "我们使用 cookie 来改善用户体验和流量分析。您可以在浏览器设置中管理您的偏好。",
+        "last_updated": "最后更新"
+    },
+    "UpgradeModal": {
+        "title": "升级到专业版",
+        "subtitle": "解锁法律AI的全部潜能",
+        "feature1": "无限次AI查询",
+        "feature2": "详细PDF分析",
+        "feature3": "Telegram机器人访问权限",
+        "feature4": "优先支持",
+        "pricing": "月",
+        "subscribeButton": "立即订阅",
+        "dismissButton": "不，谢谢，以后再说"
+    }
+}
