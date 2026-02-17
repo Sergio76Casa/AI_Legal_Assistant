@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Upload, CheckCircle2, AlertCircle, Loader2, Globe, Trash2, RefreshCw, Eye, X, Building, Users, Shield, ExternalLink } from 'lucide-react';
+import { Upload, CheckCircle2, AlertCircle, Loader2, Globe, Trash2, RefreshCw, Eye, X, Building, Users, Shield, ExternalLink, FileText, Calendar, Sparkles, File as FileIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '../lib/utils';
@@ -17,6 +17,7 @@ export const AdminDashboard: React.FC = () => {
     const [globalDocuments, setGlobalDocuments] = useState<any[]>([]);
     const [tenants, setTenants] = useState<any[]>([]);
     const [viewingDoc, setViewingDoc] = useState<{ name: string, content: string } | null>(null);
+    const [userProfile, setUserProfile] = useState<any>(null);
 
     const fetchGlobalDocuments = async () => {
         setIsUploading(true);
@@ -67,7 +68,20 @@ export const AdminDashboard: React.FC = () => {
     useEffect(() => {
         fetchGlobalDocuments();
         fetchTenants();
+        fetchUserProfile();
     }, []);
+
+    const fetchUserProfile = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', user.id)
+                .single();
+            setUserProfile(data);
+        }
+    };
 
     const handleUpload = async () => {
         if (!file) return;
@@ -367,7 +381,7 @@ export const AdminDashboard: React.FC = () => {
 
                                 {globalDocuments.length === 0 && !isUploading && (
                                     <div className="p-12 text-center">
-                                        <File size={48} className="mx-auto text-slate-200 mb-4" />
+                                        <FileIcon size={48} className="mx-auto text-slate-200 mb-4" />
                                         <p className="text-slate-400 font-medium italic">No hay documentos globales cargados.</p>
                                     </div>
                                 )}
@@ -444,8 +458,13 @@ export const AdminDashboard: React.FC = () => {
             )}
 
             {/* TAB: Own Organization (Standard OrganizationPanel) */}
-            {activeTab === 'organization' && (
-                <OrganizationPanel />
+            {activeTab === 'organization' && userProfile?.tenant_id && (
+                <OrganizationPanel tenantId={userProfile.tenant_id} />
+            )}
+            {activeTab === 'organization' && !userProfile?.tenant_id && (
+                <div className="p-12 text-center bg-white rounded-2xl border border-slate-100 italic text-slate-400">
+                    No estás asociado a ninguna organización personal.
+                </div>
             )}
 
             {/* Content Preview Modal */}
