@@ -14,16 +14,24 @@
     "auth": {
         "sign_in": "تسجيل الدخول",
         "sign_up": "إنشاء حساب",
+        "create_account": "إنشاء حساب",
+        "subtitle_in": "مرحبًا بك مرة أخرى. يرجى إدخال بيانات الاعتماد الخاصة بك للوصول.",
+        "subtitle_up": "انضم إلينا للبدء في إدارة إجراءاتك.",
         "welcome": "مرحبًا بك مرة أخرى في STARK",
         "join": "انضم إلى STARK، مستشارك القانوني",
         "google": "المتابعة باستخدام Google",
         "with_email": "أو عبر البريد الإلكتروني",
         "email": "البريد الإلكتروني",
+        "email_placeholder": "you@email.com",
+        "username_placeholder": "اسم المستخدم",
         "password": "كلمة المرور",
+        "password_placeholder": "••••••••",
         "submit_login": "دخول",
         "submit_signup": "تسجيل",
-        "go_to_signup": "ليس لديك حساب؟ سجل هنا",
-        "go_to_login": "لديك حساب بالفعل؟ سجل الدخول"
+        "login_btn": "تسجيل الدخول",
+        "create_account_btn": "إنشاء حساب",
+        "go_to_signup": "إنشاء حساب جديد",
+        "go_to_login": "لديك حساب بالفعل"
     },
     "bento": {
         "explore": "اكتشف",

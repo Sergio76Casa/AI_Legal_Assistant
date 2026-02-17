@@ -2,16 +2,17 @@ import React from 'react';
 import { Navbar } from './Navbar';
 import { useTranslation } from 'react-i18next';
 
-export function Layout({ children, onNavigate, user }: {
+export function Layout({ children, onNavigate, user, profile }: {
     children: React.ReactNode,
     onNavigate?: (v: any) => void,
-    user?: any
+    user?: any,
+    profile?: any
 }) {
     const { t } = useTranslation();
 
     return (
         <div className="min-h-screen flex flex-col bg-background font-sans selection:bg-emerald-100 selection:text-emerald-900">
-            <Navbar onNavigate={onNavigate} user={user} />
+            <Navbar onNavigate={onNavigate} user={user} profile={profile} />
             <main className="flex-grow pt-20">
                 {children}
             </main>

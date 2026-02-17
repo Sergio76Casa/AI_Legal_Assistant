@@ -14,16 +14,24 @@
     "auth": {
         "sign_in": "登录",
         "sign_up": "创建账户",
+        "create_account": "创建账户",
+        "subtitle_in": "欢迎回来。请输入您的凭据进行访问。",
+        "subtitle_up": "加入我们，开始管理您的程序。",
         "welcome": "欢迎回到 STARK",
         "join": "加入 STARK，您的法律顾问",
         "google": "使用 Google 继续",
         "with_email": "或使用电子邮件",
         "email": "电子邮件",
+        "email_placeholder": "you@email.com",
+        "username_placeholder": "用户名",
         "password": "密码",
+        "password_placeholder": "••••••••",
         "submit_login": "登录",
         "submit_signup": "注册",
-        "go_to_signup": "还没有账户？在这里注册",
-        "go_to_login": "已经有账户了？登录"
+        "login_btn": "登录",
+        "create_account_btn": "创建账户",
+        "go_to_signup": "创建一个新账户",
+        "go_to_login": "已经有账户了"
     },
     "bento": {
         "explore": "探索",

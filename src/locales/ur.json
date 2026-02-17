@@ -14,16 +14,24 @@
     "auth": {
         "sign_in": "لاگ ان کریں",
         "sign_up": "اکاؤنٹ بنائیں",
+        "create_account": "اکاؤنٹ بنائیں",
+        "subtitle_in": "خوش آمدید۔ براہ کرم رسائی کے لیے اپنی اسناد درج کریں۔",
+        "subtitle_up": "اپنے طریقہ کار کو سنبھالنا شروع کرنے کے لیے ہمارے ساتھ شامل ہوں۔",
         "welcome": "STARK میں خوش آمدید",
         "join": "STARK میں شامل ہوں، آپ کا قانونی مشیر",
         "google": "گوگل کے ساتھ جاری رکھیں",
         "with_email": "یا ای میل کے ساتھ",
         "email": "ای میل",
+        "email_placeholder": "you@email.com",
+        "username_placeholder": "صارف کا نام",
         "password": "پاس ورڈ",
+        "password_placeholder": "••••••••",
         "submit_login": "داخل ہوں",
         "submit_signup": "رجسٹر کریں",
-        "go_to_signup": "اکاؤنٹ نہیں ہے؟ یہاں رجسٹر کریں",
-        "go_to_login": "پہلے سے اکاؤنٹ ہے؟ لاگ ان کریں"
+        "login_btn": "لاگ ان",
+        "create_account_btn": "اکاؤنٹ بنائیں",
+        "go_to_signup": "نیا اکاؤنٹ بنائیں",
+        "go_to_login": "پہلے سے اکاؤنٹ ہے"
     },
     "bento": {
         "explore": "تلاش کریں",

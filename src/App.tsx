@@ -26,17 +26,29 @@ const supabase = createClient(
 
 function App() {
     const [user, setUser] = useState<any>(null);
+    const [profile, setProfile] = useState<any>(null);
     const [view, setView] = useState<'home' | 'admin' | 'login' | 'create-org' | 'documents' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'tenant-settings' | 'tenant-public'>('home');
     const [currentSlug, setCurrentSlug] = useState<string | null>(null);
 
     useEffect(() => {
+        const fetchProfile = async (userId: string) => {
+            const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+            setProfile(data);
+        };
+
         // Listen for auth changes
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user ?? null);
+            if (session?.user) fetchProfile(session.user.id);
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
+            if (session?.user) {
+                fetchProfile(session.user.id);
+            } else {
+                setProfile(null);
+            }
         });
 
         // 🔍 SLUG DETECTION: Check if URL path is a specific tenant request
@@ -53,7 +65,7 @@ function App() {
         return () => subscription.unsubscribe();
     }, []);
 
-    const isAdmin = user?.email === 'lsergiom76@gmail.com';
+    const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
     const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));
 
     return (
@@ -72,7 +84,7 @@ function App() {
                         }}
                     />
                 ) : (
-                    <Layout onNavigate={setView} user={user}>
+                    <Layout onNavigate={setView} user={user} profile={profile}>
                         {!user && view === 'home' ? (
                             <LandingPage onLogin={() => setView('login')} onCreateOrg={() => setView('create-org')} />
                         ) : view === 'login' && !user ? (

@@ -14,16 +14,24 @@
     "auth": {
         "sign_in": "Se connecter",
         "sign_up": "Créer un compte",
+        "create_account": "Créer un compte",
+        "subtitle_in": "Bon retour parmi nous. Veuillez entrer vos identifiants pour accéder.",
+        "subtitle_up": "Rejoignez-nous pour commencer à gérer vos procédures.",
         "welcome": "Bon retour chez STARK",
         "join": "Rejoignez STARK, votre consultant juridique",
         "google": "Continuer avec Google",
         "with_email": "OU AVEC EMAIL",
         "email": "Email",
+        "email_placeholder": "vous@email.com",
+        "username_placeholder": "Nom d'utilisateur",
         "password": "Mot de passe",
+        "password_placeholder": "••••••••",
         "submit_login": "Entrer",
         "submit_signup": "S'inscrire",
-        "go_to_signup": "Vous n'avez pas de compte ? Inscrivez-vous ici",
-        "go_to_login": "Vous avez déjà un compte ? Connectez-vous"
+        "login_btn": "Connexion",
+        "create_account_btn": "Créer un compte",
+        "go_to_signup": "Créer un nouveau compte",
+        "go_to_login": "J'ai déjà un compte"
     },
     "bento": {
         "explore": "Explorer",

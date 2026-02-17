@@ -178,6 +178,27 @@ export const AdminDashboard: React.FC = () => {
     const [selectedTenant, setSelectedTenant] = useState<any | null>(null);
     const [tenantUsers, setTenantUsers] = useState<any[]>([]);
     const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+    const [updatingPlan, setUpdatingPlan] = useState<string | null>(null);
+
+    const handleUpdatePlan = async (tenantId: string, newPlan: string) => {
+        setUpdatingPlan(tenantId);
+        try {
+            const { error } = await supabase
+                .from('tenants')
+                .update({ plan: newPlan })
+                .eq('id', tenantId);
+
+            if (error) throw error;
+
+            setStatus({ type: 'success', message: '¡Plan actualizado con éxito!' });
+            fetchTenants();
+        } catch (error: any) {
+            console.error('Error updating plan:', error);
+            setStatus({ type: 'error', message: 'Error al actualizar plan: ' + error.message });
+        } finally {
+            setUpdatingPlan(null);
+        }
+    };
 
     const fetchTenantUsers = async (tenantId: string) => {
         setIsLoadingUsers(true);
@@ -438,7 +459,23 @@ export const AdminDashboard: React.FC = () => {
                                             {format(new Date(tenant.created_at), 'dd/MM/yyyy')}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="px-2 py-1 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase">Enterprise</span>
+                                            <select
+                                                value={tenant.plan || 'free'}
+                                                onChange={(e) => handleUpdatePlan(tenant.id, e.target.value)}
+                                                disabled={updatingPlan === tenant.id}
+                                                className={cn(
+                                                    "px-2 py-1 rounded text-[10px] font-bold uppercase border-none focus:ring-1 focus:ring-emerald-500 cursor-pointer transition-all",
+                                                    tenant.plan === 'enterprise' ? "bg-emerald-50 text-emerald-700" :
+                                                        tenant.plan === 'business' ? "bg-purple-50 text-purple-700" :
+                                                            tenant.plan === 'pro' ? "bg-blue-50 text-blue-700" :
+                                                                "bg-slate-100 text-slate-600"
+                                                )}
+                                            >
+                                                <option value="free">Free</option>
+                                                <option value="pro">Pro</option>
+                                                <option value="business">Business</option>
+                                                <option value="enterprise">Enterprise</option>
+                                            </select>
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <button

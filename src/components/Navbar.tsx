@@ -9,18 +9,18 @@ interface NavbarProps {
     className?: string;
     onNavigate?: (v: any) => void;
     user?: any;
+    profile?: any;
 }
 
-export function Navbar({ className, onNavigate, user }: NavbarProps) {
+export function Navbar({ className, onNavigate, user, profile }: NavbarProps) {
     const { t } = useTranslation();
     const { tenant } = useTenant();
 
-    // Superadmin check (hardcoded for now as per original code)
-    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com';
+    // Superadmin check (hardcoded email + DB role)
+    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
 
     // Tenant Admin check: Check metadata or profile role
-    // create-organization sets user_metadata.role = 'admin'
-    const isTenantAdmin = user?.user_metadata?.role === 'admin';
+    const isTenantAdmin = user?.user_metadata?.role === 'admin' || profile?.role === 'admin';
 
     const username = user?.user_metadata?.username || user?.email?.split('@')[0] || 'Usuario';
 
