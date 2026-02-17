@@ -1,6 +1,4 @@
-import React from 'react';
-import { ArrowRight, Shield, Globe, Zap, CheckCircle, Smartphone, Lock } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { ArrowRight, Shield, Globe, Zap, Smartphone, Lock } from 'lucide-react';
 
 export function LandingPage({ onLogin, onCreateOrg }: { onLogin: () => void; onCreateOrg: () => void }) {
     // We can add i18n later, for now hardcoded Spanish for the B2B persona

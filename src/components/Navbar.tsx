@@ -1,4 +1,3 @@
-import React from 'react';
 import { LogOut, ShieldCheck, Building2, Crown, FileText } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';

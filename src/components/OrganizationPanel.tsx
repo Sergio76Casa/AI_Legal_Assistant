@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Users, UserPlus, Mail, Shield, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { UserPlus, Mail, Shield, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface OrganizationPanelProps {
     tenantId: string;

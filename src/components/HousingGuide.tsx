@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 import { ArrowLeft, Home, FileCheck, ShieldAlert, Key, Sparkles, ChevronRight, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useChat } from '../lib/ChatContext';
@@ -48,7 +47,6 @@ const sections = [
 ];
 
 export function HousingGuide({ onBack }: HousingGuideProps) {
-    const { t } = useTranslation();
     const { sendMessage } = useChat();
 
     useEffect(() => {
