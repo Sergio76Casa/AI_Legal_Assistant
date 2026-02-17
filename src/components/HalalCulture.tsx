@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 import { ArrowLeft, Heart, Utensils, Globe, Sparkles, ChevronRight, BookmarkCheck, Users2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useChat } from '../lib/ChatContext';
@@ -47,7 +46,6 @@ const sections = [
 ];
 
 export function HalalCulture({ onBack }: HalalCultureProps) {
-    const { t } = useTranslation();
     const { sendMessage } = useChat();
 
     useEffect(() => {
