@@ -1,0 +1,40 @@
+{
+    "nav": {
+        "login": "Connexion",
+        "logout": "Déconnexion",
+        "admin": "ADMIN",
+        "contact": "Contact",
+        "users": "Accès Utilisateurs"
+    },
+    "hero": {
+        "title": "Votre Consultant Juridique & Halal en Espagne",
+        "subtitle": "Guide spécialisé pour les expatriés et les immigrés. IA formée aux lois et réglementations espagnoles sur l'immigration.",
+        "search_placeholder": "Entrez votre requête ici (ex : exigences NIE)..."
+    },
+    "auth": {
+        "sign_in": "Se connecter",
+        "sign_up": "Créer un compte",
+        "welcome": "Bon retour chez STARK",
+        "join": "Rejoignez STARK, votre consultant juridique",
+        "google": "Continuer avec Google",
+        "with_email": "OU AVEC EMAIL",
+        "email": "Email",
+        "password": "Mot de passe",
+        "submit_login": "Entrer",
+        "submit_signup": "S'inscrire",
+        "go_to_signup": "Vous n'avez pas de compte ? Inscrivez-vous ici",
+        "go_to_login": "Vous avez déjà un compte ? Connectez-vous"
+    },
+    "bento": {
+        "explore": "Explorer",
+        "legal_title": "Procédures Légales",
+        "legal_desc": "Guide étape par étape pour la résidence, la nationalité et les permis de travail. Pas de jargon confus.",
+        "halal_title": "Vie Halal & Culture",
+        "halal_desc": "Trouvez des services certifiés, de la nourriture et des espaces communautaires respectueux de vos valeurs.",
+        "rent_title": "Logement & Location",
+        "rent_desc": "Vérification des contrats et assistance pour éviter les clauses de location abusives.",
+        "community_title": "Rejoignez notre communauté",
+        "community_desc": "Connectez-vous avec des gens qui ont déjà parcouru votre chemin. Partagez des expériences et des conseils réels.",
+        "community_btn": "Entrer au Forum"
+    }
+}

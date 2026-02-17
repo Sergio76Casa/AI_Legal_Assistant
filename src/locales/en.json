@@ -1,0 +1,83 @@
+{
+    "nav": {
+        "login": "Login",
+        "logout": "Logout",
+        "admin": "ADMIN",
+        "contact": "Contact",
+        "users": "User Access",
+        "documents": "My Documents"
+    },
+    "hero": {
+        "title": "Your Legal & Halal Consultant in Spain",
+        "subtitle": "Specialized guide for expats and immigrants. AI trained in Spanish immigration laws and regulations.",
+        "search_placeholder": "Type your query here (e.g., NIE requirements)...",
+        "social_proof": "Trusted by +1,200 families",
+        "stats": {
+            "documents": "50+ Documents",
+            "availability": "24/7 Available",
+            "response": "Response <30s"
+        }
+    },
+    "auth": {
+        "sign_in": "Sign In",
+        "sign_up": "Sign Up",
+        "welcome": "Welcome back to STARK",
+        "join": "Join our community",
+        "google": "Continue with Google",
+        "with_email": "OR WITH EMAIL",
+        "username": "Username",
+        "email": "Email",
+        "password": "Password",
+        "country": "Country/Region",
+        "country_placeholder": "Select your country",
+        "submit_login": "Sign In",
+        "submit_signup": "Create Account",
+        "go_to_signup": "Don't have an account? Sign up here",
+        "go_to_login": "Already have an account? Sign in",
+        "logout": "Logout"
+    },
+    "bento": {
+        "explore": "Explore",
+        "legal_title": "Legal Procedures",
+        "legal_desc": "Step-by-step guide for residency, nationality, and work permits. No confusing jargon.",
+        "halal_title": "Halal Life & Culture",
+        "halal_desc": "Find certified services, food, and community spaces respectful of your values.",
+        "rent_title": "Housing and Rent",
+        "rent_desc": "Contract verification and assistance to avoid abusive rental clauses.",
+        "community_title": "Join our community",
+        "community_desc": "Connect with people who have already walked your path. Share experiences and real advice.",
+        "community_btn": "Join Now"
+    },
+    "docs": {
+        "title": "My Documents",
+        "subtitle": "Manage your private files for the AI assistant.",
+        "upload_btn": "Upload Document",
+        "upload_title": "Upload your documents",
+        "upload_subtitle": "Drag your PDF here or click to browse",
+        "select_file": "Select File",
+        "confirm_upload": "Confirm upload and process",
+        "status_uploading": "Uploading file...",
+        "status_processing": "AI is analyzing your document...",
+        "status_success": "Document ready!",
+        "status_error": "Error processing",
+        "try_again": "Try again",
+        "privacy_notice": "Your documents are processed securely and are only accessible by you and the AI assistant.",
+        "empty": "No documents yet",
+        "empty_hint": "Upload PDFs so the AI can help you with your specific procedures.",
+        "loading": "Loading your documents...",
+        "confirm_delete": "Are you sure you want to delete this document?",
+        "cancel": "Cancel",
+        "view": "View document",
+        "delete": "Delete",
+        "go_home": "Home",
+        "open_chat": "Chat"
+    },
+    "legal": {
+        "privacy_title": "Privacy Policy",
+        "privacy_content": "At Legal & Halal Assistant, we protect your personal data. When you upload your documents, they are processed using encryption and only used to provide AI assistance during your active session. We do not sell or share your data with third parties. We comply with Spanish GDPR regulations.",
+        "cookies_title": "Cookie Policy",
+        "cookies_content": "We use essential cookies to keep your session active and remember your preferred language. We do not use third-party advertising tracking cookies.",
+        "footer_privacy": "Privacy",
+        "footer_cookies": "Cookies"
+    }
+}

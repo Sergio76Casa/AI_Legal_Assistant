@@ -1,0 +1,83 @@
+{
+    "nav": {
+        "login": "Entrar",
+        "logout": "Cerrar Sesión",
+        "admin": "ADMIN",
+        "contact": "Contactar",
+        "users": "Acceso Usuarios",
+        "documents": "Mis Documentos"
+    },
+    "hero": {
+        "title": "Tu Consultor Legal & Halal en España",
+        "subtitle": "Guía especializada para expatriados e inmigrantes. IA entrenada en leyes y normativa de extranjería española.",
+        "search_placeholder": "Escribe tu consulta aquí (ej: Requisitos NIE)...",
+        "social_proof": "Con la confianza de +1,200 familias",
+        "stats": {
+            "documents": "50+ Documentos",
+            "availability": "24/7 Disponible",
+            "response": "Respuesta <30s"
+        }
+    },
+    "auth": {
+        "sign_in": "Iniciar Sesión",
+        "sign_up": "Registrarse",
+        "welcome": "Bienvenido de nuevo a STARK",
+        "join": "Únete a nuestra comunidad",
+        "google": "Continuar con Google",
+        "with_email": "O CON EMAIL",
+        "username": "Nombre de usuario",
+        "email": "Email",
+        "password": "Contraseña",
+        "country": "País/Región",
+        "country_placeholder": "Selecciona tu país",
+        "submit_login": "Entrar",
+        "submit_signup": "Crear cuenta",
+        "go_to_signup": "¿No tienes cuenta? Regístrate aquí",
+        "go_to_login": "¿Ya tienes cuenta? Inicia sesión",
+        "logout": "Cerrar sesión"
+    },
+    "bento": {
+        "explore": "Explorar",
+        "legal_title": "Trámites Legales",
+        "legal_desc": "Guía paso a paso para residencia, nacionalidad y permisos de trabajo. Sin tecnicismos confusos.",
+        "halal_title": "Vida Halal & Cultura",
+        "halal_desc": "Encuentra servicios certificados, alimentación y espacios de comunidad respetuosos con tus valores.",
+        "rent_title": "Vivienda y Alquiler",
+        "rent_desc": "Verificación de contratos y asistencia para evitar cláusulas abusivas en el alquiler.",
+        "community_title": "Únete a nuestra comunidad",
+        "community_desc": "Conecta con personas que ya han recorrido tu camino. Comparte experiencias y consejos reales.",
+        "community_btn": "Entrar al Foro"
+    },
+    "docs": {
+        "title": "Mis Documentos",
+        "subtitle": "Gestiona tus archivos privados para el asistente de IA.",
+        "upload_btn": "Subir Documento",
+        "upload_title": "Sube tus documentos",
+        "upload_subtitle": "Arrastra tu PDF aquí o haz clic para buscar",
+        "select_file": "Seleccionar Archivo",
+        "confirm_upload": "Confirmar subida y procesar",
+        "status_uploading": "Subiendo archivo...",
+        "status_processing": "La IA está analizando tu documento...",
+        "status_success": "¡Documento listo!",
+        "status_error": "Error al procesar",
+        "try_again": "Reintentar",
+        "privacy_notice": "Tus documentos se procesan de forma segura y solo son accesibles por ti y el asistente de IA.",
+        "empty": "No tienes documentos aún",
+        "empty_hint": "Sube PDFs para que la IA pueda ayudarte con tus trámites específicos.",
+        "loading": "Cargando tus documentos...",
+        "confirm_delete": "¿Estás seguro de que quieres eliminar este documento?",
+        "cancel": "Cancelar",
+        "view": "Ver documento",
+        "delete": "Eliminar",
+        "go_home": "Inicio",
+        "open_chat": "Chat"
+    },
+    "legal": {
+        "privacy_title": "Política de Privacidad",
+        "privacy_content": "En Legal & Halal Assistant, protegemos tus datos personales. Al subir tus documentos, estos se procesan de forma cifrada y solo se utilizan para proporcionar asistencia de IA durante tu sesión activa. No vendemos ni compartimos tus datos con terceros. Cumplimos con el RGPD español.",
+        "cookies_title": "Política de Cookies",
+        "cookies_content": "Utilizamos cookies esenciales para mantener tu sesión activa y recordar tu idioma preferido. No utilizamos cookies de rastreo publicitario de terceros.",
+        "footer_privacy": "Privacidad",
+        "footer_cookies": "Cookies"
+    }
+}

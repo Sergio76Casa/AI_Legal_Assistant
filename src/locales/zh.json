@@ -1,0 +1,40 @@
+{
+    "nav": {
+        "login": "登录",
+        "logout": "登出",
+        "admin": "管理员",
+        "contact": "联系我们",
+        "users": "用户访问"
+    },
+    "hero": {
+        "title": "您在西班牙的法律和哈拉勒顾问",
+        "subtitle": "为外籍人士和移民提供的专业指南。接受过西班牙移民法律和法规培训的AI。",
+        "search_placeholder": "在此输入您的查询（例如：NIE要求）..."
+    },
+    "auth": {
+        "sign_in": "登录",
+        "sign_up": "创建账户",
+        "welcome": "欢迎回到 STARK",
+        "join": "加入 STARK，您的法律顾问",
+        "google": "使用 Google 继续",
+        "with_email": "或使用电子邮件",
+        "email": "电子邮件",
+        "password": "密码",
+        "submit_login": "登录",
+        "submit_signup": "注册",
+        "go_to_signup": "还没有账户？在这里注册",
+        "go_to_login": "已经有账户了？登录"
+    },
+    "bento": {
+        "explore": "探索",
+        "legal_title": "法律程序",
+        "legal_desc": "居留、入籍和工作许可的分步指南。没有令人困惑的专业术语。",
+        "halal_title": "哈拉勒生活与文化",
+        "halal_desc": "寻找认证服务、食品和尊重您价值观的社区空间。",
+        "rent_title": "住房与租房",
+        "rent_desc": "合同验证和协助，以避免滥用租金条款。",
+        "community_title": "加入我们的社区",
+        "community_desc": "与已经走过这条路的人建立联系。分享真实的经验和建议。",
+        "community_btn": "进入论坛"
+    }
+}

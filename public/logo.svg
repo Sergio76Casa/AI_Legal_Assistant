@@ -1,0 +1,52 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fondo circular con gradiente -->
+  <circle cx="100" cy="100" r="95" fill="url(#gradient1)"/>
+  
+  <!-- Definición de gradientes -->
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#064e3b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Balanza de la justicia (base) -->
+  <g transform="translate(100, 110)">
+    <!-- Pilar central -->
+    <rect x="-3" y="-35" width="6" height="50" fill="white" rx="3"/>
+    
+    <!-- Base -->
+    <ellipse cx="0" cy="18" rx="25" ry="4" fill="white" opacity="0.9"/>
+    
+    <!-- Barra horizontal -->
+    <rect x="-40" y="-38" width="80" height="4" fill="white" rx="2"/>
+    
+    <!-- Platos izquierdo -->
+    <g transform="translate(-35, -35)">
+      <line x1="0" y1="0" x2="0" y2="-8" stroke="white" stroke-width="1.5"/>
+      <ellipse cx="0" cy="-8" rx="12" ry="3" fill="url(#gradient2)"/>
+      <path d="M -12,-8 L -12,-11 L 12,-11 L 12,-8 Z" fill="url(#gradient2)" opacity="0.8"/>
+    </g>
+    
+    <!-- Platos derecho -->
+    <g transform="translate(35, -35)">
+      <line x1="0" y1="0" x2="0" y2="-8" stroke="white" stroke-width="1.5"/>
+      <ellipse cx="0" cy="-8" rx="12" ry="3" fill="url(#gradient2)"/>
+      <path d="M -12,-8 L -12,-11 L 12,-11 L 12,-8 Z" fill="url(#gradient2)" opacity="0.8"/>
+    </g>
+  </g>
+  
+  <!-- Media luna islámica (arriba) -->
+  <g transform="translate(100, 55)">
+    <path d="M 0,-20 A 15,15 0 1,1 0,10 A 12,12 0 1,0 0,-20 Z" fill="white"/>
+    <!-- Estrella -->
+    <path d="M 18,-8 L 20,-3 L 25,-3 L 21,0 L 23,5 L 18,2 L 13,5 L 15,0 L 11,-3 L 16,-3 Z" fill="white"/>
+  </g>
+  
+  <!-- Texto L&H (monograma) -->
+  <text x="100" y="170" font-family="serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">L&amp;H</text>
+</svg>
