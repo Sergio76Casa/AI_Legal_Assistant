@@ -17,10 +17,12 @@ Deno.serve(async (req) => {
         const chatId = update.message.chat.id
         const userText = update.message.text
 
+        // Initialize clients
         const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!)
         const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY!)
 
         // 1. RAG Pipeline Multi-Nivel (En Telegram asumimos que es público por ahora, a menos que sincronicemos perfiles)
+        // Usamos embedding-004 que es el modelo que estamos estandarizando
         const embeddingModel = genAI.getGenerativeModel({ model: 'models/text-embedding-004' })
         const embeddingResult = await embeddingModel.embedContent({
             content: { parts: [{ text: userText }] },
@@ -32,23 +34,22 @@ Deno.serve(async (req) => {
             query_embedding: embeddingResult.embedding.values,
             match_threshold: 0.15,
             match_count: 5,
-            p_user_id: null // Por ahora Telegram solo busca en leyes globales. En el futuro podemos vincular telegram_id con profile.id
+            p_user_id: null, // Por ahora Telegram solo busca en leyes globales. En el futuro podemos vincular telegram_id con profile.id
+            p_tenant_id: null // Búsqueda global (o tenant por defecto si lo hubiera)
         })
 
-        const contextText = documents?.map(doc => doc.content).join('\n---\n') || ''
+        const contextText = documents?.map((doc: any) => doc.content).join('\n---\n') || ''
 
         // 2. Generación con Fallback
         const systemPrompt = `Eres STARK. Responde conciso para Telegram usando este contexto: ${contextText}\n\nPregunta: ${userText}`
 
         const modelsToTry = [
-            'gemini-2.5-flash-lite',
-            'gemini-2.5-flash',
-            'gemini-2.0-flash-lite',
             'gemini-2.0-flash',
-            'gemini-1.5-flash-latest'
+            'gemini-1.5-flash'
         ]
 
         let responseText = "⚠️ Problemas técnicos con Google. Reintente luego."
+
         for (const modelName of modelsToTry) {
             try {
                 const model = genAI.getGenerativeModel({ model: modelName })
@@ -63,6 +64,7 @@ Deno.serve(async (req) => {
         return new Response('ok')
 
     } catch (error) {
+        console.error('Error in bot:', error)
         return new Response('error', { status: 500 })
     }
 })
