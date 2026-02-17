@@ -4,11 +4,10 @@ import { Crown, Zap, Rocket, Check, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 interface SubscriptionBadgeProps {
-    userId: string;
     className?: string;
 }
 
-export const SubscriptionBadge: React.FC<SubscriptionBadgeProps> = ({ userId, className }) => {
+export const SubscriptionBadge: React.FC<SubscriptionBadgeProps> = ({ className }) => {
     const { tenant } = useTenant();
     const [isOpen, setIsOpen] = useState(false);
 

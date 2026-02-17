@@ -33,7 +33,7 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
     const [error, setError] = useState<string | null>(null);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-    const { tier } = useUsageLimits(userId, 'upload_document');
+    useUsageLimits(userId, 'upload_document');
 
     const fetchDocuments = async () => {
         try {
@@ -302,7 +302,6 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
             <UpgradeModal
                 isOpen={showUpgradeModal}
                 onClose={() => setShowUpgradeModal(false)}
-                currentTier={tier as 'free' | 'pro' | 'business'}
                 limitType="upload_document"
             />
         </div>

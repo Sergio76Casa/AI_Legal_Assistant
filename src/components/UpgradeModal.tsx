@@ -4,7 +4,6 @@ import { X, Zap, Crown, Rocket, ArrowRight } from 'lucide-react';
 interface UpgradeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    currentTier: 'free' | 'pro' | 'business';
     limitType: 'chat_query' | 'upload_document';
     onSelectPlan?: (tier: 'pro' | 'business') => void;
 }
@@ -12,7 +11,6 @@ interface UpgradeModalProps {
 export const UpgradeModal: React.FC<UpgradeModalProps> = ({
     isOpen,
     onClose,
-    currentTier,
     limitType,
     onSelectPlan,
 }) => {

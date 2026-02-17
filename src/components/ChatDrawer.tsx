@@ -54,7 +54,7 @@ export function ChatDrawer() {
     }, []);
 
     // Hook de límites de uso
-    const { canPerformAction, incrementUsage, tier } = useUsageLimits(
+    const { canPerformAction, incrementUsage } = useUsageLimits(
         user?.id || null,
         'chat_query'
     );
@@ -271,7 +271,6 @@ export function ChatDrawer() {
             <UpgradeModal
                 isOpen={showUpgradeModal}
                 onClose={() => setShowUpgradeModal(false)}
-                currentTier={tier as 'free' | 'pro' | 'business'}
                 limitType="chat_query"
             />
         </>
