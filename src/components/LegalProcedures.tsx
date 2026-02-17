@@ -53,7 +53,7 @@ export function LegalProcedures({ onBack, user }: LegalProceduresProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Límites de uso
-    const { canPerformAction, tier, refresh } = useUsageLimits(user?.id, 'upload_document');
+    const { canPerformAction, refresh } = useUsageLimits(user?.id, 'upload_document');
 
     // Asegurar que la página empiece desde arriba al cargar
     useEffect(() => {
@@ -291,7 +291,6 @@ export function LegalProcedures({ onBack, user }: LegalProceduresProps) {
                 <UpgradeModal
                     isOpen={showUpgradeModal}
                     onClose={() => setShowUpgradeModal(false)}
-                    currentTier={tier as 'free' | 'pro' | 'business'}
                     limitType="upload_document"
                 />
             </div>

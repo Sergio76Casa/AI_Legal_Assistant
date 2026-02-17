@@ -22,7 +22,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Límites de uso
-    const { canPerformAction, tier, refresh } = useUsageLimits(userId, 'upload_document');
+    const { canPerformAction, refresh } = useUsageLimits(userId, 'upload_document');
 
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault();
@@ -262,7 +262,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
             <UpgradeModal
                 isOpen={showUpgradeModal}
                 onClose={() => setShowUpgradeModal(false)}
-                currentTier={tier as 'free' | 'pro' | 'business'}
                 limitType="upload_document"
             />
         </div>
