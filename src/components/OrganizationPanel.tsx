@@ -1,16 +1,110 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { UserPlus, Mail, Shield, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { UserPlus, Mail, Shield, Trash2, CheckCircle2, AlertCircle, FileText, Loader2, FolderDown, Pencil } from 'lucide-react';
+import { TemplateSelectorModal } from './PDFMapper/TemplateSelectorModal';
+import { EditProfileModal } from './EditProfileModal';
+import { SuccessBundleModal } from './SuccessBundleModal';
+
+import { useTranslation } from 'react-i18next';
+
+// Subcomponente para gestionar los Packs de cada usuario
+const UserBundlesSection = ({ userId, tenantId, onBundleSuccess }: { userId: string, tenantId: string, onBundleSuccess: (data: any) => void }) => {
+    const { t } = useTranslation();
+    const [bundles, setBundles] = useState<any[]>([]);
+    const [generatingBundleId, setGeneratingBundleId] = useState<string | null>(null);
+    const [progressMsg, setProgressMsg] = useState('');
+
+    useEffect(() => {
+        if (tenantId) fetchBundles();
+    }, [tenantId]);
+
+    const fetchBundles = async () => {
+        const { data } = await supabase
+            .from('pdf_bundles')
+            .select('*')
+            .eq('tenant_id', tenantId);
+        setBundles(data || []);
+    };
+
+    const handleGenerateBundle = async (bundle: any) => {
+        setGeneratingBundleId(bundle.id);
+        setProgressMsg(t('org_panel.generating'));
+
+        try {
+            // Importación dinámica para evitar cargar JSZip si no se usa
+            const { generateBundleZIP } = await import('../lib/bundle-generator');
+
+            const result = await generateBundleZIP(bundle.id, userId, (msg) => setProgressMsg(msg));
+            // result: { blob, fileName, fileCount, clientName, bundleName }
+
+            // Descargar ZIP
+            const url = window.URL.createObjectURL(result.blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = result.fileName; // Use generated filename
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            // Trigger Success Modal & Logging
+            onBundleSuccess(result);
+
+        } catch (error) {
+            console.error('Error generando pack:', error);
+            alert(t('org_panel.generate_error'));
+        } finally {
+            setGeneratingBundleId(null);
+            setProgressMsg('');
+        }
+    };
+
+    if (bundles.length === 0) return null;
+
+    return (
+        <div className="mt-2 pt-2 border-t border-gray-100">
+            <p className="text-xs font-semibold text-gray-500 mb-2">{t('org_panel.quick_bundles')}</p>
+            <div className="flex flex-wrap gap-2">
+                {bundles.map(bundle => (
+                    <button
+                        key={bundle.id}
+                        onClick={() => handleGenerateBundle(bundle)}
+                        disabled={!!generatingBundleId}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-indigo-100"
+                    >
+                        {generatingBundleId === bundle.id ? (
+                            <>
+                                <Loader2 size={12} className="animate-spin" />
+                                {progressMsg || t('org_panel.generating')}
+                            </>
+                        ) : (
+                            <>
+                                <FolderDown size={12} />
+                                {bundle.name}
+                            </>
+                        )}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 interface OrganizationPanelProps {
     tenantId: string;
 }
 
 export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }) => {
+    const { t } = useTranslation();
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [inviteEmail, setInviteEmail] = useState('');
     const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+    const [selectedUserForPDF, setSelectedUserForPDF] = useState<any | null>(null);
+    const [editingUser, setEditingUser] = useState<any | null>(null);
+
+    // Success Modal State
+    const [bundleSuccessData, setBundleSuccessData] = useState<any | null>(null);
 
     useEffect(() => {
         if (tenantId) fetchUsers();
@@ -49,12 +143,32 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
 
             if (data.error) throw new Error(data.error);
 
-            setStatus({ type: 'success', message: `Invitación creada correctamente. Token: ${data.invite_token}` });
+            setStatus({ type: 'success', message: t('org_panel.invite_success', { token: data.invite_token }) });
             setInviteEmail('');
             // TODO: Refresh list if we show pending invites
         } catch (error: any) {
             console.error('Invite error:', error);
-            setStatus({ type: 'error', message: error.message || 'Error al enviar invitación' });
+            setStatus({ type: 'error', message: error.message || t('org_panel.invite_error') });
+        }
+    };
+
+    const handleBundleSuccess = async (data: any) => {
+        setBundleSuccessData(data); // Show modal
+
+        // Log Activity
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                await supabase.from('activity_logs').insert({
+                    tenant_id: tenantId,
+                    user_id: user.id,
+                    action_type: 'BUNDLE_GENERATED',
+                    details: `Generado pack "${data.bundleName}" para ${data.clientName}`,
+                    metadata: data
+                });
+            }
+        } catch (err) {
+            console.error('Error logging activity:', err);
         }
     };
 
@@ -63,10 +177,10 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
                     <BuildingIcon size={24} className="text-emerald-600" />
-                    Mi Organización
+                    {t('org_panel.title')}
                 </h2>
                 <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                    ID: {tenantId}
+                    {t('org_panel.id', { id: tenantId })}
                 </div>
             </div>
 
@@ -74,12 +188,12 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
             <div className="bg-white p-6 rounded-xl shadow-sm border border-emerald-100">
                 <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
                     <UserPlus size={18} />
-                    Invitar Nuevo Miembro
+                    {t('org_panel.invite_title')}
                 </h3>
                 <form onSubmit={handleInvite} className="flex gap-4">
                     <input
                         type="email"
-                        placeholder="correo@empresa.com"
+                        placeholder={t('org_panel.invite_placeholder')}
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
                         className="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -90,7 +204,7 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                         className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium flex items-center gap-2"
                     >
                         <Mail size={18} />
-                        Enviar Invitación
+                        {t('org_panel.invite_btn')}
                     </button>
                 </form>
                 {status && (
@@ -104,20 +218,20 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
             {/* Users List */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                    <h3 className="font-semibold text-gray-700">Miembros del Equipo ({users.length})</h3>
+                    <h3 className="font-semibold text-gray-700">{t('org_panel.users_list')} ({users.length})</h3>
                 </div>
 
                 {loading ? (
-                    <div className="p-8 text-center text-gray-400">Cargando usuarios...</div>
+                    <div className="p-8 text-center text-gray-400">{t('org_panel.loading_users')}</div>
                 ) : (
                     <table className="w-full text-left text-sm">
                         <thead className="bg-gray-50 text-gray-500">
                             <tr>
-                                <th className="px-6 py-3 font-medium">Usuario</th>
-                                <th className="px-6 py-3 font-medium">Rol</th>
-                                <th className="px-6 py-3 font-medium">Fecha Unión</th>
-                                <th className="px-6 py-3 font-medium">Estado</th>
-                                <th className="px-6 py-3 font-medium text-right">Acciones</th>
+                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.user')}</th>
+                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.role')}</th>
+                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.join_date')}</th>
+                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.status')}</th>
+                                <th className="px-6 py-3 font-medium text-right">{t('org_panel.headers.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -131,6 +245,9 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                                             <div>
                                                 <div className="font-medium text-gray-900">{user.email}</div>
                                                 <div className="text-xs text-gray-500">{user.id}</div>
+
+                                                {/* Sección de Packs */}
+                                                <UserBundlesSection userId={user.id} tenantId={tenantId} onBundleSuccess={handleBundleSuccess} />
                                             </div>
                                         </div>
                                     </td>
@@ -140,7 +257,7 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                                             : 'bg-gray-100 text-gray-800'
                                             }`}>
                                             {user.role === 'admin' ? <Shield size={12} className="mr-1" /> : null}
-                                            {user.role || 'member'}
+                                            {user.role === 'admin' ? t('org_panel.role_admin') : t('org_panel.role_user')}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-gray-500">
@@ -148,11 +265,25 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-emerald-600 bg-emerald-50 px-2 py-1 rounded text-xs font-medium">
-                                            Activo
+                                            {t('org_panel.status_active')}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="text-gray-400 hover:text-red-500 transition-colors">
+                                    <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
+                                        <button
+                                            onClick={() => setEditingUser(user)}
+                                            className="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors tooltip"
+                                            title={t('org_panel.tooltips.edit_client')}
+                                        >
+                                            <Pencil size={16} />
+                                        </button>
+                                        <button
+                                            onClick={() => setSelectedUserForPDF(user)}
+                                            className="text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-lg transition-colors tooltip"
+                                            title={t('org_panel.tooltips.generate_doc')}
+                                        >
+                                            <FileText size={16} />
+                                        </button>
+                                        <button className="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-lg">
                                             <Trash2 size={16} />
                                         </button>
                                     </td>
@@ -161,7 +292,7 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                             {users.length === 0 && (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-8 text-center text-gray-500 italic">
-                                        No hay usuarios en esta organización (¡raro, deberías estar tú!)
+                                        {t('org_panel.no_users')}
                                     </td>
                                 </tr>
                             )}
@@ -169,6 +300,30 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                     </table>
                 )}
             </div>
+
+            <SuccessBundleModal
+                isOpen={!!bundleSuccessData}
+                data={bundleSuccessData}
+                onClose={() => setBundleSuccessData(null)}
+            />
+
+            {selectedUserForPDF && (
+                <TemplateSelectorModal
+                    isOpen={!!selectedUserForPDF}
+                    onClose={() => setSelectedUserForPDF(null)}
+                    clientProfile={selectedUserForPDF}
+                    tenantId={tenantId}
+                />
+            )}
+
+            {editingUser && (
+                <EditProfileModal
+                    isOpen={!!editingUser}
+                    onClose={() => setEditingUser(null)}
+                    userId={editingUser.id}
+                    onProfileUpdated={fetchUsers}
+                />
+            )}
         </div>
     );
 };

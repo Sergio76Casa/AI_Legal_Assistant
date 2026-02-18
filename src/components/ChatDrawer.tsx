@@ -21,7 +21,7 @@ export function ChatDrawer() {
         {
             id: '1',
             role: 'assistant',
-            content: i18n.language === 'es' ? 'Hola, soy tu asistente experto en trámites y cultura. ¿En qué puedo ayudarte hoy?' : t('hero.subtitle')
+            content: t('chat.welcome_msg')
         }
     ]);
     const [inputValue, setInputValue] = useState('');
@@ -138,7 +138,7 @@ export function ChatDrawer() {
             console.error('Error al contactar con el asistente:', error);
 
             // Intentar extraer el mensaje de error detallado
-            let errorMessage = t('hero.subtitle'); // Fallback por defecto
+            let errorMessage = t('chat.error_fallback'); // Fallback por defecto
 
             if (error.context?.message) {
                 errorMessage = error.context.message;
@@ -150,7 +150,7 @@ export function ChatDrawer() {
             setMessages((prev: Message[]) => prev.concat({
                 id: Date.now().toString(),
                 role: 'assistant',
-                content: `Error: ${errorMessage}`
+                content: t('chat.error_prefix', { message: errorMessage })
             }));
         }
     };
@@ -198,8 +198,8 @@ export function ChatDrawer() {
                                     <Bot className="w-6 h-6 text-primary" />
                                 </div>
                                 <div>
-                                    <h3 className="font-serif text-lg text-gray-900">{t('nav.users')}</h3>
-                                    <p className="text-xs text-emerald-600 font-medium">En línea • Experto Verificado</p>
+                                    <h3 className="font-serif text-lg text-gray-900">{t('nav.brand_assistant')}</h3>
+                                    <p className="text-xs text-emerald-600 font-medium">{t('chat.status_verified')}</p>
                                 </div>
                             </div>
                             <button onClick={toggleDrawer} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
@@ -260,7 +260,7 @@ export function ChatDrawer() {
                                 </button>
                             </form>
                             <p className="text-center text-[10px] text-gray-400 mt-3">
-                                La IA puede cometer errores. Verifica la información legal importante.
+                                {t('chat.disclaimer')}
                             </p>
                         </div>
                     </motion.div>

@@ -8,13 +8,16 @@ interface TenantDashboardProps {
     onNavigate?: (view: any) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const TenantDashboard: React.FC<TenantDashboardProps> = ({ onBack, onNavigate }) => {
+    const { t } = useTranslation();
     const { tenant, loading } = useTenant();
 
     if (loading) {
         return (
             <div className="flex h-screen items-center justify-center">
-                <div className="animate-pulse text-slate-400">Cargando organización...</div>
+                <div className="animate-pulse text-slate-400">{t('tenant_dashboard.loading')}</div>
             </div>
         );
     }
@@ -23,13 +26,13 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({ onBack, onNavi
         return (
             <div className="flex h-screen flex-col items-center justify-center p-8 text-center text-slate-500">
                 <Building2 size={48} className="mb-4 text-slate-300" />
-                <h2 className="text-xl font-semibold text-slate-700">No se encontró la organización</h2>
-                <p className="mt-2">No tienes permisos para ver este panel o no perteneces a ninguna organización.</p>
+                <h2 className="text-xl font-semibold text-slate-700">{t('tenant_dashboard.not_found')}</h2>
+                <p className="mt-2">{t('tenant_dashboard.no_permission')}</p>
                 <button
                     onClick={onBack}
                     className="mt-6 text-sm text-emerald-600 hover:underline"
                 >
-                    Volver al inicio
+                    {t('tenant_dashboard.back_home')}
                 </button>
             </div>
         );
@@ -45,7 +48,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({ onBack, onNavi
                             onClick={onBack}
                             className="mb-2 flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors"
                         >
-                            <ArrowLeft size={14} /> Volver
+                            <ArrowLeft size={14} /> {t('tenant_dashboard.back')}
                         </button>
                         <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-900">
                             <span className="p-2 bg-white rounded-lg border border-slate-200 shadow-sm">
@@ -54,7 +57,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({ onBack, onNavi
                             {tenant.name}
                         </h1>
                         <p className="mt-1 text-slate-500 ml-14">
-                            Panel de Administración • Plan <span className="font-semibold uppercase text-emerald-600">{tenant.plan || 'Free'}</span>
+                            {t('tenant_dashboard.admin_panel')} • {t('tenant_dashboard.plan')} <span className="font-semibold uppercase text-emerald-600">{tenant.plan || 'Free'}</span>
                         </p>
                     </div>
 
@@ -65,14 +68,14 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({ onBack, onNavi
                             className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100 shadow-sm transition-all"
                         >
                             <FileText size={16} />
-                            Documentos
+                            {t('tenant_dashboard.documents')}
                             <ExternalLink size={12} className="ml-1 opacity-50" />
                         </button>
 
                         {/* Settings Button */}
                         <button className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 shadow-sm transition-all">
                             <Settings size={16} />
-                            Configuración
+                            {t('tenant_dashboard.settings')}
                         </button>
                     </div>
                 </div>

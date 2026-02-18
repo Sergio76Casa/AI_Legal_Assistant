@@ -8,7 +8,8 @@ const languages = [
     { code: 'fr', name: 'Français', flagCode: 'fr', dir: 'ltr' },
     { code: 'ar', name: 'العربية (Maghreb)', flagCode: 'ma', dir: 'rtl' },
     { code: 'zh', name: '中文', flagCode: 'cn', dir: 'ltr' },
-    { code: 'ur', name: 'اردو', flagCode: 'pk', dir: 'rtl' }
+    { code: 'ur', name: 'اردو', flagCode: 'pk', dir: 'rtl' },
+    { code: 'ru', name: 'Русский', flagCode: 'ru', dir: 'ltr' }
 ];
 
 export const LanguageSelector: React.FC = () => {

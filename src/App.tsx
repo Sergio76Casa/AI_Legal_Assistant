@@ -17,6 +17,7 @@ import { LandingPage } from './components/LandingPage';
 import { CreateOrgForm } from './components/CreateOrgForm';
 import { TenantDashboard } from './components/TenantDashboard';
 import { TenantPublicPage } from './components/TenantPublicPage';
+import { TemplateManager } from './components/TemplateManager';
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -27,7 +28,7 @@ const supabase = createClient(
 function App() {
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [view, setView] = useState<'home' | 'admin' | 'login' | 'create-org' | 'documents' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'tenant-settings' | 'tenant-public'>('home');
+    const [view, setView] = useState<'home' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'tenant-settings' | 'tenant-public'>('home');
     const [currentSlug, setCurrentSlug] = useState<string | null>(null);
 
     useEffect(() => {
@@ -109,6 +110,8 @@ function App() {
                             <AdminDashboard />
                         ) : view === 'tenant-settings' && user ? (
                             <TenantDashboard onBack={() => setView('home')} onNavigate={setView} />
+                        ) : view === 'templates' && user ? (
+                            <TemplateManager />
                         ) : view === 'documents' && user ? (
                             <UserDocuments userId={user.id} onNavigate={setView} />
                         ) : view === 'privacy' ? (

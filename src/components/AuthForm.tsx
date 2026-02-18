@@ -111,13 +111,13 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onBack, tenan
                     </div>
                     <h2 className="mt-6 text-3xl font-bold tracking-tight text-slate-900 font-serif">
                         {tenantSlug
-                            ? (isSignUp ? `Regístrate en ${tenantName || tenantSlug}` : `Accede a ${tenantName || tenantSlug}`)
+                            ? (isSignUp ? t('auth.register_tenant', { tenant: tenantName || tenantSlug }) : t('auth.access_tenant', { tenant: tenantName || tenantSlug }))
                             : (isSignUp ? t('auth.create_account') : t('auth.sign_in'))
                         }
                     </h2>
                     <p className="mt-2 text-sm text-slate-600">
                         {isSignUp
-                            ? (tenantSlug ? `Crea tu cuenta ${targetPlan === 'pro' ? 'Premium' : 'Gratuita'} para acceder.` : t('auth.subtitle_up'))
+                            ? (tenantSlug ? t('auth.create_account_context', { plan: targetPlan === 'pro' ? t('auth.plan_premium') : t('auth.plan_free') }) : t('auth.subtitle_up'))
                             : t('auth.subtitle_in')
                         }
                     </p>
@@ -147,7 +147,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onBack, tenan
                                 fill="#EA4335"
                             />
                         </svg>
-                        {t('auth.google') || 'Continuar con Google'}
+                        {t('auth.google')}
                     </button>
 
                     <div className="relative">
@@ -173,7 +173,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onBack, tenan
                                     type="text"
                                     required
                                     className="relative block w-full rounded-t-md border-0 py-3 pl-10 text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-emerald-600 sm:text-sm sm:leading-6"
-                                    placeholder={t('auth.username_placeholder') || 'Nombre de usuario'}
+                                    placeholder={t('auth.username_placeholder')}
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                 />

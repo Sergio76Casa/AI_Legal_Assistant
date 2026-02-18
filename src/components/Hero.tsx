@@ -20,7 +20,7 @@ export function Hero() {
             {/* Badge de confianza */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 mb-8 animate-fade-in">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="text-xs font-medium text-emerald-800 tracking-wide uppercase">Asistencia Legal & Cultural Verificada</span>
+                <span className="text-xs font-medium text-emerald-800 tracking-wide uppercase">{t('hero.verification_badge')}</span>
             </div>
 
             {/* Titular */}
@@ -63,7 +63,7 @@ export function Hero() {
                         </svg>
                     </div>
                     <p className="text-lg font-bold text-gray-900">{t('hero.stats.documents')}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">Procesados</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{t('hero.stats.processed')}</p>
                 </div>
 
                 <div className="text-center">
@@ -73,7 +73,7 @@ export function Hero() {
                         </svg>
                     </div>
                     <p className="text-lg font-bold text-gray-900">{t('hero.stats.availability')}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">Asistencia</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{t('hero.stats.assistance')}</p>
                 </div>
 
                 <div className="text-center">
@@ -83,7 +83,7 @@ export function Hero() {
                         </svg>
                     </div>
                     <p className="text-lg font-bold text-gray-900">{t('hero.stats.response')}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">Velocidad</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{t('hero.stats.speed')}</p>
                 </div>
             </div>
 

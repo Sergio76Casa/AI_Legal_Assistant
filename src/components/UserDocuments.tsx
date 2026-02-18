@@ -60,7 +60,7 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
     }, [userId]);
 
     const deleteDocument = async (doc: UserDocument) => {
-        if (!window.confirm(t('docs.confirm_delete') || '¿Estás seguro de que quieres eliminar este documento?')) return;
+        if (!window.confirm(t('docs.confirm_delete'))) return;
 
         try {
             // 1. Eliminar de Storage
@@ -140,7 +140,7 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
                     className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-medium px-3 py-1.5 rounded-lg hover:bg-slate-100"
                 >
                     <Home size={16} />
-                    {t('docs.go_home') || 'Inicio'}
+                    {t('docs.go_home')}
                 </button>
                 <button
                     onClick={() => {
@@ -150,17 +150,17 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
                     className="flex items-center gap-2 text-slate-500 hover:text-primary transition-colors font-medium px-3 py-1.5 rounded-lg hover:bg-slate-100"
                 >
                     <MessageSquare size={16} />
-                    {t('docs.open_chat') || 'Chat'}
+                    {t('docs.open_chat')}
                 </button>
             </div>
 
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 font-serif">
-                        {t('docs.title') || 'Mis Documentos'}
+                        {t('docs.title')}
                     </h1>
                     <p className="text-slate-500 mt-2">
-                        {t('docs.subtitle') || 'Gestiona tus archivos privados para el asistente de IA.'}
+                        {t('docs.subtitle')}
                     </p>
                 </div>
                 <button
@@ -173,7 +173,7 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
                     )}
                 >
                     {showUploader ? <X size={18} /> : <Plus size={18} />}
-                    {showUploader ? t('docs.cancel') || 'Cancelar' : t('docs.upload_btn') || 'Subir Documento'}
+                    {showUploader ? t('docs.cancel') : t('docs.upload_btn')}
                 </button>
             </div>
 
@@ -201,13 +201,13 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                     <Loader2 size={40} className="animate-spin mb-4" />
-                    <p>{t('docs.loading') || 'Cargando tus documentos...'}</p>
+                    <p>{t('docs.loading')}</p>
                 </div>
             ) : documents.length === 0 ? (
                 <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl py-20 text-center text-slate-500">
                     <FolderOpen size={48} className="mx-auto mb-4 opacity-20" />
-                    <p className="text-lg font-medium">{t('docs.empty') || 'No tienes documentos aún'}</p>
-                    <p className="text-sm mt-1">{t('docs.empty_hint') || 'Sube PDFs para que la IA pueda ayudarte con tus trámites específicos.'}</p>
+                    <p className="text-lg font-medium">{t('docs.empty')}</p>
+                    <p className="text-sm mt-1">{t('docs.empty_hint')}</p>
                 </div>
             ) : (
                 <div className="grid gap-4">
@@ -252,14 +252,14 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
                                             <h3
                                                 className="font-semibold text-slate-900 truncate pr-4 cursor-pointer hover:text-primary transition-colors"
                                                 onClick={() => startRename(doc)}
-                                                title="Haz clic para renombrar"
+                                                title={t('docs.rename_tooltip')}
                                             >
                                                 {doc.name}
                                             </h3>
                                             {doc.status === 'processing' && (
                                                 <span className="flex items-center gap-1 text-[10px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full font-bold">
                                                     <Loader2 size={10} className="animate-spin" />
-                                                    PROCESANDO
+                                                    {t('docs.processing_badge')}
                                                 </span>
                                             )}
                                         </div>
@@ -274,14 +274,14 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId, onNavigate
                                 <button
                                     onClick={() => handleView(doc.url)}
                                     className="p-2.5 text-slate-400 hover:text-primary hover:bg-emerald-50 rounded-xl transition-all"
-                                    title={t('docs.view') || 'Ver documento'}
+                                    title={t('docs.view')}
                                 >
                                     <ExternalLink size={18} />
                                 </button>
                                 <button
                                     onClick={() => deleteDocument(doc)}
                                     className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
-                                    title={t('docs.delete') || 'Eliminar'}
+                                    title={t('docs.delete')}
                                 >
                                     <Trash2 size={18} />
                                 </button>
