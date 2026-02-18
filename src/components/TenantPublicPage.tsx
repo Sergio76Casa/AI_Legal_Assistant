@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { Building2, ArrowRight, CheckCircle2, Star, Shield, Lock } from 'lucide-react';
 import { AuthForm } from './AuthForm';
 import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from './LanguageSelector';
 
 interface TenantPublicPageProps {
     slug: string;
@@ -74,23 +75,27 @@ export const TenantPublicPage: React.FC<TenantPublicPageProps> = ({ slug, onLogi
         <div className="min-h-screen bg-white">
             {/* Header */}
             <header className="fixed w-full bg-white/80 backdrop-blur-sm border-b border-slate-100 z-50">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="bg-emerald-50 p-2 rounded-lg border border-emerald-100">
                             <Building2 size={24} className="text-emerald-600" />
                         </div>
                         <span className="font-bold text-xl text-slate-900">{tenant.name}</span>
                     </div>
-                    <button
-                        onClick={() => {
-                            setSelectedPlan('free');
-                            setAuthMode('login');
-                            setShowAuth(true);
-                        }}
-                        className="px-6 py-2.5 bg-slate-900 text-white font-medium rounded-full hover:bg-slate-800 transition-colors"
-                    >
-                        {t('tenant_page.client_access')}
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <LanguageSelector />
+                        <div className="h-4 w-px bg-slate-200 mx-1" />
+                        <button
+                            onClick={() => {
+                                setSelectedPlan('free');
+                                setAuthMode('login');
+                                setShowAuth(true);
+                            }}
+                            className="px-6 py-2 bg-slate-900 text-white text-sm font-medium rounded-full hover:bg-slate-800 transition-colors"
+                        >
+                            {t('tenant_page.client_access')}
+                        </button>
+                    </div>
                 </div>
             </header>
 
