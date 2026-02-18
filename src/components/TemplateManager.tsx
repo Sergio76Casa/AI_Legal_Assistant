@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useTenant } from '../lib/TenantContext';
 import { PDFUploader } from './PDFMapper/PDFUploader';
 import { PDFEditor } from './PDFMapper/PDFEditor';
-import { FileText, Map, Trash2, Calendar, Loader2, Plus, Edit } from 'lucide-react';
+import { FileText, Map, Trash2, Calendar, Loader2, Plus } from 'lucide-react';
 
 export const TemplateManager = () => {
     const { tenant } = useTenant();

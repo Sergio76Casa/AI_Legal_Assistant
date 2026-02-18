@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, FileText, CheckCircle2, AlertCircle, Loader2, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { useTranslation } from 'react-i18next';
 import { useTenant } from '../../lib/TenantContext';
 
 interface PDFUploaderProps {
@@ -9,7 +8,6 @@ interface PDFUploaderProps {
 }
 
 export const PDFUploader: React.FC<PDFUploaderProps> = ({ onUploadSuccess }) => {
-    const { t } = useTranslation();
     const { tenant } = useTenant();
     const [file, setFile] = useState<File | null>(null);
     const [name, setName] = useState('');
