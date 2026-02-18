@@ -32,7 +32,11 @@ function App() {
 
     useEffect(() => {
         const fetchProfile = async (userId: string) => {
-            const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+            const { data } = await supabase
+                .from('profiles')
+                .select('*, tenants(slug)')
+                .eq('id', userId)
+                .maybeSingle();
             setProfile(data);
         };
 
@@ -51,19 +55,33 @@ function App() {
             }
         });
 
-        // 🔍 SLUG DETECTION: Check if URL path is a specific tenant request
-        const path = window.location.pathname;
-        if (path !== '/' && !path.startsWith('/admin') && !path.includes('.')) {
-            const potentialSlug = path.substring(1); // Quitar el slash inicial
-            // Simple regex for likely slugs (alphanumeric, dashes)
-            if (/^[a-z0-9-]+$/.test(potentialSlug)) {
-                setCurrentSlug(potentialSlug);
-                setView('tenant-public');
-            }
-        }
-
         return () => subscription.unsubscribe();
     }, []);
+
+    // 🔍 SLUG DETECTION: Check if URL path is a specific tenant request
+    // Reactive to user state so it triggers on logout
+    useEffect(() => {
+        const path = window.location.pathname;
+        if (path !== '/' && !path.startsWith('/admin') && !path.includes('.')) {
+            const potentialSlug = path.substring(1);
+            if (/^[a-z0-9-]+$/.test(potentialSlug)) {
+                setCurrentSlug(potentialSlug);
+                // Si no hay usuario, forzamos la vista pública del tenant
+                if (!user) {
+                    setView('tenant-public');
+                }
+            }
+        }
+    }, [user]);
+
+    // 🚀 REDIRECTION LOGIC: If a user logs in from '/' and has a tenant, move them to '/slug'
+    useEffect(() => {
+        if (user && profile?.tenants?.slug && window.location.pathname === '/') {
+            const tenantSlug = profile.tenants.slug;
+            window.history.pushState({}, '', `/${tenantSlug}`);
+            setCurrentSlug(tenantSlug);
+        }
+    }, [user, profile]);
 
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
     const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));
@@ -72,15 +90,11 @@ function App() {
         <TenantProvider>
             <ChatProvider>
                 {/* Ocultamos el Layout normal si estamos en la Landing Pública del Tenant (para diseño full custom) */}
-                {view === 'tenant-public' ? (
+                {view === 'tenant-public' && !user ? (
                     <TenantPublicPage
                         slug={currentSlug || ''}
                         onLogin={() => {
-                            // Limpiamos el slug de la URL visualmente (opcional) o mantenemos el contexto
-                            // Por ahora, redirigimos al login normal
-                            setView('login');
-                            window.history.pushState({}, '', '/'); // Reset URL to root to avoid confusion, or keep it? 
-                            // Better: Keep it clean for now.
+                            setView('home');
                         }}
                     />
                 ) : (

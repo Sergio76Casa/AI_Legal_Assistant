@@ -119,7 +119,11 @@ export function Navbar({ className, onNavigate, user, profile }: NavbarProps) {
                                 <button
                                     onClick={() => {
                                         const supabase = (window as any).supabase;
-                                        if (supabase) supabase.auth.signOut().then(() => onNavigate?.('home'));
+                                        if (supabase) {
+                                            supabase.auth.signOut().then(() => {
+                                                onNavigate?.('home');
+                                            });
+                                        }
                                     }}
                                     className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-all"
                                     title={t('nav.logout')}
@@ -149,6 +153,6 @@ export function Navbar({ className, onNavigate, user, profile }: NavbarProps) {
                     )}
                 </div>
             </div>
-        </nav>
+        </nav >
     );
 }
