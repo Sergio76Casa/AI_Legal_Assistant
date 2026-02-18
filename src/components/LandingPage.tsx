@@ -1,5 +1,6 @@
 import { ArrowRight, Shield, Globe, Zap, Smartphone, Lock } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
+import { LanguageSelector } from './LanguageSelector';
 
 export function LandingPage({ onLogin, onCreateOrg }: { onLogin: () => void; onCreateOrg: () => void }) {
     const { t } = useTranslation();
@@ -8,12 +9,14 @@ export function LandingPage({ onLogin, onCreateOrg }: { onLogin: () => void; onC
         <div className="min-h-screen bg-stone-50 font-sans text-slate-900">
             {/* Navbar */}
             <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-stone-100">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">L</div>
                         <span className="text-xl font-serif font-bold tracking-tight">Legal<span className="text-emerald-600">AI</span> Corporate</span>
                     </div>
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4">
+                        <LanguageSelector />
+                        <div className="h-4 w-px bg-slate-200 mx-1" />
                         <button onClick={onLogin} className="text-sm font-medium hover:text-emerald-600 transition-colors">
                             {t('landing.nav.login')}
                         </button>

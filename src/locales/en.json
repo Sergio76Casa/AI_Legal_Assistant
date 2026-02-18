@@ -424,27 +424,35 @@
         "powered_by": "Powered by Legal & Halal."
     },
     "landing": {
-        "login": "Sign In",
-        "create_org": "Create Organization",
-        "new_badge": "New: Certified Multi-Tenant Architecture",
-        "hero_title_1": "Legal and Halal Compliance",
-        "hero_title_2": "for Global Teams",
-        "hero_desc": "The AI platform that centralizes visas, housing, and regulations for your expatriate employees. Enterprise-grade security, local empathy.",
-        "start_free": "Start Free",
-        "schedule_demo": "Schedule Demo",
-        "why_title": "Why LegalAI Corporate?",
-        "why_subtitle": "Designed for HR departments and Consultancies.",
-        "security_title": "Iron Silo™ Security",
-        "security_desc": "Cryptographically isolated data. Your organization is an impenetrable fortress.",
-        "ai_title": "STARK 2.0 Engine",
-        "ai_desc": "Our AI doesn't just read laws, it *understands* your internal contracts. Upload PDFs, images, or employee guides.",
-        "global_title": "Global Coverage",
-        "global_desc": "Adapted for employees in Spain, Morocco, and LATAM.",
-        "mobile_title": "App-Like Experience",
-        "mobile_desc": "Your employees access from anywhere.",
-        "cta_title": "Ready to modernize your compliance?",
-        "cta_desc": "Join the companies already managing their procedures with Artificial Intelligence.",
-        "cta_btn": "Create Business Account",
+        "nav": {
+            "login": "Sign In",
+            "create_org": "Create Organization"
+        },
+        "hero": {
+            "new_tag": "New: Certified Multi-Tenant Architecture",
+            "title": "Legal & Halal Compliance",
+            "subtitle": "for Global Teams",
+            "desc": "The AI platform centralizing visas, housing, and regulations for your expat employees. Enterprise-grade security, local empathy.",
+            "start_free": "Start for Free",
+            "book_demo": "Book Demo"
+        },
+        "features": {
+            "title": "Why LegalAI Corporate?",
+            "subtitle": "Designed for HR Departments and Consultancies.",
+            "security_title": "Iron Silo™ Security",
+            "security_desc": "Cryptographically isolated data. Your organization is an impenetrable fortress.",
+            "ai_title": "STARK 2.0 Engine",
+            "ai_desc": "Our AI doesn't just read laws, it *understands* your internal contracts. Upload PDFs, images, or employee guides.",
+            "global_title": "Global Coverage",
+            "global_desc": "Adapted for employees in Spain, Morocco, and LATAM.",
+            "mobile_title": "App-Like Experience",
+            "mobile_desc": "Your employees access from anywhere."
+        },
+        "cta": {
+            "title": "Ready to modernize your compliance?",
+            "desc": "Join companies already managing their procedures with Artificial Intelligence.",
+            "btn": "Create Business Account"
+        },
         "footer": "All rights reserved."
     },
     "org_panel": {
@@ -477,38 +485,6 @@
         "tooltips": {
             "edit_client": "Edit Client Profile",
             "generate_doc": "Generate Official Document"
-        },
-        "landing": {
-            "nav": {
-                "login": "Sign In",
-                "create_org": "Create Organization"
-            },
-            "hero": {
-                "new_tag": "New: Certified Multi-Tenant Architecture",
-                "title": "Legal & Halal Compliance",
-                "subtitle": "for Global Teams",
-                "desc": "The AI platform centralizing visas, housing, and regulations for your expat employees. Enterprise-grade security, local empathy.",
-                "start_free": "Start for Free",
-                "book_demo": "Book Demo"
-            },
-            "features": {
-                "title": "Why LegalAI Corporate?",
-                "subtitle": "Designed for HR Departments and Consultancies.",
-                "security_title": "Iron Silo™ Security",
-                "security_desc": "Cryptographically isolated data. Your organization is an impenetrable fortress.",
-                "ai_title": "STARK 2.0 Engine",
-                "ai_desc": "Our AI doesn't just read laws, it *understands* your internal contracts. Upload PDFs, images, or employee guides.",
-                "global_title": "Global Coverage",
-                "global_desc": "Adapted for employees in Spain, Morocco, and LATAM.",
-                "mobile_title": "App-Like Experience",
-                "mobile_desc": "Your employees access from anywhere."
-            },
-            "cta": {
-                "title": "Ready to modernize your compliance?",
-                "desc": "Join companies already managing their procedures with Artificial Intelligence.",
-                "btn": "Create Business Account"
-            },
-            "footer": "All rights reserved."
         }
     },
     "profile": {

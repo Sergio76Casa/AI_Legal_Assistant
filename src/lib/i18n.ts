@@ -9,6 +9,7 @@ import fr from '../locales/fr.json';
 import ar from '../locales/ar.json';
 import zh from '../locales/zh.json';
 import ur from '../locales/ur.json';
+import ru from '../locales/ru.json';
 
 i18n
     .use(LanguageDetector)
@@ -20,7 +21,8 @@ i18n
             fr: { translation: fr },
             ar: { translation: ar },
             zh: { translation: zh },
-            ur: { translation: ur }
+            ur: { translation: ur },
+            ru: { translation: ru }
         },
         fallbackLng: 'es',
         interpolation: {
