@@ -95,13 +95,18 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onBack, tenan
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-            <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-                <div className="text-center">
-                    {onBack && (
-                        <button onClick={onBack} className="absolute top-8 left-8 p-2 text-slate-400 hover:text-slate-600 transition-colors">
-                            <ArrowLeft size={20} />
-                        </button>
-                    )}
+            <div className="relative w-full max-w-md space-y-8 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+                {onBack && (
+                    <button
+                        onClick={onBack}
+                        className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-emerald-600 transition-all group"
+                        title={t('procedures.back')}
+                    >
+                        <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
+                        <span>{t('procedures.back').split(' ')[0]}</span>
+                    </button>
+                )}
+                <div className="text-center pt-4">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
                         {tenantSlug ? (
                             <span className="text-xl font-bold text-emerald-600">{tenantSlug.charAt(0).toUpperCase()}</span>

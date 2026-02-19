@@ -9,7 +9,10 @@ const languages = [
     { code: 'ar', name: 'العربية (Maghreb)', flagCode: 'ma', dir: 'rtl' },
     { code: 'zh', name: '中文', flagCode: 'cn', dir: 'ltr' },
     { code: 'ur', name: 'اردو', flagCode: 'pk', dir: 'rtl' },
-    { code: 'ru', name: 'Русский', flagCode: 'ru', dir: 'ltr' }
+    { code: 'ru', name: 'Русский', flagCode: 'ru', dir: 'ltr' },
+    { code: 'pt', name: 'Português', flagCode: 'pt', dir: 'ltr' },
+    { code: 'wo', name: 'Wolof (Senegal)', flagCode: 'sn', dir: 'ltr' },
+    { code: 'bm', name: 'Bambara (Mali)', flagCode: 'ml', dir: 'ltr' }
 ];
 
 export const LanguageSelector: React.FC = () => {

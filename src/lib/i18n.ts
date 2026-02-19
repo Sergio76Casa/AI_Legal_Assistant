@@ -11,6 +11,10 @@ import zh from '../locales/zh.json';
 import ur from '../locales/ur.json';
 import ru from '../locales/ru.json';
 
+import pt from '../locales/pt.json';
+import wo from '../locales/wo.json';
+import bm from '../locales/bm.json';
+
 i18n
     .use(LanguageDetector)
     .use(initReactI18next)
@@ -22,7 +26,10 @@ i18n
             ar: { translation: ar },
             zh: { translation: zh },
             ur: { translation: ur },
-            ru: { translation: ru }
+            ru: { translation: ru },
+            pt: { translation: pt },
+            wo: { translation: wo },
+            bm: { translation: bm }
         },
         fallbackLng: 'es',
         interpolation: {
