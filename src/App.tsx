@@ -18,6 +18,7 @@ import { CreateOrgForm } from './components/CreateOrgForm';
 import { TenantDashboard } from './components/TenantDashboard';
 import { TenantPublicPage } from './components/TenantPublicPage';
 import { TemplateManager } from './components/TemplateManager';
+import { AffiliatePanel } from './components/AffiliatePanel';
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -28,20 +29,78 @@ const supabase = createClient(
 function App() {
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [view, setView] = useState<'home' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'tenant-settings' | 'tenant-public'>('home');
+    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'tenant-settings' | 'tenant-public' | 'affiliates'>('home');
     const [currentSlug, setCurrentSlug] = useState<string | null>(null);
 
+    const fetchProfile = async (userId: string) => {
+        const { data } = await supabase
+            .from('profiles')
+            .select('*, tenants(slug)')
+            .eq('id', userId)
+            .maybeSingle();
+        setProfile(data);
+    };
+
+    // 🔍 ROUTING & REFERRAL SYSTEM
     useEffect(() => {
-        const fetchProfile = async (userId: string) => {
-            const { data } = await supabase
-                .from('profiles')
-                .select('*, tenants(slug)')
-                .eq('id', userId)
-                .maybeSingle();
-            setProfile(data);
+        const handleRouting = async () => {
+            const params = new URLSearchParams(window.location.search);
+            let ref = params.get('ref');
+            let path = window.location.pathname.replace(/^\/|\/$/g, '');
+            const reservedPublic = ['login', 'create-org', 'privacy', 'cookies', 'home', ''];
+
+            // Dashboard views mapping
+            const dashboardMap: Record<string, string> = {
+                'dashboard': 'dashboard',
+                'dashboard/documents': 'documents',
+                'dashboard/templates': 'templates',
+                'dashboard/affiliates': 'affiliates',
+                'dashboard/settings': 'tenant-settings',
+                'dashboard/admin': 'admin'
+            };
+
+            // A. Vanity URL Detection
+            if (!ref && path && !reservedPublic.includes(path.toLowerCase()) && !path.startsWith('dashboard') && !path.includes('.')) {
+                const { data: aff } = await supabase
+                    .from('affiliates')
+                    .select('affiliate_code')
+                    .eq('affiliate_code', path.toUpperCase())
+                    .maybeSingle();
+
+                if (aff) {
+                    ref = aff.affiliate_code;
+                    window.history.replaceState({}, '', '/');
+                    path = '';
+                }
+            }
+
+            // B. Set Referral Cookie
+            if (ref) {
+                const date = new Date();
+                date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+                document.cookie = `referral_code=${ref.toUpperCase()};expires=${date.toUTCString()};path=/;SameSite=Lax;Domain=.legalflow.digital`;
+            }
+
+            // C. Resolve View
+            if (path === '' || path === 'home') {
+                setView('home');
+            } else if (dashboardMap[path]) {
+                setView(user ? dashboardMap[path] as any : 'login');
+            } else if (reservedPublic.includes(path.toLowerCase())) {
+                setView(path.toLowerCase() as any);
+            } else if (['legal-procedures', 'halal-culture', 'housing-guide'].includes(path)) {
+                setView(path as any);
+            } else if (/^[a-z0-9-]+$/.test(path)) {
+                setCurrentSlug(path);
+                if (!user) setView('tenant-public');
+            }
         };
 
-        // Listen for auth changes
+        handleRouting();
+    }, [user]);
+
+    // 🚀 AUTH LISTENER
+    useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
             setUser(session?.user ?? null);
             if (session?.user) fetchProfile(session.user.id);
@@ -53,36 +112,21 @@ function App() {
                 fetchProfile(session.user.id);
             } else {
                 setProfile(null);
+                setView('home');
+                window.history.pushState({}, '', '/');
             }
         });
 
         return () => subscription.unsubscribe();
     }, []);
 
-    // 🔍 SLUG DETECTION: Check if URL path is a specific tenant request
-    // Reactive to user state so it triggers on logout
+    // 🚀 REDIRECTION LOGIC: Auto-navigate to dashboard on login
     useEffect(() => {
-        const path = window.location.pathname;
-        if (path !== '/' && !path.startsWith('/admin') && !path.includes('.')) {
-            const potentialSlug = path.substring(1);
-            if (/^[a-z0-9-]+$/.test(potentialSlug)) {
-                setCurrentSlug(potentialSlug);
-                // Si no hay usuario, forzamos la vista pública del tenant
-                if (!user) {
-                    setView('tenant-public');
-                }
-            }
+        if (user && view === 'home' && window.location.pathname === '/') {
+            setView('dashboard');
+            window.history.pushState({}, '', '/dashboard');
         }
-    }, [user]);
-
-    // 🚀 REDIRECTION LOGIC: If a user logs in from '/' and has a tenant, move them to '/slug'
-    useEffect(() => {
-        if (user && profile?.tenants?.slug && window.location.pathname === '/') {
-            const tenantSlug = profile.tenants.slug;
-            window.history.pushState({}, '', `/${tenantSlug}`);
-            setCurrentSlug(tenantSlug);
-        }
-    }, [user, profile]);
+    }, [user, view]);
 
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
     const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));
@@ -90,45 +134,76 @@ function App() {
     return (
         <TenantProvider>
             <ChatProvider>
-                {/* Ocultamos el Layout normal si estamos en la Landing Pública del Tenant (para diseño full custom) */}
                 {view === 'tenant-public' && !user ? (
                     <TenantPublicPage
                         slug={currentSlug || ''}
                         onLogin={() => {
-                            setView('home');
+                            setView('login');
+                            window.history.pushState({}, '', '/login');
                         }}
                     />
                 ) : (
-                    <Layout onNavigate={setView} user={user} profile={profile}>
-                        {!user && view === 'home' ? (
-                            <LandingPage onLogin={() => setView('login')} onCreateOrg={() => setView('create-org')} />
+                    <Layout onNavigate={(v) => {
+                        setView(v);
+                        const path = v === 'home' ? '/' : (v === 'dashboard' ? '/dashboard' :
+                            v === 'documents' ? '/dashboard/documents' :
+                                v === 'templates' ? '/dashboard/templates' :
+                                    v === 'affiliates' ? '/dashboard/affiliates' :
+                                        v === 'admin' ? '/dashboard/admin' :
+                                            v === 'tenant-settings' ? '/dashboard/settings' : `/${v}`);
+                        window.history.pushState({}, '', path);
+                    }} user={user} profile={profile}>
+                        {view === 'home' ? (
+                            <LandingPage
+                                onLogin={() => { setView('login'); window.history.pushState({}, '', '/login'); }}
+                                onCreateOrg={() => { setView('create-org'); window.history.pushState({}, '', '/create-org'); }}
+                            />
                         ) : view === 'login' && !user ? (
-                            <AuthForm onAuthSuccess={() => setView('home')} onBack={() => setView('home')} />
+                            <AuthForm
+                                onAuthSuccess={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
+                                onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }}
+                            />
                         ) : view === 'create-org' && !user ? (
-                            <CreateOrgForm onSuccess={() => setView('home')} onBack={() => setView('home')} />
+                            <CreateOrgForm
+                                onSuccess={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
+                                onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }}
+                            />
                         ) : showAdmin ? (
                             <AdminDashboard />
                         ) : view === 'tenant-settings' && user ? (
-                            <TenantDashboard onBack={() => setView('home')} onNavigate={setView} />
+                            <TenantDashboard onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} onNavigate={(v) => { setView(v); window.history.pushState({}, '', `/dashboard/settings`); }} />
                         ) : view === 'templates' && user ? (
                             <TemplateManager />
+                        ) : view === 'affiliates' && user ? (
+                            <AffiliatePanel />
                         ) : view === 'documents' && user ? (
-                            <UserDocuments userId={user.id} onNavigate={setView} />
+                            <UserDocuments userId={user.id} onNavigate={(v) => { setView(v); window.history.pushState({}, '', `/dashboard/documents`); }} />
                         ) : view === 'privacy' ? (
-                            <LegalPage type="privacy" onBack={() => setView('home')} />
+                            <LegalPage type="privacy" onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
                         ) : view === 'cookies' ? (
-                            <LegalPage type="cookies" onBack={() => setView('home')} />
+                            <LegalPage type="cookies" onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
                         ) : view === 'legal-procedures' ? (
-                            <LegalProcedures onBack={() => setView('home')} user={user} />
+                            <LegalProcedures onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} user={user} />
                         ) : view === 'halal-culture' ? (
-                            <HalalCulture onBack={() => setView('home')} />
+                            <HalalCulture onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
                         ) : view === 'housing-guide' ? (
-                            <HousingGuide onBack={() => setView('home')} />
-                        ) : (
+                            <HousingGuide onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
+                        ) : user || view === 'dashboard' ? (
                             <>
                                 <Hero />
-                                <BentoGrid onNavigate={setView} />
+                                <BentoGrid onNavigate={(v) => {
+                                    setView(v);
+                                    const path = v === 'documents' ? '/dashboard/documents' :
+                                        v === 'templates' ? '/dashboard/templates' :
+                                            v === 'affiliates' ? '/dashboard/affiliates' : `/${v}`;
+                                    window.history.pushState({}, '', path);
+                                }} />
                             </>
+                        ) : (
+                            <LandingPage
+                                onLogin={() => { setView('login'); window.history.pushState({}, '', '/login'); }}
+                                onCreateOrg={() => { setView('create-org'); window.history.pushState({}, '', '/create-org'); }}
+                            />
                         )}
                         <ChatDrawer />
                     </Layout>

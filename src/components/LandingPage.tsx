@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { ArrowRight, Shield, Globe, Zap, Smartphone, Lock } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 import { LanguageSelector } from './LanguageSelector';
+import { BookDemoModal } from './BookDemoModal';
 
 export function LandingPage({ onLogin, onCreateOrg }: { onLogin: () => void; onCreateOrg: () => void }) {
     const { t } = useTranslation();
+    const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
 
     return (
         <div className="min-h-screen bg-stone-50 font-sans text-slate-900">
@@ -12,7 +15,7 @@ export function LandingPage({ onLogin, onCreateOrg }: { onLogin: () => void; onC
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">L</div>
-                        <span className="text-xl font-serif font-bold tracking-tight">Legal<span className="text-emerald-600">AI</span> Corporate</span>
+                        <span className="text-xl font-serif font-bold tracking-tight text-slate-900">Legal<span className="text-emerald-600">Flow</span></span>
                     </div>
                     <div className="flex items-center gap-4">
                         <LanguageSelector />
@@ -48,7 +51,10 @@ export function LandingPage({ onLogin, onCreateOrg }: { onLogin: () => void; onC
                         <button onClick={onCreateOrg} className="w-full sm:w-auto px-8 py-4 bg-emerald-600 text-white rounded-full font-medium text-lg hover:bg-emerald-700 transition-all shadow-lg hover:shadow-emerald-200/50 flex items-center justify-center gap-2">
                             {t('landing.hero.start_free')} <ArrowRight className="w-5 h-5" />
                         </button>
-                        <button className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-medium text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                        <button
+                            onClick={() => setIsDemoModalOpen(true)}
+                            className="w-full sm:w-auto px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-full font-medium text-lg hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                        >
                             {t('landing.hero.book_demo')}
                         </button>
                     </div>
@@ -138,8 +144,10 @@ export function LandingPage({ onLogin, onCreateOrg }: { onLogin: () => void; onC
 
             {/* Footer */}
             <footer className="bg-stone-50 py-12 px-6 border-t border-stone-200 text-center text-slate-500 text-sm">
-                <p>&copy; 2026 LegalAI Corporate. {t('landing.footer')}</p>
+                <p>&copy; 2026 LegalFlow. {t('landing.footer')}</p>
             </footer>
+
+            <BookDemoModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
         </div>
     );
 }

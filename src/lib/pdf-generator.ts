@@ -47,7 +47,14 @@ export const generateFilledPDF = async ({ templateId, clientProfile, customMappi
         // 3. Cargar PDF con pdf-lib
         if (!arrayBuffer || !mappings) throw new Error("Faltan datos para generar PDF");
 
-        const pdfDoc = await PDFDocument.load(arrayBuffer);
+        let pdfDoc: PDFDocument;
+        try {
+            pdfDoc = await PDFDocument.load(arrayBuffer);
+        } catch (loadErr) {
+            console.error('Error loading PDF:', loadErr);
+            throw new Error('PDF_LOAD_ERROR'); // Código para i18n
+        }
+
         const pages = pdfDoc.getPages();
         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 

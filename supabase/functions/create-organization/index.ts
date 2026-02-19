@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { email, password, orgName, username, country_code } = await req.json()
+    const { email, password, orgName, username, country_code, referral_code } = await req.json()
 
     // Create Supabase client with Service Role Key (Admin privileges)
     const supabaseAdmin = createClient(
@@ -21,6 +21,21 @@ Deno.serve(async (req) => {
       }
     )
 
+    // Lookup affiliate if referral code is provided
+    let referredById = null;
+    if (referral_code) {
+      const { data: affiliate } = await supabaseAdmin
+        .from('affiliates')
+        .select('id')
+        .eq('affiliate_code', referral_code)
+        .eq('status', 'active') // Only active affiliates can refer
+        .maybeSingle();
+
+      if (affiliate) {
+        referredById = affiliate.id;
+      }
+    }
+
     // 1. Create Tenant
     const slug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 7)
     const { data: tenant, error: tenantError } = await supabaseAdmin
@@ -29,7 +44,8 @@ Deno.serve(async (req) => {
         name: orgName,
         slug: slug,
         plan: 'free',
-        status: 'active'
+        status: 'active',
+        referred_by: referredById // Link to affiliate
       })
       .select()
       .single()

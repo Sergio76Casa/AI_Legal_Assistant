@@ -1,4 +1,4 @@
-import { LogOut, ShieldCheck, Building2, Crown, FileText, Grid } from 'lucide-react';
+import { LogOut, ShieldCheck, Building2, Crown, FileText, Grid, TrendingUp } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from './LanguageSelector';
@@ -32,12 +32,12 @@ export function Navbar({ className, onNavigate, user, profile }: NavbarProps) {
                 {/* Logotipo */}
                 <div
                     className="flex items-center gap-3 cursor-pointer group"
-                    onClick={() => onNavigate?.('home')}
+                    onClick={() => onNavigate?.(user ? 'dashboard' : 'home')}
                 >
                     <div className="relative">
                         <img
                             src="/logo.svg"
-                            alt="Legal & Halal"
+                            alt="LegalFlow"
                             className="w-10 h-10 group-hover:scale-105 transition-transform"
                         />
                         {tenant && (
@@ -48,7 +48,7 @@ export function Navbar({ className, onNavigate, user, profile }: NavbarProps) {
                     </div>
                     <div className="flex flex-col">
                         <span className="font-serif text-lg font-bold tracking-tight text-gray-900 leading-none">
-                            Legal & Halal
+                            LegalFlow
                         </span>
                         {tenant ? (
                             <span className="text-[10px] uppercase tracking-wider font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full w-fit mt-0.5 border border-emerald-100/50">
@@ -76,13 +76,23 @@ export function Navbar({ className, onNavigate, user, profile }: NavbarProps) {
 
                     {/* Link Documentos */}
                     {isTenantUser && (
-                        <button
-                            onClick={() => onNavigate?.('documents')}
-                            className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors bg-slate-50 hover:bg-emerald-50 px-3 py-2 rounded-lg border border-slate-100/50"
-                        >
-                            <FileText size={18} />
-                            {t('nav.documents')}
-                        </button>
+                        <>
+                            <button
+                                onClick={() => onNavigate?.('affiliates')}
+                                className="hidden md:flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-lg border border-emerald-100/50"
+                                title={t('affiliate.title')}
+                            >
+                                <TrendingUp size={18} />
+                                <span className="hidden lg:inline">{t('affiliate.title')}</span>
+                            </button>
+                            <button
+                                onClick={() => onNavigate?.('documents')}
+                                className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-emerald-600 transition-colors bg-slate-50 hover:bg-emerald-50 px-3 py-2 rounded-lg border border-slate-100/50"
+                            >
+                                <FileText size={18} />
+                                {t('nav.documents')}
+                            </button>
+                        </>
                     )}
 
                     {/* Selector de idioma */}

@@ -100,7 +100,7 @@
     },
     "legal": {
         "privacy_title": "Gundo sira bɛnkan",
-        "privacy_content": "Legal & Halal Assistant na, an b'i ka kow lakana. I ka sɛbɛnw bɛ baara kɛlen gundo sira na walasa k'i dɛmɛ dɔrɔn. An t'i ka kow feere walima k'u tila ni mɔgɔ wɛrɛw ye. An b'a kɛ Èspaɲi RGPD bɛnkan na.",
+        "privacy_content": "LegalFlow na, an b'i ka kow lakana. I ka sɛbɛnw bɛ baara kɛlen gundo sira na walasa k'i dɛmɛ dɔrɔn. An t'i ka kow feere walima k'u tila ni mɔgɔ wɛrɛw ye. An b'a kɛ Èspaɲi RGPD bɛnkan na.",
         "cookies_title": "Cookies sira bɛnkan",
         "cookies_content": "An bɛ baara kɛ ni cookies nafama ye walasa k'i dɛmɛ k'i ka kan sugandilen kɔrɔsi. An tɛ baara kɛ ni laseli cookies ye.",
         "footer_privacy": "Gundo",
@@ -386,7 +386,7 @@
         "create_password": "I ka Gundo kun siri",
         "creating_account": "Kont bɛ sirilen...",
         "accept_invitation": "Wele kan nangu",
-        "terms_notice": "I kɛra kelen ye, i bɛ bɛn Legal & Halal ni {{orgName}} kow la.",
+        "terms_notice": "I kɛra kelen ye, i bɛ bɛn LegalFlow ni {{orgName}} kow la.",
         "error_processing": "Fili sɔrɔla kont siri kan."
     },
     "tenant_page": {
@@ -421,7 +421,7 @@
         "premium_feat3": "IA xalima lajɛ i ka fise kan",
         "premium_feat4": "Dɛmɛn teliya 24/7",
         "start_premium": "Damina ni Premium ye",
-        "powered_by": "Tecnologia bu Legal & Halal."
+        "powered_by": "Tecnologia bu LegalFlow."
     },
     "landing": {
         "nav": {
@@ -437,7 +437,7 @@
             "book_demo": "Nyini Demo"
         },
         "features": {
-            "title": "Mun na LegalAI Corporate ?",
+            "title": "Mun na LegalFlow ?",
             "subtitle": "Siri ko RRHH ni Gestorías fɛ.",
             "security_title": "Lakana Iron Silo™",
             "security_desc": "Kow lakanalen gundo sira na. I ka tǒn kër don mɔgɔ tɛ don.",
@@ -601,5 +601,28 @@
         "plan": "Baara",
         "documents": "Sɛbɛnw",
         "settings": "Lajɛ"
+    },
+    "demo": {
+        "title": "Demo dɔ nyini",
+        "subtitle": "A kɔrɔsi cogo di an bɛ se ka sariya ni ladamun dɛmɛn kɛ i ka jɛkulu fɛ.",
+        "submit": "Nyininka yónnee",
+        "close": "Tëj",
+        "success_title": "Nyininka sɔrɔla!",
+        "success_message": "An ka jɛkulu b'i wele leri 24 kɔnɔ walasa ka lofere dɔ labɛn i fɛ.",
+        "fields": {
+            "name": "Tɔgɔ mët na",
+            "email": "Email baara fɛ",
+            "org": "Tǒn tɔgɔ",
+            "size": "Tǒn hakɛ",
+            "employees": "baarakɛlaw",
+            "message": "Cogo di an bɛ se k'i dɛmɛ ?"
+        },
+        "placeholders": {
+            "name": "I tɔgɔ sɛbɛn",
+            "email": "i@tǒn.com",
+            "org": "I ka tǒn",
+            "select_size": "Dɔ sugandi",
+            "message": "I ka soxla xibaar kura dadi..."
+        }
     }
 }

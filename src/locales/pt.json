@@ -100,7 +100,7 @@
     },
     "legal": {
         "privacy_title": "Política de Privacidade",
-        "privacy_content": "No Legal & Halal Assistant, protegemos seus dados pessoais. Seus documentos são processados de forma criptografada e usados apenas para fornecer assistência de IA durante sua sessão ativa. Não vendemos nem compartilhamos seus dados com terceiros. Cumprimos o RGPD espanhol.",
+        "privacy_content": "No LegalFlow, protegemos seus dados pessoais. Seus documentos são processados de forma criptografada e usados apenas para fornecer assistência de IA durante sua sessão ativa. Não vendemos nem compartilhamos seus dados com terceiros. Cumprimos o RGPD espanhol.",
         "cookies_title": "Política de Cookies",
         "cookies_content": "Usamos cookies essenciais para manter sua sessão ativa e lembrar seu idioma preferido. Não usamos cookies de rastreamento publicitário de terceiros.",
         "footer_privacy": "Privacidade",
@@ -386,7 +386,7 @@
         "create_password": "Crie sua Senha",
         "creating_account": "Criando conta...",
         "accept_invitation": "Aceitar Convite",
-        "terms_notice": "Ao se unir, você aceita os termos do Legal & Halal e do {{orgName}}.",
+        "terms_notice": "Ao se unir, você aceita os termos do LegalFlow e do {{orgName}}.",
         "error_processing": "Erro ao processar o cadastro."
     },
     "tenant_page": {
@@ -421,7 +421,7 @@
         "premium_feat3": "Análise IA avançada de seus arquivos",
         "premium_feat4": "Suporte Prioritário 24/7",
         "start_premium": "Começar com Premium",
-        "powered_by": "Tecnologia de Legal & Halal."
+        "powered_by": "Tecnologia de LegalFlow."
     },
     "landing": {
         "nav": {
@@ -437,7 +437,7 @@
             "book_demo": "Agendar Demo"
         },
         "features": {
-            "title": "Por que LegalAI Corporate?",
+            "title": "Por que LegalFlow?",
             "subtitle": "Projetado para departamentos de RH e agências.",
             "security_title": "Segurança Iron Silo™",
             "security_desc": "Dados isolados criptograficamente. Sua organização é uma fortaleza impenetrável.",
@@ -601,5 +601,28 @@
         "plan": "Plano",
         "documents": "Documentos",
         "settings": "Configuração"
+    },
+    "demo": {
+        "title": "Agendar uma Demonstração",
+        "subtitle": "Descubra como podemos automatizar a conformidade legal e cultural para sua equipe global.",
+        "submit": "Enviar Solicitação",
+        "close": "Fechar",
+        "success_title": "Solicitação Recebida!",
+        "success_message": "Nossa equipe entrará em contato em até 24 horas para agendar uma sessão personalizada.",
+        "fields": {
+            "name": "Nome completo",
+            "email": "E-mail corporativo",
+            "org": "Nome da empresa",
+            "size": "Tamanho da empresa",
+            "employees": "funcionários",
+            "message": "Como podemos ajudar?"
+        },
+        "placeholders": {
+            "name": "Digite seu nome",
+            "email": "ex@empresa.com",
+            "org": "Sua organização",
+            "select_size": "Selecione uma opção",
+            "message": "Conte-nos brevemente sobre suas necessidades..."
+        }
     }
 }

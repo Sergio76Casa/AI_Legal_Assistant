@@ -161,7 +161,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
                     </form>
 
                     <p className="mt-6 text-center text-xs text-gray-400">
-                        Al unirte, aceptas los términos de Legal & Halal y de {invitation.tenants?.name}.
+                        Al unirte, aceptas los términos de LegalFlow y de {invitation.tenants?.name}.
                     </p>
                 </div>
             </div>

@@ -100,7 +100,7 @@
     },
     "legal": {
         "privacy_title": "Politique de Confidentialité",
-        "privacy_content": "Chez Legal & Halal Assistant, nous protégeons vos données personnelles. Vos documents sont traités de manière cryptée et ne sont utilisés que pour fournir une assistance IA pendant votre session active. Nous ne vendons ni ne partageons vos données avec des tiers. Nous respectons le RGPD espagnol.",
+        "privacy_content": "Chez LegalFlow, nous protégeons vos données personnelles. Vos documents sont traités de manière cryptée et ne sont utilisés que pour fournir une assistance IA pendant votre session active. Nous ne vendons ni ne partageons vos données avec des tiers. Nous respectons le RGPD espagnol.",
         "cookies_title": "Politique de Cookies",
         "cookies_content": "Nous utilisons des cookies essentiels pour maintenir votre session active et mémoriser votre langue préférée. Nous n'utilisons pas de cookies de suivi publicitaire tiers.",
         "footer_privacy": "Confidentialité",
@@ -386,7 +386,7 @@
         "create_password": "Créez votre Mot de Passe",
         "creating_account": "Création du compte...",
         "accept_invitation": "Accepter l'Invitation",
-        "terms_notice": "En vous inscrivant, vous acceptez les termes de Legal & Halal et de {{orgName}}.",
+        "terms_notice": "En vous inscrivant, vous acceptez les termes de LegalFlow et de {{orgName}}.",
         "error_processing": "Erreur lors du traitement de l'inscription."
     },
     "tenant_page": {
@@ -421,7 +421,7 @@
         "premium_feat3": "Analyse IA avancée de vos fichiers",
         "premium_feat4": "Support Prioritaire 24/7",
         "start_premium": "Commencer avec Premium",
-        "powered_by": "Propulsé par Legal & Halal."
+        "powered_by": "Propulsé par LegalFlow."
     },
     "landing": {
         "nav": {
@@ -437,7 +437,7 @@
             "book_demo": "Réserver une Démo"
         },
         "features": {
-            "title": "Pourquoi LegalAI Corporate ?",
+            "title": "Pourquoi LegalFlow ?",
             "subtitle": "Conçu pour les départements RH et agences.",
             "security_title": "Sécurité Iron Silo™",
             "security_desc": "Données isolées cryptographiquement. Votre organisation est une forteresse impénétrable.",
@@ -601,5 +601,28 @@
         "plan": "Plan",
         "documents": "Documents",
         "settings": "Configuration"
+    },
+    "demo": {
+        "title": "Réserver une Démo",
+        "subtitle": "Découvrez comment nous pouvons automatiser la conformité légale et culturelle pour votre équipe mondiale.",
+        "submit": "Envoyer la Demande",
+        "close": "Fermer",
+        "success_title": "Demande Reçue !",
+        "success_message": "Notre équipe vous contactera dans les 24 heures pour planifier une session personnalisée.",
+        "fields": {
+            "name": "Nom complet",
+            "email": "Email professionnel",
+            "org": "Nom de l'entreprise",
+            "size": "Taille de l'entreprise",
+            "employees": "employés",
+            "message": "Comment pouvons-nous vous aider ?"
+        },
+        "placeholders": {
+            "name": "Entrez votre nom",
+            "email": "ex@entreprise.com",
+            "org": "Votre organisation",
+            "select_size": "Sélectionnez une option",
+            "message": "Parlez-nous brièvement de vos besoins..."
+        }
     }
 }

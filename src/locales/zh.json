@@ -100,7 +100,7 @@
     },
     "legal": {
         "privacy_title": "隐私政策",
-        "privacy_content": "在 Legal & Halal Assistant，我们保护您的个人数据。上传的文档经过加密处理，仅用于在活跃会话期间提供 AI 援助。我们不向第三方出售或共享您的数据。我们遵守西班牙 RGPD。",
+        "privacy_content": "在 LegalFlow，我们保护您的个人数据。上传的文档经过加密处理，仅用于在活跃会话期间提供 AI 援助。我们不向第三方出售或共享您的数据。我们遵守西班牙 RGPD。",
         "cookies_title": "Cookie 政策",
         "cookies_content": "我们使用必要的 Cookie 来保持会话活跃并记录您的首选语言。我们不使用第三方广告跟踪 Cookie。",
         "footer_privacy": "隐私",
@@ -386,7 +386,7 @@
         "create_password": "创建您的密码",
         "creating_account": "正在创建账户...",
         "accept_invitation": "接受邀请",
-        "terms_notice": "加入即表示您接受 Legal & Halal 及 {{orgName}} 的条款。",
+        "terms_notice": "加入即表示您接受 LegalFlow 及 {{orgName}} 的条款。",
         "error_processing": "注册处理出错。"
     },
     "tenant_page": {
@@ -421,7 +421,7 @@
         "premium_feat3": "高级 AI 文档分析",
         "premium_feat4": "24/7 优先支持",
         "start_premium": "开始使用高级版",
-        "powered_by": "由 Legal & Halal 提供支持。"
+        "powered_by": "由 LegalFlow 提供支持。"
     },
     "landing": {
         "nav": {
@@ -437,7 +437,7 @@
             "book_demo": "预约演示"
         },
         "features": {
-            "title": "为什么选择 LegalAI Corporate？",
+            "title": "为什么选择 LegalFlow？",
             "subtitle": "专为人力资源部门和代办处设计。",
             "security_title": "Iron Silo™ 安全",
             "security_desc": "数据加密隔离。您的组织是不可攻破的堡垒。",
@@ -601,5 +601,28 @@
         "plan": "方案",
         "documents": "文档",
         "settings": "设置"
+    },
+    "demo": {
+        "title": "预约演示",
+        "subtitle": "了解我们如何为您全球团队自动处理法律和文化合规事宜。",
+        "submit": "发送请求",
+        "close": "关闭",
+        "success_title": "请求已收到！",
+        "success_message": "我们的团队将在 24 小时内联系您，安排个性化的演示环节。",
+        "fields": {
+            "name": "全名",
+            "email": "公司邮箱",
+            "org": "公司名称",
+            "size": "公司规模",
+            "employees": "名员工",
+            "message": "我们能为您提供什么帮助？"
+        },
+        "placeholders": {
+            "name": "请输入您的姓名",
+            "email": "ex@company.com",
+            "org": "您的机构",
+            "select_size": "请选择一个选项",
+            "message": "请简要描述您的需求..."
+        }
     }
 }

@@ -19,7 +19,7 @@ export function Layout({ children, onNavigate, user, profile }: {
             <footer className="py-12 bg-white border-t border-gray-100">
                 <div className="max-w-7xl mx-auto px-6 text-center">
                     <p className="text-sm text-gray-400">
-                        © {new Date().getFullYear()} Legal & Halal Assistant. {t('nav.contact')}.
+                        © {new Date().getFullYear()} LegalFlow. {t('nav.contact')}.
                     </p>
                     <div className="flex justify-center gap-6 mt-4">
                         <button
@@ -37,21 +37,15 @@ export function Layout({ children, onNavigate, user, profile }: {
                     </div>
                     <div className="mt-8 pt-8 border-t border-gray-50">
                         <a
-                            href="/"
+                            href="https://legalflow.digital"
                             onClick={(e) => {
                                 e.preventDefault();
                                 onNavigate?.('home');
-                                // Si 'home' no lleva a landing cuando hay usuario, 
-                                // quizás necesitemos una lógica de "Cerrar sesión" o un link externo real si la landing es otra URL.
-                                // Asumiendo que '/' es la landing pública y el router lo maneja.
-                                // Si estamos dentro de la app (autenticados), ir a '/' podría llevar al dashboard.
-                                // El usuario pidió "acceder a la landing", si ya están dentro, la landing suele ser para no-autenticados.
-                                // Pero bueno, pondremos el link visualmente.
-                                window.location.href = '/';
+                                window.location.href = 'https://legalflow.digital';
                             }}
                             className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-full transition-colors"
                         >
-                            ⚡ Powered by Legal & Halal Enterprise Platform
+                            ⚡ Powered by LegalFlow Platform
                         </a>
                     </div>
                 </div>

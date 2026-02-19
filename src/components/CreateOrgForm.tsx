@@ -27,14 +27,20 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
         setError(null);
 
         try {
+            // Read referral cookie
+            const referralCode = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('referral_code='))
+                ?.split('=')[1];
+
             // New Flow: Call Edge Function 'create-organization' directly
-            // This function handles both Tenant creation and User creation + assignment
             const { data, error: functionError } = await supabase.functions.invoke('create-organization', {
                 body: {
                     email,
                     password,
                     orgName,
-                    username
+                    username,
+                    referral_code: referralCode // Pass identifying code
                 }
             });
 

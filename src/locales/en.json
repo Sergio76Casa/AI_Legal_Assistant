@@ -15,7 +15,7 @@
         "manage_org": "Manage Organization"
     },
     "hero": {
-        "title": "Your Legal & Halal Consultant in Spain",
+        "title": "Your LegalFlow Consultant in Spain",
         "subtitle": "Specialized guide for expats and immigrants. AI trained in Spanish immigration laws and regulations.",
         "search_placeholder": "Type your query here (e.g., NIE requirements)...",
         "social_proof": "Trusted by +1,200 families",
@@ -100,7 +100,7 @@
     },
     "legal": {
         "privacy_title": "Privacy Policy",
-        "privacy_content": "At Legal & Halal Assistant, we protect your personal data. When you upload your documents, they are processed using encryption and only used to provide AI assistance during your active session. We do not sell or share your data with third parties. We comply with Spanish GDPR regulations.",
+        "privacy_content": "At LegalFlow, we protect your personal data. When you upload your documents, they are processed using encryption and only used to provide AI assistance during your active session. We do not sell or share your data with third parties. We comply with Spanish GDPR regulations.",
         "cookies_title": "Cookie Policy",
         "cookies_content": "We use essential cookies to keep your session active and remember your preferred language. We do not use third-party advertising tracking cookies.",
         "footer_privacy": "Privacy",
@@ -386,7 +386,7 @@
         "create_password": "Create your Password",
         "creating_account": "Creating account...",
         "accept_invitation": "Accept Invitation",
-        "terms_notice": "By joining, you accept the terms of Legal & Halal and {{orgName}}.",
+        "terms_notice": "By joining, you accept the terms of LegalFlow and {{orgName}}.",
         "error_processing": "Error processing registration."
     },
     "tenant_page": {
@@ -421,7 +421,7 @@
         "premium_feat3": "Advanced AI analysis of your files",
         "premium_feat4": "Priority Support 24/7",
         "start_premium": "Start with Premium",
-        "powered_by": "Powered by Legal & Halal."
+        "powered_by": "Powered by LegalFlow."
     },
     "landing": {
         "nav": {
@@ -430,14 +430,14 @@
         },
         "hero": {
             "new_tag": "New: Certified Multi-Tenant Architecture",
-            "title": "Legal & Halal Compliance",
+            "title": "LegalFlow Compliance",
             "subtitle": "for Global Teams",
             "desc": "The AI platform centralizing visas, housing, and regulations for your expat employees. Enterprise-grade security, local empathy.",
             "start_free": "Start for Free",
             "book_demo": "Book Demo"
         },
         "features": {
-            "title": "Why LegalAI Corporate?",
+            "title": "Why LegalFlow?",
             "subtitle": "Designed for HR Departments and Consultancies.",
             "security_title": "Iron Silo™ Security",
             "security_desc": "Cryptographically isolated data. Your organization is an impenetrable fortress.",
@@ -524,6 +524,9 @@
             "filling": "Filling form officially...",
             "success": "Document generated successfully!",
             "error": "Error: {{error}}",
+            "PDF_LOAD_ERROR": "This PDF is protected or not compatible. Please upload an unlocked version.",
+            "ERROR_UNAUTHORIZED": "Unauthorized. Please log in again.",
+            "ERROR_FORBIDDEN": "You do not have permission to perform this action.",
             "ready": "Done!",
             "cross_referencing": "Cross-referencing file data..."
         },
@@ -601,5 +604,51 @@
         "plan": "Plan",
         "documents": "Documents",
         "settings": "Settings"
+    },
+    "demo": {
+        "title": "Book a Demo",
+        "subtitle": "Discover how we can automate legal and cultural compliance for your global team.",
+        "submit": "Send Request",
+        "close": "Close",
+        "success_title": "Request Received!",
+        "success_message": "Our team will contact you within 24 hours to schedule a personalized session.",
+        "fields": {
+            "name": "Full name",
+            "email": "Corporate email",
+            "org": "Company name",
+            "size": "Company size",
+            "employees": "employees",
+            "message": "How can we help you?"
+        },
+        "placeholders": {
+            "name": "Enter your name",
+            "email": "ex@company.com",
+            "org": "Your organization",
+            "select_size": "Select an option",
+            "message": "Briefly tell us about your needs..."
+        }
+    },
+    "affiliate": {
+        "title": "Affiliate Program",
+        "description": "Earn 30% recurring by recommending our platform to professionals and businesses.",
+        "join_btn": "Apply to be an Affiliate",
+        "pending_approval": "Your application is being reviewed.",
+        "dashboard_title": "Affiliate Dashboard",
+        "your_link": "Your Unique Link",
+        "copy_btn": "Copy",
+        "copied": "Copied!",
+        "stats": {
+            "clicks": "Clicks on your link",
+            "registrations": "Total registrations",
+            "paid_customers": "Paid customers"
+        },
+        "balance": {
+            "title": "Your Earnings",
+            "earned": "Accumulated commissions",
+            "pending": "Pending balance"
+        },
+        "customize_code": "Customize Code",
+        "customize_hint": "You can customize your code only once.",
+        "save": "Save"
     }
 }

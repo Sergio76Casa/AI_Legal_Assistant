@@ -26,7 +26,7 @@ serve(async (req) => {
             data: { user },
         } = await supabaseClient.auth.getUser();
 
-        if (!user) throw new Error('Unauthorized');
+        if (!user) throw new Error('ERROR_UNAUTHORIZED');
 
         // 3. Permission Check: Is the inviter ADMIN of this tenant? (or Superadmin)
         const { data: profile } = await supabaseClient
@@ -35,20 +35,17 @@ serve(async (req) => {
             .eq('id', user.id)
             .single();
 
-        const isSuperadmin = profile.role === 'superadmin';
-        const isTenantAdmin = profile.role === 'admin' && profile.tenant_id === tenant_id;
+        const isSuperadmin = profile?.role === 'superadmin';
+        const isTenantAdmin = profile?.role === 'admin' && profile?.tenant_id === tenant_id;
 
         if (!isSuperadmin && !isTenantAdmin) {
-            return new Response(JSON.stringify({ error: 'No permission to invite users to this tenant' }), {
+            return new Response(JSON.stringify({ error: 'ERROR_FORBIDDEN' }), {
                 status: 403,
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             });
         }
 
         // 4. Create Invitation Record
-        // Note: We use Service Role Key here to bypass RLS for inserting if needed, 
-        // but standard client + RLS policies SHOULD work if set correctly. 
-        // For robustness, let's stick to standard client first.
         const { data: invite, error: inviteError } = await supabaseClient
             .from('tenant_invitations')
             .insert({
@@ -65,18 +62,15 @@ serve(async (req) => {
         // 5. Send Email (Simulation / Future integration with Resend)
         console.log(`[SIM] Invitation Email sent to ${email} for Tenant ${tenant_id}. Token: ${invite.token}`);
 
-        // In a real scenario, here we would call RESEND API:
-        // await resend.emails.send({ to: email, subject: 'Join our Team', html: `<a href="...?token=${invite.token}">Join</a>` })
-
         return new Response(JSON.stringify({
             success: true,
             message: 'Invitation created',
-            invite_token: invite.token // Returned for debug/manual sharing
+            invite_token: invite.token
         }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
 
-    } catch (error) {
+    } catch (error: any) {
         return new Response(JSON.stringify({ error: error.message }), {
             status: 400,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },

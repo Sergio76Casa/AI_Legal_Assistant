@@ -71,7 +71,9 @@ export const TemplateSelectorModal: React.FC<TemplateSelectorModalProps> = ({
             }
         } catch (err: any) {
             console.error(err);
-            setStatus(t('templates.status.error', { error: err.message }));
+            // Si el error es un código (ej: PDF_LOAD_ERROR), lo traducimos. De lo contrario mostramos el mensaje original.
+            const errorMsg = t(`templates.status.${err.message}`, { defaultValue: err.message });
+            setStatus(t('templates.status.error', { error: errorMsg }));
             setGenerating(false);
         }
     };

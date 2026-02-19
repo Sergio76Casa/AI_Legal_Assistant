@@ -100,7 +100,7 @@
     },
     "legal": {
         "privacy_title": "Liggéeyu Sutura",
-        "privacy_content": "Ci Legal & Halal Assistant, dañuy aar say xibaar yu jagle. Bu nga yekkatee say kayit, dañu leen a saytu ci kàmb te yow rekk lañu am yoonu xool ci sa biiru liggéey. Duñu jaay wala ñu bokk say xibaar ak ñeneen. Ñu ngi apply yoonu RGPD bu Ispañ.",
+        "privacy_content": "Ci LegalFlow, dañuy aar say xibaar yu jagle. Bu nga yekkatee say kayit, dañu leen a saytu ci kàmb te yow rekk lañu am yoonu xool ci sa biiru liggéey. Duñu jaay wala ñu bokk say xibaar ak ñeneen. Ñu ngi apply yoonu RGPD bu Ispañ.",
         "cookies_title": "Yoonu Cookies",
         "cookies_content": "Dañuy jëfandikoo cookies yu am solo ngir wattu sa biiru liggéey te fàttaliku sa làkk bu nga tann. Duñu jëfandikoo cookies ngir pub.",
         "footer_privacy": "Sutura",
@@ -386,7 +386,7 @@
         "create_password": "Sos sa Baat u fajo",
         "creating_account": "Ngi sos sa sàq...",
         "accept_invitation": "Nangu bi Ñëw",
-        "terms_notice": "Bu nga bokkee, danga nangu mbiru Legal & Halal ak {{orgName}}.",
+        "terms_notice": "Bu nga bokkee, danga nangu mbiru LegalFlow ak {{orgName}}.",
         "error_processing": "Njuumte ci sos sa sàq."
     },
     "tenant_page": {
@@ -421,7 +421,7 @@
         "premium_feat3": "Saytu gu xóot ak IA",
         "premium_feat4": "Ndimbal gu gaaw 24/7",
         "start_premium": "Tàmbali ak Premium",
-        "powered_by": "Tecnologia bu Legal & Halal."
+        "powered_by": "Tecnologia bu LegalFlow."
     },
     "landing": {
         "nav": {
@@ -437,7 +437,7 @@
             "book_demo": "Laaj am Demo"
         },
         "features": {
-            "title": "Lu tax LegalAI Corporate ?",
+            "title": "Lu tax LegalFlow ?",
             "subtitle": "Sos ko ngir RRHH ak Gestorías.",
             "security_title": "Sutura Iron Silo™",
             "security_desc": "Xibaar yu ñu kàmb. Sa mbooloo kër la gu ñu mënul duggu.",
@@ -601,5 +601,28 @@
         "plan": "Porogaraam",
         "documents": "Kayit yi",
         "settings": "Saytu"
+    },
+    "demo": {
+        "title": "Laaj am Demo",
+        "subtitle": "Xoolal naka lañuy yombalé mbiru yoon ak aada ngir sa liggéeykat yi bitim réew.",
+        "submit": "Yónnee Laaj bi",
+        "close": "Tëj",
+        "success_title": "Jot nañu sa Laaj bi!",
+        "success_message": "Suñu equipe dina la jokkoo ci biir 24h ngir toggalaat am waxtu bu jagle.",
+        "fields": {
+            "name": "Tur mu mët",
+            "email": "Email liggéey",
+            "org": "Tur u Mbooloo",
+            "size": "Rëy u Mbooloo",
+            "employees": "liggéeykat",
+            "message": "Naka lañu la mën a jàpale ?"
+        },
+        "placeholders": {
+            "name": "Bindal sa tur",
+            "email": "sa@mbooloo.com",
+            "org": "Sa mbooloo",
+            "select_size": "Tannal benn",
+            "message": "Waxal nu néew ci say soxla..."
+        }
     }
 }
