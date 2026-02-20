@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, FileText, LayoutGrid, Building2, TrendingUp, Cpu, Shield, Globe } from 'lucide-react';
+import { X, FileText, LayoutGrid, Building2, TrendingUp, Cpu, Shield } from 'lucide-react';
 
 interface ServicesModalProps {
     type: 'documents' | 'templates' | 'organization' | 'affiliates' | null;
