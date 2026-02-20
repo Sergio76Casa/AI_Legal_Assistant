@@ -1,168 +1,144 @@
 import { motion } from 'framer-motion';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface AffiliateTermsProps {
     onBack: () => void;
 }
 
 export function AffiliateTerms({ onBack }: AffiliateTermsProps) {
+    const { t } = useTranslation();
+
+    const sections = [
+        {
+            id: 'eligibility',
+            title: t('affiliate_terms.sections.eligibility.title'),
+            content: t('affiliate_terms.sections.eligibility.content'),
+            sub: t('affiliate_terms.sections.eligibility.sub')
+        },
+        {
+            id: 'commissions',
+            title: t('affiliate_terms.sections.commissions.title'),
+            content: (
+                <Trans i18nKey="affiliate_terms.sections.commissions.content">
+                    Se otorgará una comisión del <span className="text-primary font-bold">20% recurrente</span> (mensual o anual) por cada nuevo suscriptor que contrate un plan de pago a través del enlace personalizado del afiliado.
+                </Trans>
+            ),
+            example: (
+                <Trans i18nKey="affiliate_terms.sections.commissions.example">
+                    <span className="text-white font-bold">Ejemplo:</span> Si refieres un suscriptor al Plan Business (149€/mes), recibirás <span className="text-primary font-bold">29,80€/mes</span> de forma recurrente mientras el suscriptor mantenga su plan activo.
+                </Trans>
+            )
+        },
+        {
+            id: 'cookies',
+            title: t('affiliate_terms.sections.cookies.title'),
+            content: (
+                <Trans i18nKey="affiliate_terms.sections.cookies.content">
+                    Utilizamos una ventana de atribución de <span className="text-primary font-bold">30 días</span>. Si un cliente potencial hace clic en tu enlace de afiliado y completa la suscripción dentro de ese periodo, la comisión te será asignada automáticamente.
+                </Trans>
+            ),
+            sub: t('affiliate_terms.sections.cookies.sub')
+        },
+        {
+            id: 'payments',
+            title: t('affiliate_terms.sections.payments.title'),
+            content: (
+                <Trans i18nKey="affiliate_terms.sections.payments.content">
+                    Las comisiones se liquidarán <span className="text-primary font-bold">mensualmente</span> a través de Stripe o transferencia bancaria, una vez alcanzado un umbral mínimo de <span className="text-primary font-bold">50€</span>.
+                </Trans>
+            ),
+            list: t('affiliate_terms.sections.payments.details', { returnObjects: true }) as string[]
+        },
+        {
+            id: 'ethics',
+            title: t('affiliate_terms.sections.ethics.title'),
+            content: (
+                <Trans i18nKey="affiliate_terms.sections.ethics.content">
+                    Queda <span className="text-primary font-bold">estrictamente prohibido</span> el uso de técnicas de spam, publicidad engañosa, suplantación de identidad o cualquier práctica que pueda dañar la reputación de LegalFlow.
+                </Trans>
+            ),
+            warning: (
+                <Trans i18nKey="affiliate_terms.sections.ethics.warning">
+                    <span className="text-primary font-bold">⚠️ Importante:</span> El incumplimiento de esta norma supondrá la <span className="text-primary font-bold">baja inmediata</span> del programa y la pérdida de todas las comisiones acumuladas y pendientes de pago.
+                </Trans>
+            )
+        },
+        {
+            id: 'modifications',
+            title: t('affiliate_terms.sections.modifications.title'),
+            content: t('affiliate_terms.sections.modifications.content'),
+            sub: t('affiliate_terms.sections.modifications.sub')
+        }
+    ];
+
     return (
-        <div className="min-h-screen bg-background-dark py-20 px-4">
+        <div className="min-h-screen bg-[#0a0f1d] py-16 md:py-20 px-4 md:px-6">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="max-w-3xl mx-auto"
+                className="max-w-4xl mx-auto"
             >
-                {/* Back Button */}
+                {/* Back */}
                 <button
                     onClick={onBack}
                     className="flex items-center gap-2 text-slate-400 hover:text-primary transition-colors mb-10 text-sm font-medium"
                 >
                     <span className="material-symbols-outlined text-lg">arrow_back</span>
-                    Volver
+                    {t('affiliate_terms.back')}
                 </button>
 
                 {/* Header */}
-                <div className="mb-12">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
-                            <span className="material-symbols-outlined">handshake</span>
-                        </div>
-                        <h1 className="text-3xl md:text-4xl font-bold text-white">Términos del Programa de Afiliados</h1>
-                    </div>
-                    <p className="text-slate-500 text-sm">
-                        Última actualización: Febrero 2026 • LegalFlow Pro
+                <div className="mb-16 space-y-4">
+                    <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                        {t('affiliate_terms.title')}
+                    </h1>
+                    <p className="text-slate-400 italic">
+                        {t('affiliate_terms.last_update')}
                     </p>
                 </div>
 
                 {/* Content */}
-                <div className="space-y-10">
-                    {/* Section 1 */}
-                    <section className="glass-card rounded-2xl p-8 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <span className="text-primary font-black text-lg">01</span>
-                            <h2 className="text-xl font-bold text-white">Elegibilidad</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {sections.map((section) => (
+                        <div key={section.id} className="glass-card rounded-[2.5rem] p-8 md:p-10 space-y-6">
+                            <h2 className="text-2xl font-bold text-white border-b border-white/5 pb-4">
+                                {section.title}
+                            </h2>
+                            <div className="text-slate-400 leading-relaxed text-lg space-y-4">
+                                <div>{section.content}</div>
+                                {section.sub && <p className="text-sm opacity-80">{section.sub}</p>}
+                                {section.example && (
+                                    <div className="bg-white/5 rounded-2xl p-6 text-sm border border-white/5">
+                                        {section.example}
+                                    </div>
+                                )}
+                                {section.warning && (
+                                    <div className="bg-primary/5 rounded-2xl p-6 text-sm border border-primary/10">
+                                        {section.warning}
+                                    </div>
+                                )}
+                                {section.list && (
+                                    <ul className="space-y-3 pt-2">
+                                        {section.list.map((item, i) => (
+                                            <li key={i} className="flex gap-3 text-sm">
+                                                <span className="text-primary font-bold">•</span>
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
                         </div>
-                        <p className="text-slate-300 leading-relaxed">
-                            El Programa de Afiliados de LegalFlow está abierto a profesionales del sector legal,
-                            gestores administrativos, agencias de relocation, consultorías de inmigración y creadores
-                            de contenido que cumplan con la normativa vigente en España.
-                        </p>
-                        <p className="text-slate-400 text-sm leading-relaxed">
-                            Para participar, el solicitante debe ser mayor de edad y disponer de capacidad legal
-                            para celebrar contratos. LegalFlow se reserva el derecho de aceptar o rechazar solicitudes
-                            de afiliación a su discreción.
-                        </p>
-                    </section>
-
-                    {/* Section 2 */}
-                    <section className="glass-card rounded-2xl p-8 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <span className="text-primary font-black text-lg">02</span>
-                            <h2 className="text-xl font-bold text-white">Estructura de Comisiones</h2>
-                        </div>
-                        <p className="text-slate-300 leading-relaxed">
-                            Se otorgará una comisión del <span className="text-primary font-bold">20% recurrente</span> (mensual
-                            o anual) por cada nuevo suscriptor que contrate un plan de pago a través del enlace
-                            personalizado del afiliado.
-                        </p>
-                        <div className="bg-primary/5 border border-primary/10 rounded-xl p-4 text-sm">
-                            <p className="text-slate-300">
-                                <span className="text-primary font-bold">Ejemplo:</span> Si refieres un suscriptor al
-                                Plan Business (149€/mes), recibirás <span className="text-white font-bold">29,80€/mes</span> de
-                                forma recurrente mientras el suscriptor mantenga su plan activo.
-                            </p>
-                        </div>
-                    </section>
-
-                    {/* Section 3 */}
-                    <section className="glass-card rounded-2xl p-8 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <span className="text-primary font-black text-lg">03</span>
-                            <h2 className="text-xl font-bold text-white">Atribución y Cookies</h2>
-                        </div>
-                        <p className="text-slate-300 leading-relaxed">
-                            Utilizamos una ventana de atribución de <span className="text-white font-bold">30 días</span>.
-                            Si un cliente potencial hace clic en tu enlace de afiliado y completa la suscripción
-                            dentro de ese periodo, la comisión te será asignada automáticamente.
-                        </p>
-                        <p className="text-slate-400 text-sm leading-relaxed">
-                            La cookie de seguimiento se almacena en el navegador del visitante con una duración
-                            de 30 días naturales. En caso de que el visitante haga clic en el enlace de otro
-                            afiliado, prevalecerá la atribución más reciente (last-click attribution).
-                        </p>
-                    </section>
-
-                    {/* Section 4 */}
-                    <section className="glass-card rounded-2xl p-8 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <span className="text-primary font-black text-lg">04</span>
-                            <h2 className="text-xl font-bold text-white">Pagos y Liquidación</h2>
-                        </div>
-                        <p className="text-slate-300 leading-relaxed">
-                            Las comisiones se liquidarán <span className="text-white font-bold">mensualmente</span> a
-                            través de Stripe o transferencia bancaria, una vez alcanzado un umbral mínimo
-                            de <span className="text-primary font-bold">50€</span>.
-                        </p>
-                        <ul className="space-y-2 text-slate-400 text-sm">
-                            <li className="flex items-start gap-2">
-                                <span className="material-symbols-outlined text-primary text-sm mt-0.5">check</span>
-                                Las comisiones se calculan sobre el importe neto (sin IVA) de la suscripción.
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="material-symbols-outlined text-primary text-sm mt-0.5">check</span>
-                                El afiliado es responsable de cumplir con sus obligaciones fiscales.
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="material-symbols-outlined text-primary text-sm mt-0.5">check</span>
-                                Los pagos pendientes por debajo del umbral se acumulan para el siguiente periodo.
-                            </li>
-                        </ul>
-                    </section>
-
-                    {/* Section 5 */}
-                    <section className="glass-card rounded-2xl p-8 space-y-4 border-red-500/10">
-                        <div className="flex items-center gap-3">
-                            <span className="text-red-400 font-black text-lg">05</span>
-                            <h2 className="text-xl font-bold text-white">Ética, Conducta y Spam</h2>
-                        </div>
-                        <p className="text-slate-300 leading-relaxed">
-                            Queda <span className="text-red-400 font-bold">estrictamente prohibido</span> el uso de
-                            técnicas de spam, publicidad engañosa, suplantación de identidad o cualquier práctica
-                            que pueda dañar la reputación de LegalFlow.
-                        </p>
-                        <div className="bg-red-500/5 border border-red-500/10 rounded-xl p-4 text-sm">
-                            <p className="text-slate-400">
-                                <span className="text-red-400 font-bold">⚠️ Importante:</span> El incumplimiento de esta norma
-                                supondrá la <span className="text-white font-bold">baja inmediata</span> del programa y la
-                                pérdida de todas las comisiones acumuladas y pendientes de pago.
-                            </p>
-                        </div>
-                    </section>
-
-                    {/* Section 6 */}
-                    <section className="glass-card rounded-2xl p-8 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <span className="text-primary font-black text-lg">06</span>
-                            <h2 className="text-xl font-bold text-white">Modificaciones y Vigencia</h2>
-                        </div>
-                        <p className="text-slate-300 leading-relaxed">
-                            LegalFlow se reserva el derecho de modificar estos términos en cualquier momento,
-                            notificando previamente al afiliado por correo electrónico con un mínimo de 15 días
-                            de antelación.
-                        </p>
-                        <p className="text-slate-400 text-sm leading-relaxed">
-                            La participación continuada en el programa tras la notificación de cambios se
-                            entenderá como aceptación de los nuevos términos. El afiliado puede darse de baja
-                            del programa en cualquier momento sin penalización.
-                        </p>
-                    </section>
+                    ))}
                 </div>
 
                 {/* Footer */}
-                <div className="mt-12 text-center">
-                    <p className="text-slate-600 text-xs">
-                        © 2026 LegalFlow Pro. Todos los derechos reservados.
-                        <br />Estos términos están sujetos a la legislación española y a la jurisdicción de los tribunales de Madrid.
+                <div className="mt-20 pt-10 border-t border-white/5 text-center text-slate-600 text-sm">
+                    <p>
+                        <Trans i18nKey="affiliate_terms.footer">
+                            © 2026 LegalFlow Pro. Todos los derechos reservados.<br />
+                            Estos términos están sujetos a la legislación española y a la jurisdicción de los tribunales de Madrid.
+                        </Trans>
                     </p>
                 </div>
             </motion.div>

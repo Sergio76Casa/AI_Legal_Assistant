@@ -21,7 +21,7 @@ export function LandingPage({ onLogin, onCreateOrg }: LandingPageProps) {
     const [legalModal, setLegalModal] = useState<'privacy' | 'cookies' | null>(null);
 
     return (
-        <div className="min-h-screen bg-background-dark font-display text-slate-100 antialiased selection:bg-primary/30 selection:text-primary">
+        <div className="min-h-screen bg-[#0a0f1d] font-display text-slate-100 antialiased selection:bg-primary/30 selection:text-primary">
             {/* Navigation */}
             <Navbar onLogin={onLogin} onCreateOrg={onCreateOrg} />
 

@@ -150,11 +150,26 @@ function App() {
 
     // 🚀 REDIRECTION LOGIC: Auto-navigate to dashboard on login
     useEffect(() => {
-        if (user && view === 'home' && window.location.pathname === '/') {
+        // If we have a user and they are on the root/home, send them to dashboard
+        if (user && view === 'home' && (window.location.pathname === '/' || window.location.pathname === '/home')) {
             setView('dashboard');
-            window.history.pushState({}, '', '/dashboard');
+            window.history.replaceState({}, '', '/dashboard');
         }
     }, [user, view]);
+
+    // Handle initial state and deep linking
+    useEffect(() => {
+        const path = window.location.pathname.substring(1);
+        if (!path || path === '') {
+            // Root
+            if (user) {
+                setView('dashboard');
+                window.history.replaceState({}, '', '/dashboard');
+            } else {
+                setView('home');
+            }
+        }
+    }, [user]);
 
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
     const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));

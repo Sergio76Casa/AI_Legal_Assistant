@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-[#0a0f1d] text-foreground font-sans antialiased;
+    @apply bg-[#0a0f1d] text-foreground font-sans antialiased overflow-x-hidden;
   }
 
   h1,

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface CTASectionProps {
     onCreateOrg: () => void;
@@ -6,6 +7,8 @@ interface CTASectionProps {
 }
 
 export function CTASection({ onCreateOrg, onBookDemo }: CTASectionProps) {
+    const { t } = useTranslation();
+
     return (
         <section className="py-24 px-4 overflow-hidden">
             <motion.div
@@ -26,12 +29,13 @@ export function CTASection({ onCreateOrg, onBookDemo }: CTASectionProps) {
 
                 <div className="relative z-10 space-y-8">
                     <h2 className="font-serif text-4xl md:text-6xl text-white max-w-3xl mx-auto leading-tight">
-                        Digitaliza tu despacho con <span className="text-primary">IA de extranjería</span>
+                        <Trans i18nKey="landing.cta.title">
+                            Digitaliza tu despacho con <span className="text-primary">IA de extranjería</span>
+                        </Trans>
                     </h2>
 
                     <p className="text-lg text-slate-400 max-w-xl mx-auto leading-relaxed">
-                        Únete a los profesionales que ya gestionan expedientes, documentos y consultas migratorias
-                        en la mitad de tiempo con LegalFlow.
+                        {t('landing.cta.desc')}
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -39,18 +43,18 @@ export function CTASection({ onCreateOrg, onBookDemo }: CTASectionProps) {
                             onClick={onCreateOrg}
                             className="w-full sm:w-auto bg-primary text-background-dark px-10 py-5 rounded-full text-lg font-bold hover:scale-105 transition-all shadow-2xl shadow-primary/20 hover:shadow-primary/40"
                         >
-                            Empezar prueba gratuita
+                            {t('landing.cta.btn')}
                         </button>
                         <button
                             onClick={onBookDemo}
                             className="w-full sm:w-auto px-10 py-5 rounded-full text-lg font-bold border border-white/10 hover:bg-white/5 transition-all text-white"
                         >
-                            Solicitar una demo
+                            {t('landing.cta.btn_demo')}
                         </button>
                     </div>
 
                     <p className="text-sm text-slate-500">
-                        Sin tarjeta de crédito. Sin permanencia. Configuración en 2 minutos.
+                        {t('landing.cta.footer')}
                     </p>
                 </div>
             </motion.div>

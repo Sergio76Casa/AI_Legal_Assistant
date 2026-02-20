@@ -1,68 +1,78 @@
 import { useEffect } from 'react';
-import { ArrowLeft, Home, FileCheck, ShieldAlert, Key, Sparkles, ChevronRight, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Home, FileCheck, Key, Sparkles, ChevronRight, HelpCircle, MapPin, Droplets } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useChat } from '../lib/ChatContext';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface HousingGuideProps {
     onBack: () => void;
 }
 
-const sections = [
-    {
-        id: 'contracts',
-        icon: <FileCheck className="w-6 h-6" />,
-        title: 'Tipos de Contrato',
-        description: 'Vivienda habitual vs. temporada. Conoce tus derechos según la Ley de Arrendamientos Urbanos (LAU).',
-        questions: [
-            '¿Cuál es la duración mínima de un contrato de alquiler?',
-            'Diferencia entre contrato de temporada y vivienda habitual',
-            '¿Puedo dejar el piso antes de los 6 meses?',
-            '¿Qué es la prórroga automática del contrato?'
-        ]
-    },
-    {
-        id: 'deposits',
-        icon: <Key className="w-6 h-6" />,
-        title: 'Fianzas y Pagos',
-        description: 'Todo sobre la fianza legal, garantías adicionales y quién debe pagar los honorarios de la agencia.',
-        questions: [
-            '¿Cuántos meses de fianza son obligatorios?',
-            '¿Quién paga la inmobiliaria según la nueva ley?',
-            '¿Cómo recuperar mi fianza si no me la devuelven?',
-            '¿Puede el casero pedirme 6 meses de depósito?'
-        ]
-    },
-    {
-        id: 'rights',
-        icon: <ShieldAlert className="w-6 h-6" />,
-        title: 'Derechos del Inquilino',
-        description: 'Reparaciones, suministros y protección ante desahucios u otros abusos.',
-        questions: [
-            '¿Quién paga las averías de la caldera o electrodomésticos?',
-            '¿Puede el casero entrar en mi casa sin permiso?',
-            '¿Qué hacer si me quieren subir el alquiler de golpe?',
-            'Derechos ante un aviso de fin de contrato'
-        ]
-    }
-];
-
 export function HousingGuide({ onBack }: HousingGuideProps) {
+    const { t } = useTranslation();
     const { sendMessage } = useChat();
+
+    const sections = [
+        {
+            id: 'contratos',
+            icon: <FileCheck className="w-6 h-6" />,
+            title: t('housing_page.items.contratos.title'),
+            description: t('housing_page.items.contratos.desc'),
+            questions: [
+                t('housing_page.items.contratos.q1'),
+                t('housing_page.items.contratos.q2'),
+                t('housing_page.items.contratos.q3')
+            ]
+        },
+        {
+            id: 'requisitos',
+            icon: <Key className="w-6 h-6" />,
+            title: t('housing_page.items.requisitos.title'),
+            description: t('housing_page.items.requisitos.desc'),
+            questions: [
+                t('housing_page.items.requisitos.q1'),
+                t('housing_page.items.requisitos.q2'),
+                t('housing_page.items.requisitos.q3')
+            ]
+        },
+        {
+            id: 'zonas',
+            icon: <MapPin className="w-6 h-6" />,
+            title: t('housing_page.items.zonas.title'),
+            description: t('housing_page.items.zonas.desc'),
+            questions: [
+                t('housing_page.items.zonas.q1'),
+                t('housing_page.items.zonas.q2'),
+                t('housing_page.items.zonas.q3')
+            ]
+        },
+        {
+            id: 'suministros',
+            icon: <Droplets className="w-6 h-6" />,
+            title: t('housing_page.items.suministros.title'),
+            description: t('housing_page.items.suministros.desc'),
+            questions: [
+                t('housing_page.items.suministros.q1'),
+                t('housing_page.items.suministros.q2'),
+                t('housing_page.items.suministros.q3')
+            ]
+        }
+    ];
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     return (
-        <div className="min-h-screen bg-stone-50/30">
+        <div className="min-h-screen bg-[#0a0f1d]">
             {/* Header / Nav Area */}
-            <div className="max-w-7xl mx-auto px-6 pt-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12">
                 <button
                     onClick={onBack}
-                    className="flex items-center gap-2 text-stone-500 hover:text-primary transition-colors group mb-12"
+                    className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group mb-12"
                 >
                     <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="font-medium">Volver al inicio</span>
+                    <span className="font-medium">{t('housing_page.back')}</span>
                 </button>
 
                 <div className="max-w-3xl mb-16">
@@ -72,52 +82,54 @@ export function HousingGuide({ onBack }: HousingGuideProps) {
                         transition={{ duration: 0.5 }}
                     >
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-3 bg-white rounded-2xl text-stone-900 shadow-sm border border-stone-100">
+                            <div className="p-3 bg-white/5 rounded-2xl text-primary shadow-sm border border-white/10">
                                 <Home className="w-8 h-8" />
                             </div>
-                            <span className="bg-stone-200 text-stone-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-stone-300">
-                                Vivienda & Alquiler
+                            <span className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-primary/20">
+                                {t('landing.trust_bar.gdpr')}
                             </span>
                         </div>
-                        <h1 className="font-serif text-5xl text-gray-900 mb-6 leading-tight">
-                            Protección y Guía para tu <span className="text-secondary italic">Hogar en España</span>
+                        <h1 className="font-serif text-4xl sm:text-5xl text-white mb-6 leading-tight">
+                            <Trans i18nKey="housing_page.title">
+                                Guía de <span className="text-secondary italic">Vivienda & Alquiler</span>
+                            </Trans>
                         </h1>
-                        <p className="text-xl text-gray-600 font-light leading-relaxed">
-                            No te dejes engañar por contratos abusivos. Te ayudamos a entender la ley de vivienda, verificar tus derechos y asegurar tu fianza.
+                        <p className="text-lg sm:text-xl text-slate-400 font-light leading-relaxed">
+                            {t('housing_page.desc')}
                         </p>
                     </motion.div>
                 </div>
 
                 {/* Grid de Secciones */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-20">
                     {sections.map((section, idx) => (
                         <motion.div
                             key={section.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: idx * 0.1 }}
-                            className="bg-white rounded-[2rem] p-8 border border-stone-100 shadow-sm hover:shadow-md transition-all group"
+                            className="glass-card rounded-[2rem] p-6 sm:p-8 border border-white/5 hover:border-primary/20 transition-all group"
                         >
                             <div className="flex items-start justify-between mb-8">
-                                <div className="p-4 bg-stone-50 rounded-2xl text-stone-700 group-hover:bg-stone-900 group-hover:text-white transition-colors">
+                                <div className="p-4 bg-white/5 rounded-2xl text-slate-300 group-hover:bg-primary group-hover:text-slate-900 transition-colors">
                                     {section.icon}
                                 </div>
                                 <Sparkles className="w-5 h-5 text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
 
-                            <h3 className="font-serif text-2xl text-gray-900 mb-4">{section.title}</h3>
-                            <p className="text-gray-600 mb-8 font-light min-h-[3rem]">{section.description}</p>
+                            <h3 className="font-serif text-2xl text-white mb-4">{section.title}</h3>
+                            <p className="text-slate-400 mb-8 font-light min-h-[3rem] text-sm md:text-base">{section.description}</p>
 
                             <div className="space-y-3">
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Consultar a STARK</p>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">{t('housing_page.common_steps')}</p>
                                 {section.questions.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className="w-full flex items-center justify-between p-4 bg-stone-50/50 rounded-xl text-sm text-gray-700 hover:bg-stone-900 hover:text-white transition-all text-left group/btn"
+                                        className="w-full flex items-center justify-between p-4 bg-white/5 rounded-xl text-sm text-slate-300 hover:bg-primary hover:text-slate-900 transition-all text-left group/btn"
                                     >
-                                        <span className="font-medium">{q}</span>
-                                        <ChevronRight className="w-4 h-4 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                                        <span className="font-medium line-clamp-2">{q}</span>
+                                        <ChevronRight className="w-4 h-4 flex-shrink-0" />
                                     </button>
                                 ))}
                             </div>
@@ -130,44 +142,26 @@ export function HousingGuide({ onBack }: HousingGuideProps) {
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="relative rounded-[2.5rem] bg-stone-900 text-white p-12 overflow-hidden mb-24"
+                    className="relative rounded-[2.5rem] bg-slate-900 text-white p-8 sm:p-12 overflow-hidden mb-24 border border-white/10"
                 >
                     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
 
-                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-stone-500/20 text-stone-300 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-stone-500/30">
+                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-center lg:text-left">
+                        <div className="flex flex-col items-center lg:items-start">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 border border-primary/20">
                                 <HelpCircle size={14} />
                                 Verificación de Contratos
                             </div>
-                            <h2 className="font-serif text-4xl mb-6 leading-tight">¿Vas a firmar un nuevo contrato?</h2>
-                            <p className="text-stone-300 text-lg font-light mb-8">
+                            <h2 className="font-serif text-3xl sm:text-4xl mb-6 leading-tight">¿Vas a firmar un nuevo contrato?</h2>
+                            <p className="text-slate-400 text-base sm:text-lg font-light mb-8 max-w-xl">
                                 Sube el borrador de tu contrato ahora. STARK analizará si tiene cláusulas abusivas, si la fianza es legal y si cumple con la nueva Ley de Vivienda 2023.
                             </p>
                             <button
                                 onClick={onBack}
-                                className="px-8 py-4 bg-white text-stone-900 rounded-full font-bold hover:bg-stone-200 transition-all shadow-lg active:scale-95"
+                                className="px-8 py-4 bg-primary text-slate-900 rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/20 active:scale-95 w-full sm:w-auto"
                             >
-                                Subir Contrato para Análisis
+                                {t('housing_page.btn_ask')}
                             </button>
-                        </div>
-                        <div className="hidden lg:block">
-                            <div className="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10">
-                                <ul className="space-y-4">
-                                    <li className="flex items-center gap-3 text-stone-200">
-                                        <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">✓</div>
-                                        <span>Detección de honorarios ilegales</span>
-                                    </li>
-                                    <li className="flex items-center gap-3 text-stone-200">
-                                        <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">✓</div>
-                                        <span>Verificación de prórrogas legales</span>
-                                    </li>
-                                    <li className="flex items-center gap-3 text-stone-200">
-                                        <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">✓</div>
-                                        <span>Cálculo de suministros y gastos</span>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </motion.div>

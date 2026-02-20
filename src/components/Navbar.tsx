@@ -60,7 +60,7 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                         {tenant ? (
                             !tenant?.config?.show_logo && (
                                 <span className="text-[10px] uppercase tracking-wider font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full w-fit mt-0.5 border border-primary/20">
-                                    Panel de Gestión
+                                    {t('tenant_dashboard.admin_panel')}
                                 </span>
                             )
                         ) : (
@@ -88,7 +88,7 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                                 className="text-xs font-bold text-slate-400 hover:text-white transition-colors border-l border-white/10 pl-6 h-8 flex items-center gap-2"
                             >
                                 <Building2 size={14} className="text-primary/50" />
-                                {['documents', 'templates', 'organization', 'affiliates', 'settings'].includes(currentView || '') ? 'Mi Dashboard' : (t('nav.documents') || 'Mis documentos')}
+                                {['documents', 'templates', 'organization', 'affiliates', 'settings'].includes(currentView || '') ? t('nav.my_dashboard') : (t('nav.documents') || 'Mis documentos')}
                             </button>
 
                             {/* 3. Logo para cambiar idioma */}

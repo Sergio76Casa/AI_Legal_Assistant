@@ -12,7 +12,204 @@
         "admin_badge": "Admin",
         "superadmin_dashboard": "Panel SUPERADMIN",
         "manage_templates": "Administrar Plantillas PDF",
-        "manage_org": "Administrar Organización"
+        "manage_org": "Administrar Organización",
+        "my_dashboard": "Mi Dashboard"
+    },
+    "footer": {
+        "sections": {
+            "services": "Servicios",
+            "legal": "Legal",
+            "contact": "Contacto"
+        },
+        "links": {
+            "my_documents": "Mis Documentos",
+            "pdf_templates": "Plantillas PDF",
+            "my_organization": "Mi Organización",
+            "affiliate_program": "Programa de Afiliados",
+            "privacy_policy": "Política de Privacidad",
+            "cookie_policy": "Política de Cookies",
+            "legal_notice": "Aviso Legal"
+        },
+        "rights": "Todos los derechos reservados"
+    },
+    "modals": {
+        "common": {
+            "close": "Cerrar",
+            "understand": "Entendido",
+            "update_date": "Última actualización: Febrero 2026",
+            "query_contact": "Para cualquier consulta sobre este documento, contacta con {{email}}"
+        },
+        "legal": {
+            "privacy_intro": "En LegalFlow nos tomamos muy en serio la protección de tus datos. Esta política explica cómo recopilamos, usamos y protegemos tu información personal.",
+            "cookies_intro": "Esta política explica cómo utilizamos las cookies y tecnologías similares en legalflow.digital.",
+            "legal_intro": "Este aviso regula las condiciones generales de uso del portal legalflow.digital.",
+            "privacy_content": [
+                {
+                    "title": "1. Responsable del Tratamiento",
+                    "body": "LegalFlow Technologies, S.L. (en adelante, \"LegalFlow\") con domicilio social en Madrid, España. Email de contacto: privacidad@legalflow.digital."
+                },
+                {
+                    "title": "2. Datos que Recopilamos",
+                    "body": "Recopilamos los datos que nos proporcionas al registrarte (nombre, email, organización), los documentos que subes para su análisis por IA, datos de uso y navegación, e información de facturación procesada de forma segura por Stripe."
+                },
+                {
+                    "title": "3. Finalidad del Tratamiento",
+                    "body": "Tus datos se utilizan para: prestación del servicio de asistencia legal con IA, gestión de tu cuenta y suscripción, mejora del servicio mediante análisis agregados y anónimos, comunicaciones relacionadas con el servicio y cumplimiento de obligaciones legales."
+                },
+                {
+                    "title": "4. Base Legal",
+                    "body": "El tratamiento se basa en: la ejecución del contrato de servicio (Art. 6.1.b RGPD), tu consentimiento explícito para el procesamiento de documentos (Art. 6.1.a RGPD), el interés legítimo para mejora del servicio (Art. 6.1.f RGPD) y el cumplimiento de obligaciones legales (Art. 6.1.c RGPD)."
+                },
+                {
+                    "title": "5. Tecnología Iron Silo™",
+                    "body": "Todos los documentos se procesan con nuestra tecnología Iron Silo™ de cifrado de extremo a extremo. Los datos se almacenan en servidores ubicados en la UE, cumpliendo con el RGPD. No compartimos documentos con terceros y la IA procesa los datos en tiempo real sin almacenamiento persistente del contenido analizado."
+                },
+                {
+                    "title": "6. Conservación de Datos",
+                    "body": "Tus datos personales se conservan mientras mantengas tu cuenta activa. Los documentos subidos pueden ser eliminados por ti en cualquier momento. Tras la cancelación de la cuenta, los datos se eliminan en un plazo máximo de 30 días, salvo obligación legal de conservación."
+                },
+                {
+                    "title": "7. Derechos del Usuario",
+                    "body": "Puedes ejercer tus derechos de acceso, rectificación, supresión, portabilidad, limitación y oposición contactando a privacidad@legalflow.digital. También tienes derecho a presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD)."
+                },
+                {
+                    "title": "8. Transferencias Internacionales",
+                    "body": "No realizamos transferencias de datos fuera del Espacio Económico Europeo. Todos los servidores y servicios de procesamiento se encuentran en la UE."
+                }
+            ],
+            "cookies_content": [
+                {
+                    "title": "1. ¿Qué son las Cookies?",
+                    "body": "Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas nuestra web. Nos ayudan a mejorar tu experiencia y a entender cómo usas el servicio."
+                },
+                {
+                    "title": "2. Cookies Técnicas (Necesarias)",
+                    "body": "Estas cookies son esenciales para el funcionamiento de la plataforma: sesión de autenticación (mantiene tu sesión iniciada), preferencias de idioma (recuerda tu idioma seleccionado) y token CSRF (protección de seguridad contra ataques). No se pueden desactivar."
+                },
+                {
+                    "title": "3. Cookies de Afiliación",
+                    "body": "Si llegas a LegalFlow a través de un enlace de afiliado, almacenamos una cookie de referencia (referral_code) durante 30 días para atribuir correctamente la recomendación. Esta cookie solo contiene el código del afiliado."
+                },
+                {
+                    "title": "4. Cookies Analíticas",
+                    "body": "Utilizamos cookies analíticas propias para entender patrones de uso agregados. No utilizamos Google Analytics ni servicios de terceros que rastreen tu actividad en otros sitios. Los datos son completamente anónimos."
+                },
+                {
+                    "title": "5. Cookies de Terceros",
+                    "body": "Stripe (procesador de pagos): utiliza cookies estrictamente necesarias para procesar pagos de forma segura. Estas cookies están sujetas a la política de privacidad de Stripe. No utilizamos cookies publicitarias ni de redes sociales."
+                },
+                {
+                    "title": "6. Gestión de Cookies",
+                    "body": "Puedes configurar tu navegador para bloquear o eliminar cookies en cualquier momento. Ten en cuenta que desactivar las cookies técnicas puede afectar al funcionamiento de la plataforma. Para más información, consulta la ayuda de tu navegador."
+                },
+                {
+                    "title": "7. Actualizaciones",
+                    "body": "Esta política puede actualizarse periódicamente. La fecha de última actualización se muestra al final del documento. Te notificaremos cambios significativos por email."
+                }
+            ],
+            "legal_content": [
+                {
+                    "title": "1. Información General",
+                    "body": "En cumplimiento del deber de información recogido en el artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y del Comercio Electrónico, se detallan los datos del titular del sitio web."
+                },
+                {
+                    "title": "2. Titular del Sitio Web",
+                    "body": "El sitio web legalflow.digital es propiedad de LegalFlow Technologies, S.L., con NIF B12345678 y domicilio social en Madrid, España. Sociedad inscrita en el Registro Mercantil de Madrid."
+                },
+                {
+                    "title": "3. Propiedad Intelectual",
+                    "body": "Todos los contenidos del sitio web, incluyendo textos, gráficos, logotipos e imágenes, son propiedad de LegalFlow Technologies, S.L. o de sus licenciantes y están protegidos por las leyes de propiedad intelectual."
+                },
+                {
+                    "title": "4. Condiciones de Uso",
+                    "body": "El usuario se compromete a hacer un uso adecuado de los contenidos y servicios de la plataforma, evitando actividades ilícitas o contrarias a la buena fe y al orden público."
+                },
+                {
+                    "title": "5. Exclusión de Responsabilidad",
+                    "body": "LegalFlow no se hace responsable de los daños y perjuicios que pudieran derivarse del uso de la información contenida en el sitio web, ni de la interrupción del servicio o la presencia de virus."
+                },
+                {
+                    "title": "6. Legislación Aplicable",
+                    "body": "Las presentes condiciones se rigen por la legislación española. Para cualquier controversia, las partes se someten a los juzgados y tribunales de la ciudad de Madrid."
+                }
+            ]
+        },
+        "services": {
+            "tagline": "Herramientas LegalFlow Platform",
+            "certified": "Tecnología Certificada",
+            "documents": {
+                "title": "Gestión Inteligente de Documentos",
+                "desc": "Nuestra plataforma utiliza IA de última generación para analizar y organizar tus documentos legales de forma automática.",
+                "features": [
+                    {
+                        "title": "Análisis IA Experimental",
+                        "desc": "Extrae datos clave, fechas y obligaciones de cualquier PDF o imagen legal."
+                    },
+                    {
+                        "title": "Tecnología Iron Silo™",
+                        "desc": "Tus documentos se cifran con estándares militares y se almacenan en servidores seguros de la UE."
+                    },
+                    {
+                        "title": "Búsqueda Semántica",
+                        "desc": "Encuentra información dentro de tus documentos haciendo preguntas en lenguaje natural."
+                    }
+                ]
+            },
+            "templates": {
+                "title": "Plantillas PDF Dinámicas",
+                "desc": "Reduce el trabajo administrativo creando documentos complejos en segundos utilizando nuestras plantillas inteligentes.",
+                "features": [
+                    {
+                        "title": "Generación Automática",
+                        "desc": "Rellena datos de clientes y casos automáticamente en tus modelos de contratos."
+                    },
+                    {
+                        "title": "Personalización Total",
+                        "desc": "Adapta los logos, fuentes y estilos de cada documento a tu identidad corporativa."
+                    },
+                    {
+                        "title": "Exportación Instantánea",
+                        "desc": "Genera archivos PDF listos para firmar con un solo clic."
+                    }
+                ]
+            },
+            "organization": {
+                "title": "Mi Organización Digital",
+                "desc": "Toma el control total de tu marca y de cómo tus clientes interactúan con tu despacho o empresa.",
+                "features": [
+                    {
+                        "title": "Marca Blanca",
+                        "desc": "Personaliza tu portal con tus propios colores, logos y dominio personalizado."
+                    },
+                    {
+                        "title": "Gestión de Sedes",
+                        "desc": "Configura múltiples oficinas físicas y puntos de contacto para tus clientes."
+                    },
+                    {
+                        "title": "Control de Acceso",
+                        "desc": "Asigna roles y permisos específicos para cada miembro de tu equipo."
+                    }
+                ]
+            },
+            "affiliates": {
+                "title": "Programa de Afiliados Pro",
+                "desc": "Convierte tus recomendaciones en ingresos recurrentes uniéndote a nuestra red de partners.",
+                "features": [
+                    {
+                        "title": "Comisiones Recurrentes",
+                        "desc": "Gana un porcentaje de cada suscripción mensual de los clientes que refieras."
+                    },
+                    {
+                        "title": "Panel de Control",
+                        "desc": "Monitoriza tus clics, registros y ganancias en tiempo real con estadísticas detalladas."
+                    },
+                    {
+                        "title": "Material de Marketing",
+                        "desc": "Acceso a banners, enlaces y materiales diseñados para maximizar tus conversiones."
+                    }
+                ]
+            }
+        }
     },
     "hero": {
         "title": "Tu Consultor LegalFlow en España",
@@ -430,8 +627,9 @@
         },
         "hero": {
             "new_tag": "Nuevo: Arquitectura Multi-Tenant Certificada",
-            "title": "Tu nueva vida en España, sin complicaciones legales",
+            "title": "Tu nueva vida en España, <1>sin complicaciones</1> legales",
             "subtitle": "Gestión Legal & Cultural",
+            "active_ai_tag": "Procesando Visado en Tiempo Real • IA Activa",
             "desc": "El primer partner legal impulsado por IA diseñado específicamente para expatriados. Asegura tu visado, residencia y trámites con confianza y claridad absoluta.",
             "start_free": "Empezar ahora",
             "book_demo": "Ver demostración"
@@ -439,6 +637,11 @@
         "features": {
             "title": "¿Por qué LegalFlow?",
             "subtitle": "Diseñado para departamentos de RRHH y Gestorías.",
+            "tech_details": "Detalles técnicos",
+            "response_time": "Tiempo de Respuesta",
+            "speed_advantage": "50% más rápido que la gestión tradicional",
+            "tech_features": "Características Tech",
+            "request_whitepaper": "Solicitar Whitepaper",
             "security_title": "Seguridad Iron Silo™",
             "security_desc": "Datos aislados criptográficamente. Tu organización es una fortaleza impenetrable.",
             "ai_title": "Motor STARK 2.0",
@@ -451,11 +654,100 @@
             "mobile_title": "Experiencia App-Like",
             "mobile_desc": "Tus empleados acceden desde cualquier lugar."
         },
-        "cta": {
-            "title": "¿Listo para asegurar tu futuro en España?",
-            "desc": "Únete a miles de expatriados que han simplificado sus trámites legales con nuestra inteligencia artificial.",
-            "btn": "Crear mi cuenta gratuita"
+        "partners": {
+            "title": "Programa de Partners",
+            "subtitle": "¿Conoces a otros <1>profesionales</1>?",
+            "desc": "Gana comisiones recurrentes recomendando la tecnología líder en extranjería. Cada cliente que traigas significa ingresos pasivos para ti, mes a mes.",
+            "commissions": "Comisiones del 20% recurrente",
+            "commissions_desc": "Por cada despacho o agencia que se suscriba con tu enlace",
+            "dashboard": "Panel de seguimiento en tiempo real",
+            "dashboard_desc": "Visualiza referidos, conversiones y pagos",
+            "marketing": "Material de marketing exclusivo",
+            "marketing_desc": "Banners, demos y contenido para compartir",
+            "join_btn": "Unirme al programa",
+            "golden_close": "Cierre Dorado",
+            "use_free_title": "Usa LegalFlow <1>gratis</1>",
+            "use_free_desc": "Si traes a <1>3 profesionales</1> que se suscriban, tu plan <2>Business te sale a coste cero</2>. Así de simple.",
+            "step1": "Regístrate como Partner",
+            "step2": "Comparte tu enlace con 3 profesionales",
+            "step3": "¡Tu Business es gratis para siempre!",
+            "savings": "Ahorras 1.788€ al año",
+            "savings_desc": "Valor del plan Business anual completo"
         },
+        "pricing": {
+            "title": "Planes & Precios",
+            "subtitle": "Escala tu negocio con <1>IA legal</1>",
+            "desc": "Elige el plan que mejor se adapte al volumen de tu despacho o agencia. Sin contratos de permanencia.",
+            "monthly": "Mensual",
+            "yearly": "Anual",
+            "two_months_free": "2 meses gratis",
+            "popular_badge": "El más popular",
+            "from": "Desde",
+            "price_suffix": "/mes",
+            "yearly_suffix": "/año",
+            "savings_calc": "Ahorras {{amount}}€ al año (2 meses gratis)",
+            "custom_quote": "Presupuesto a medida",
+            "cta_start": "Comenzar Ahora",
+            "cta_choose": "Elegir Business",
+            "cta_contact": "Contactar Ventas",
+            "footer_trust": "Pago seguro con Stripe • Sin permanencia • Datos protegidos con Iron Silo™",
+            "footer_volume": "¿Necesitas más de 50 expedientes?",
+            "footer_contact": "Habla con nuestro equipo comercial →",
+            "plans": {
+                "starter": {
+                    "name": "Starter",
+                    "target": "Profesionales Independientes",
+                    "desc": "Ideal para gestores, consultores y expertos en movilidad que gestionan pocos expedientes al mes.",
+                    "features": [
+                        "Hasta 10 expedientes nuevos/mes",
+                        "Escaneo inteligente de documentos (OCR)",
+                        "Acceso al Motor STARK 2.0 básico",
+                        "Panel de gestión de casos",
+                        "Soporte vía email"
+                    ]
+                },
+                "business": {
+                    "name": "Business",
+                    "target": "Despachos y Agencias",
+                    "desc": "Diseñado para despachos, agencias de relocation y consultorías que necesitan velocidad y colaboración.",
+                    "features": [
+                        "Hasta 50 expedientes nuevos/mes",
+                        "Seguridad Iron Silo™ avanzada",
+                        "Hasta 3 cuentas de usuario (gestores)",
+                        "Traducción automática de documentos",
+                        "Motor STARK 2.0 completo",
+                        "Soporte prioritario 24/7"
+                    ]
+                },
+                "enterprise": {
+                    "name": "Enterprise",
+                    "target": "Grandes Firmas y Corporaciones",
+                    "desc": "Para organizaciones con alto volumen de expedientes, departamentos de RRHH y necesidad de personalización.",
+                    "features": [
+                        "Expedientes ilimitados",
+                        "Integración vía API con sistemas propios",
+                        "Arquitectura Multi-Tenant dedicada",
+                        "Formación personalizada para el equipo",
+                        "Gestor de cuenta exclusivo",
+                        "SLA garantizado"
+                    ]
+                }
+            }
+        },
+        "trust_bar": {
+            "gdpr": "GDPR Compliant",
+            "ministry": "Ministerio de Justicia",
+            "secured": "Secured by AI",
+            "privacy": "EU Data Privacy"
+        },
+        "cta": {
+            "title": "Digitaliza tu despacho con <1>IA de extranjería</1>",
+            "desc": "Únete a los profesionales que ya gestionan expedientes, documentos y consultas migratorias en la mitad de tiempo con LegalFlow.",
+            "btn": "Empezar prueba gratuita",
+            "btn_demo": "Solicitar una demo",
+            "footer": "Sin tarjeta de crédito. Sin permanencia. Configuración en 2 minutos."
+        },
+        "footer_rights": "Todos los derechos reservados.",
         "footer": "Todos los derechos reservados."
     },
     "org_panel": {
@@ -605,7 +897,10 @@
         "back": "Volver",
         "admin_panel": "Panel de Administración",
         "plan": "Plan",
-        "documents": "Documentos",
+        "documents": "Mis Documentos",
+        "templates": "Plantillas PDF",
+        "organization": "Mi Organización",
+        "affiliates": "Programa de Afiliados",
         "settings": "Configuración"
     },
     "demo": {
@@ -653,5 +948,200 @@
         "customize_code": "Personalizar Código",
         "customize_hint": "Puedes personalizar tu código una sola vez.",
         "save": "Guardar"
+    },
+    "procedures_page": {
+        "back": "Volver al inicio",
+        "title": "Guía Integral de <1>Trámites Legales</1>",
+        "desc": "Simplificamos la burocracia española para que puedas enfocarte en tu nueva vida. Información actualizada sobre extranjería, nacionalidad y derechos.",
+        "common_questions": "Preguntas comunes",
+        "analysis_banner": {
+            "tag": "Análisis Inteligente por IA",
+            "title": "¿Recibiste una carta de la Oficina de Extranjería?",
+            "desc": "No te preocupes por el lenguaje técnico. Súbela ahora y <1>STARK lo analizará por ti</1> en segundos.",
+            "upload_btn": "Subir foto o documento",
+            "processing": "Procesando...",
+            "success": "¡Analizado!",
+            "formats": "Formatos: PDF, JPG, PNG.",
+            "privacy": "Privacidad garantizada bajo cifrado.",
+            "login_required": "Por favor, inicia sesión para analizar tus documentos.",
+            "error_types": "Solo se permiten archivos PDF, JPG o PNG",
+            "chat_msg": "He subido un documento: {{name}}. Por favor, analízalo y dime si hay plazos o requisitos importantes."
+        },
+        "items": {
+            "residencia": {
+                "title": "Residencia y Estancia",
+                "desc": "Todo sobre NIE, TIE, Arraigo Social, Laboral y Familiar. Te guiamos en cada paso.",
+                "q1": "¿Cómo obtengo el arraigo social?",
+                "q2": "Diferencia entre NIE y TIE",
+                "q3": "Requisitos para reagrupación familiar"
+            },
+            "nacionalidad": {
+                "title": "Nacionalidad Española",
+                "desc": "Exámenes CCSE/DELE, plazos de residencia y presentación telemática.",
+                "q1": "¿Cuántos años necesito para la nacionalidad?",
+                "q2": "¿Cómo es el examen CCSE?",
+                "q3": "Documentos para nacionalidad por residencia"
+            },
+            "trabajo": {
+                "title": "Permisos de Trabajo",
+                "desc": "Cuenta propia, cuenta ajena, profesionales altamente cualificados y nómadas digitales.",
+                "q1": "Requisitos para Visa de Nómada Digital",
+                "q2": "¿Puedo trabajar con mi residencia de estudiante?",
+                "q3": "Modificación de estancia a trabajo"
+            },
+            "asilo": {
+                "title": "Protección Internacional",
+                "desc": "Asilo, protección subsidiaria y razones humanitarias.",
+                "q1": "¿Cómo pido cita para asilo?",
+                "q2": "Derechos durante la espera de asilo",
+                "q3": "¿Qué es la tarjeta roja?"
+            }
+        }
+    },
+    "halal_page": {
+        "back": "Volver al dashboard",
+        "title": "Vida <1>Halal & Cultural</1>",
+        "desc": "Guía práctica para la integración cultural y el estilo de vida musulmán en España. Encuentra servicios certificados y consejos de convivencia.",
+        "common_topics": "Temas de interés",
+        "btn_ask": "Preguntar sobre esto",
+        "items": {
+            "alimentacion": {
+                "title": "Alimentación Halal",
+                "desc": "Cómo identificar carnicerías, restaurantes y productos certificados por el Instituto Halal de España.",
+                "q1": "¿Dónde comprar carne halal en mi ciudad?",
+                "q2": "Lista de aditivos no halal comunes",
+                "q3": "Restaurantes con certificación oficial"
+            },
+            "mezquitas": {
+                "title": "Centros y Mezquitas",
+                "desc": "Localización de los principales centros culturales islámicos y horarios de oración.",
+                "q1": "Mezquita más cercana a mi ubicación",
+                "q2": "Horarios de rezo en Madrid/Barcelona",
+                "q3": "Actividades para niños en centros culturales"
+            },
+            "derechos": {
+                "title": "Derechos Laborales",
+                "desc": "Información sobre festividades religiosas y el Acuerdo de Cooperación de 1992.",
+                "q1": "¿Puedo pedir el día libre por Eid?",
+                "q2": "Derecho al rezo en el trabajo",
+                "q3": "Cómo gestionar el ayuno de Ramadán en la oficina"
+            },
+            "educacion": {
+                "title": "Educación y Familia",
+                "desc": "Enseñanza religiosa en colegios públicos y actividades para jóvenes.",
+                "q1": "¿Cómo solicitar clases de religión islámica?",
+                "q2": "Campamentos de verano para jóvenes",
+                "q3": "Consejos para la integración escolar"
+            }
+        }
+    },
+    "housing_page": {
+        "back": "Volver al dashboard",
+        "title": "Guía de <1>Vivienda & Alquiler</1>",
+        "desc": "Asegura tu hogar en España. Te ayudamos a entender los contratos, evitar estafas y conocer tus derechos como inquilino.",
+        "common_steps": "Pasos esenciales",
+        "btn_ask": "Consultar duda",
+        "items": {
+            "contratos": {
+                "title": "Contratos de Alquiler",
+                "desc": "Análisis de la Ley de Arrendamientos Urbanos (LAU). Duración, fianzas y cláusulas abusivas.",
+                "q1": "¿Cuál es la duración mínima del contrato?",
+                "q2": "¿Cuánto me pueden pedir de fianza?",
+                "q3": "¿Qué reparaciones debe pagar el casero?"
+            },
+            "requisitos": {
+                "title": "Documentación Necesaria",
+                "desc": "Nóminas, avales bancarios y el seguro de impago de alquiler. Qué piden los propietarios.",
+                "q1": "¿Puedo alquilar solo con mi pasaporte?",
+                "q2": "¿Qué es un seguro de impago?",
+                "q3": "Cómo demostrar solvencia sin nómina española"
+            },
+            "zonas": {
+                "title": "Mejores Zonas",
+                "desc": "Análisis de precios por barrios, transporte público y servicios cercanos.",
+                "q1": "Barrios más económicos y seguros",
+                "q2": "Zonas mejor conectadas por transporte",
+                "q3": "Pueblos cercanos con buena calidad de vida"
+            },
+            "suministros": {
+                "title": "Suministros y Empadronamiento",
+                "desc": "Cómo dar de alta luz, agua, internet y la importancia del padrón municipal.",
+                "q1": "¿Cómo me empadrono si no tengo contrato todavía?",
+                "q2": "Documentos para dar de alta la luz",
+                "q3": "Diferencia entre padrón y residencia"
+            }
+        }
+    },
+    "affiliate_terms": {
+        "back": "Volver",
+        "title": "Términos del Programa de Afiliados",
+        "last_update": "Última actualización: Febrero 2026 • LegalFlow Pro",
+        "sections": {
+            "eligibility": {
+                "title": "Elegibilidad",
+                "content": "El Programa de Afiliados de LegalFlow está abierto a profesionales del sector legal, gestores administrativos, agencias de relocation, consultorías de inmigración y creadores de contenido que cumplan con la normativa vigente en España.",
+                "sub": "Para participar, el solicitante debe ser mayor de edad y disponer de capacidad legal para celebrar contratos. LegalFlow se reserva el derecho de aceptar o rechazar solicitudes de afiliación a su discreción."
+            },
+            "commissions": {
+                "title": "Estructura de Comisiones",
+                "content": "Se otorgará una comisión del <1>20% recurrente</1> (mensual o anual) por cada nuevo suscriptor que contrate un plan de pago a través del enlace personalizado del afiliado.",
+                "example": "<1>Ejemplo:</1> Si refieres un suscriptor al Plan Business (149€/mes), recibirás <1>29,80€/mes</1> de forma recurrente mientras el suscriptor mantenga su plan activo."
+            },
+            "cookies": {
+                "title": "Atribución y Cookies",
+                "content": "Utilizamos una ventana de atribución de <1>30 días</1>. Si un cliente potencial hace clic en tu enlace de afiliado y completa la suscripción dentro de ese periodo, la comisión te será asignada automáticamente.",
+                "sub": "La cookie de seguimiento se almacena en el navegador del visitante con una duración de 30 días naturales. En caso de que el visitante haga clic en el enlace de otro afiliado, prevalecerá la atribución más reciente (last-click attribution)."
+            },
+            "payments": {
+                "title": "Pagos y Liquidación",
+                "content": "Las comisiones se liquidarán <1>mensualmente</1> a través de Stripe o transferencia bancaria, una vez alcanzado un umbral mínimo de <1>50€</1>.",
+                "details": [
+                    "Las comisiones se calculan sobre el importe neto (sin IVA) de la suscripción.",
+                    "El afiliado es responsable de cumplir con sus obligaciones fiscales.",
+                    "Los pagos pendientes por debajo del umbral se acumulan para el siguiente periodo."
+                ]
+            },
+            "ethics": {
+                "title": "Ética, Conducta y Spam",
+                "content": "Queda <1>estrictamente prohibido</1> el uso de técnicas de spam, publicidad engañosa, suplantación de identidad o cualquier práctica que pueda dañar la reputación de LegalFlow.",
+                "warning": "<1>⚠️ Importante:</1> El incumplimiento de esta norma supondrá la <1>baja inmediata</1> del programa y la pérdida de todas las comisiones acumuladas y pendientes de pago."
+            },
+            "modifications": {
+                "title": "Modificaciones y Vigencia",
+                "content": "LegalFlow se reserva el derecho de modificar estos términos en cualquier momento, notificando previamente al afiliado por correo electrónico con un mínimo de 15 días de antelación.",
+                "sub": "La participación continuada en el programa tras la notificación de cambios se entenderá como aceptación de los nuevos términos. El afiliado puede darse de baja del programa en cualquier momento sin penalización."
+            }
+        },
+        "footer": "© 2026 LegalFlow Pro. Todos los derechos reservados.<br />Estos términos están sujetos a la legislación española y a la jurisdicción de los tribunales de Madrid."
+    },
+    "register_affiliate": {
+        "back": "Volver",
+        "title": "Únete al Programa de Partners",
+        "desc": "Gana un <1>20% de comisión recurrente</1> por cada despacho o agencia que se suscriba con tu enlace.",
+        "success_title": "¡Solicitud recibida!",
+        "success_desc": "Revisaremos tu solicitud en las próximas <1>24-48 horas</1>. Recibirás un email con tu enlace de afiliado y acceso al panel de seguimiento.",
+        "success_btn": "Volver a LegalFlow",
+        "form": {
+            "name": "Nombre completo *",
+            "name_placeholder": "Tu nombre",
+            "email": "Email profesional *",
+            "email_placeholder": "tu@despacho.com",
+            "company": "Empresa / Despacho",
+            "company_placeholder": "Nombre del despacho o agencia",
+            "role": "Rol profesional",
+            "role_select": "Selecciona tu perfil",
+            "roles": {
+                "abogado": "Abogado/a de Extranjería",
+                "gestor": "Gestor/a Administrativo/a",
+                "consultor": "Consultor/a de Inmigración",
+                "relocation": "Agente de Relocation",
+                "rrhh": "Departamento de RRHH",
+                "creador": "Creador/a de Contenido",
+                "otro": "Otro"
+            },
+            "terms": "He leído y acepto los <1>Términos y Condiciones del Programa de Afiliados</1>, incluyendo la política de comisiones (20% recurrente), la ventana de atribución de 30 días y las normas de conducta. *",
+            "submit": "Solicitar acceso al programa",
+            "footer": "Procesaremos tu solicitud en 24-48h. Sin compromiso."
+        }
     }
 }

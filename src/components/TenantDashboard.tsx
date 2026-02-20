@@ -56,20 +56,20 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
 
     const tabs = [
-        { id: 'documents', label: 'Mis Documentos', icon: FileText },
-        { id: 'templates', label: 'Plantillas PDF', icon: LayoutGrid, adminOnly: true },
-        { id: 'organization', label: 'Mi Organización', icon: Building2, adminOnly: true },
-        { id: 'affiliates', label: 'Programa de Afiliados', icon: TrendingUp },
-        { id: 'settings', label: 'Configuración', icon: Settings, adminOnly: true },
+        { id: 'documents', label: t('tenant_dashboard.documents'), icon: FileText },
+        { id: 'templates', label: t('tenant_dashboard.templates'), icon: LayoutGrid, adminOnly: true },
+        { id: 'organization', label: t('tenant_dashboard.organization'), icon: Building2, adminOnly: true },
+        { id: 'affiliates', label: t('tenant_dashboard.affiliates'), icon: TrendingUp },
+        { id: 'settings', label: t('tenant_dashboard.settings'), icon: Settings, adminOnly: true },
     ];
 
     const filteredTabs = tabs.filter(tab => !tab.adminOnly || isAdmin);
 
     return (
         <div className="min-h-screen bg-[#0a0f1d] pb-20 pt-12">
-            <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-6xl px-4 md:px-6">
                 {/* 1. Bloque Superior (Identidad y Contexto) */}
-                <div className="mb-12">
+                <div className="mb-10">
                     <button
                         onClick={onBack}
                         className="mb-6 flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-white transition-colors group"
@@ -78,38 +78,40 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                         {t('tenant_dashboard.back')}
                     </button>
 
-                    <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-3">
+                    <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-3">
                         {tenant.name}
                     </h1>
 
-                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500/80">
-                        <span>Rol:</span>
-                        <span className="text-primary font-black">{isAdmin ? 'Administrador' : 'Usuario'}</span>
-                        <span className="mx-2 opacity-20">|</span>
-                        <span className="uppercase tracking-[0.15em]">Email: <span className="text-slate-500 font-bold not-italic">{user?.email}</span></span>
+                    <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500/80">
+                        <div className="flex items-center gap-2">
+                            <span>{t('org_panel.headers.role') || 'Rol'}:</span>
+                            <span className="text-primary font-black uppercase">{isAdmin ? t('org_panel.role_admin') : t('org_panel.role_user')}</span>
+                        </div>
+                        <span className="hidden xs:inline opacity-20">|</span>
+                        <span className="lowercase tracking-[0.1em] opacity-80">{user?.email}</span>
                     </div>
                 </div>
 
                 {/* 2. Navegación en Fila (Secciones Horizontales) */}
-                <div className="mb-12 flex items-center gap-1 bg-[#0f172a] p-1 rounded-xl border border-white/5 w-full overflow-x-auto">
+                <div className="mb-10 flex items-center gap-1 bg-[#0f172a] p-1.5 rounded-2xl border border-white/5 w-full overflow-x-auto scrollbar-hide no-scrollbar">
                     {filteredTabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => handleTabChange(tab.id)}
                             className={cn(
-                                "flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-lg text-[10px] font-black uppercase tracking-[0.15em] transition-all relative overflow-hidden group",
+                                "flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-[0.15em] transition-all relative overflow-hidden group min-w-[140px] md:min-w-0 md:max-w-none",
                                 activeTab === tab.id
                                     ? "text-primary bg-primary/10 shadow-[inset_0_0_12px_rgba(19,236,200,0.05)]"
                                     : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
                             )}
                         >
-                            <tab.icon size={14} className={cn(
+                            <tab.icon size={16} className={cn(
                                 "transition-transform duration-300",
                                 activeTab === tab.id ? "scale-110" : "group-hover:scale-110"
                             )} />
-                            <span className="truncate">{tab.label}</span>
+                            <span className="truncate whitespace-nowrap">{tab.label}</span>
                             {activeTab === tab.id && (
-                                <div className="absolute bottom-0 left-1 right-1 h-0.5 bg-primary shadow-[0_0_8px_rgba(19,236,200,0.5)] rounded-full" />
+                                <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary shadow-[0_0_8px_rgba(19,236,200,0.5)] rounded-full" />
                             )}
                         </button>
                     ))}

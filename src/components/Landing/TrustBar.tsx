@@ -1,9 +1,12 @@
+import { useTranslation } from 'react-i18next';
+
 export function TrustBar() {
+    const { t } = useTranslation();
     const partners = [
-        "GDPR Compliant",
-        "Ministerio de Justicia",
-        "Secured by AI",
-        "EU Data Privacy"
+        t('landing.trust_bar.gdpr'),
+        t('landing.trust_bar.ministry'),
+        t('landing.trust_bar.secured'),
+        t('landing.trust_bar.privacy')
     ];
 
     return (

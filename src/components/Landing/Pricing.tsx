@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface PricingProps {
     onCreateOrg: () => void;
@@ -7,61 +8,42 @@ interface PricingProps {
 }
 
 export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
+    const { t } = useTranslation();
     const [isYearly, setIsYearly] = useState(false);
 
     const plans = [
         {
             id: 'starter',
-            name: 'Starter',
-            target: 'Profesionales Independientes',
-            description: 'Ideal para gestores, consultores y expertos en movilidad que gestionan pocos expedientes al mes.',
+            name: t('landing.pricing.plans.starter.name'),
+            target: t('landing.pricing.plans.starter.target'),
+            description: t('landing.pricing.plans.starter.desc'),
             price: { monthly: 49, yearly: 470 },
             icon: 'person',
             popular: false,
-            cta: 'Comenzar Ahora',
-            features: [
-                'Hasta 10 expedientes nuevos/mes',
-                'Escaneo inteligente de documentos (OCR)',
-                'Acceso al Motor STARK 2.0 básico',
-                'Panel de gestión de casos',
-                'Soporte vía email'
-            ]
+            cta: t('landing.pricing.cta_start'),
+            features: t('landing.pricing.plans.starter.features', { returnObjects: true }) as string[]
         },
         {
             id: 'business',
-            name: 'Business',
-            target: 'Despachos y Agencias',
-            description: 'Diseñado para despachos, agencias de relocation y consultorías que necesitan velocidad y colaboración.',
+            name: t('landing.pricing.plans.business.name'),
+            target: t('landing.pricing.plans.business.target'),
+            description: t('landing.pricing.plans.business.desc'),
             price: { monthly: 149, yearly: 1430 },
             icon: 'groups',
             popular: true,
-            cta: 'Elegir Business',
-            features: [
-                'Hasta 50 expedientes nuevos/mes',
-                'Seguridad Iron Silo™ avanzada',
-                'Hasta 3 cuentas de usuario (gestores)',
-                'Traducción automática de documentos',
-                'Motor STARK 2.0 completo',
-                'Soporte prioritario 24/7'
-            ]
+            cta: t('landing.pricing.cta_choose'),
+            features: t('landing.pricing.plans.business.features', { returnObjects: true }) as string[]
         },
         {
             id: 'enterprise',
-            name: 'Enterprise',
-            target: 'Grandes Firmas y Corporaciones',
-            description: 'Para organizaciones con alto volumen de expedientes, departamentos de RRHH y necesidad de personalización.',
+            name: t('landing.pricing.plans.enterprise.name'),
+            target: t('landing.pricing.plans.enterprise.target'),
+            description: t('landing.pricing.plans.enterprise.desc'),
             price: { monthly: 399, yearly: null },
             icon: 'domain',
             popular: false,
-            cta: 'Contactar Ventas',
-            features: [
-                'Expedientes ilimitados',
-                'Integración vía API con sistemas propios',
-                'Arquitectura Multi-Tenant dedicada',
-                'Formación personalizada para el equipo',
-                'Gestor de cuenta exclusivo',
-                'SLA garantizado'
-            ]
+            cta: t('landing.pricing.cta_contact'),
+            features: t('landing.pricing.plans.enterprise.features', { returnObjects: true }) as string[]
         }
     ];
 
@@ -70,33 +52,37 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
             {/* Header */}
             <div className="text-center mb-16 space-y-4">
                 <h2 className="text-sm font-bold text-primary tracking-[0.2em] uppercase">
-                    Planes & Precios
+                    {t('landing.pricing.title')}
                 </h2>
                 <h3 className="font-serif text-4xl md:text-5xl text-white">
-                    Escala tu negocio con <span className="text-primary">IA legal</span>
+                    <Trans i18nKey="landing.pricing.subtitle">
+                        Escala tu negocio con <span className="text-primary">IA legal</span>
+                    </Trans>
                 </h3>
                 <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-                    Elige el plan que mejor se adapte al volumen de tu despacho o agencia. Sin contratos de permanencia.
+                    {t('landing.pricing.desc')}
                 </p>
             </div>
 
             {/* Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-16">
-                <span className={`text-sm font-bold transition-colors ${!isYearly ? 'text-white' : 'text-slate-500'}`}>
-                    Mensual
-                </span>
-                <button
-                    onClick={() => setIsYearly(!isYearly)}
-                    className={`relative w-14 h-7 rounded-full transition-colors ${isYearly ? 'bg-primary' : 'bg-white/10'}`}
-                >
-                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform ${isYearly ? 'translate-x-8' : 'translate-x-1'}`}></div>
-                </button>
-                <span className={`text-sm font-bold transition-colors ${isYearly ? 'text-white' : 'text-slate-500'}`}>
-                    Anual
-                </span>
+            <div className="flex flex-wrap items-center justify-center gap-4 mb-16 px-2">
+                <div className="flex items-center gap-4">
+                    <span className={`text-sm font-bold transition-colors ${!isYearly ? 'text-white' : 'text-slate-500'}`}>
+                        {t('landing.pricing.monthly')}
+                    </span>
+                    <button
+                        onClick={() => setIsYearly(!isYearly)}
+                        className={`relative w-14 h-7 rounded-full transition-colors ${isYearly ? 'bg-primary' : 'bg-white/10'}`}
+                    >
+                        <div className={`absolute top-1 w-5 h-5 rounded-full bg-white shadow-md transition-transform ${isYearly ? 'translate-x-8' : 'translate-x-1'}`}></div>
+                    </button>
+                    <span className={`text-sm font-bold transition-colors ${isYearly ? 'text-white' : 'text-slate-500'}`}>
+                        {t('landing.pricing.yearly')}
+                    </span>
+                </div>
                 {isYearly && (
-                    <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-bold border border-primary/30 animate-pulse">
-                        🎁 2 meses gratis
+                    <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-bold border border-primary/30 animate-pulse whitespace-nowrap">
+                        🎁 {t('landing.pricing.two_months_free')}
                     </span>
                 )}
             </div>
@@ -118,7 +104,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
                         {/* Popular Badge */}
                         {plan.popular && (
                             <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-xs font-black px-5 py-1.5 rounded-full shadow-lg shadow-primary/30 uppercase tracking-wider whitespace-nowrap">
-                                ⭐ El más popular
+                                ⭐ {t('landing.pricing.popular_badge')}
                             </div>
                         )}
                         {/* Icon + Name */}
@@ -136,7 +122,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
                             <div className="flex items-baseline gap-1">
                                 {plan.price.yearly === null ? (
                                     <>
-                                        <span className="text-lg text-slate-400 font-medium">Desde</span>
+                                        <span className="text-lg text-slate-400 font-medium">{t('landing.pricing.from')}</span>
                                         <span className="text-5xl font-black text-white tracking-tight ml-2">
                                             {plan.price.monthly}€
                                         </span>
@@ -147,17 +133,17 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
                                     </span>
                                 )}
                                 <span className="text-slate-500 text-sm font-medium">
-                                    /{isYearly && plan.price.yearly ? 'año' : 'mes'}
+                                    {isYearly && plan.price.yearly ? t('landing.pricing.yearly_suffix') : t('landing.pricing.price_suffix')}
                                 </span>
                             </div>
                             {isYearly && plan.price.yearly && (
                                 <p className="text-emerald-400 text-xs mt-2 font-medium flex items-center gap-1">
                                     <span className="material-symbols-outlined text-xs">savings</span>
-                                    Ahorras {plan.price.monthly * 12 - plan.price.yearly}€ al año (2 meses gratis)
+                                    {t('landing.pricing.savings_calc', { amount: plan.price.monthly * 12 - plan.price.yearly })}
                                 </p>
                             )}
                             {plan.price.yearly === null && (
-                                <p className="text-slate-500 text-xs mt-2">Presupuesto a medida</p>
+                                <p className="text-slate-500 text-xs mt-2">{t('landing.pricing.custom_quote')}</p>
                             )}
                         </div>
 
@@ -188,11 +174,11 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
             {/* Footer */}
             <div className="text-center mt-16 space-y-3">
                 <p className="text-slate-500 text-sm">
-                    💳 Pago seguro con Stripe • ✅ Sin permanencia • 🔒 Datos protegidos con Iron Silo™
+                    {t('landing.pricing.footer_trust')}
                 </p>
                 <p className="text-slate-600 text-xs">
-                    ¿Necesitas más de 50 expedientes?{' '}
-                    <button onClick={onBookDemo} className="text-primary hover:underline font-medium cursor-pointer">Habla con nuestro equipo comercial →</button>
+                    {t('landing.pricing.footer_volume')}{' '}
+                    <button onClick={onBookDemo} className="text-primary hover:underline font-medium cursor-pointer">{t('landing.pricing.footer_contact')}</button>
                 </p>
             </div>
         </section>

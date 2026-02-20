@@ -1,67 +1,78 @@
 import { useEffect } from 'react';
-import { ArrowLeft, Heart, Utensils, Globe, Sparkles, ChevronRight, BookmarkCheck, Users2 } from 'lucide-react';
+import { ArrowLeft, Heart, Utensils, Globe, Sparkles, ChevronRight, BookmarkCheck, Briefcase, GraduationCap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useChat } from '../lib/ChatContext';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface HalalCultureProps {
     onBack: () => void;
 }
 
-const sections = [
-    {
-        id: 'halal-food',
-        icon: <Utensils className="w-6 h-6" />,
-        title: 'Alimentación Halal',
-        description: 'Guía de aditivos, sellos de certificación y consejos para el supermercado en Europa.',
-        questions: [
-            '¿Qué aditivos E son Haram?',
-            '¿Cómo reconocer el sello del Instituto Halal?',
-            '¿Es el E120 permitido en la dieta Halal?',
-            'Consejos para comprar carne Halal en España'
-        ]
-    },
-    {
-        id: 'culture',
-        icon: <Globe className="w-6 h-6" />,
-        title: 'Protocolo y Cultura',
-        description: 'Entiende las costumbres locales, saludos y festividades para una mejor integración.',
-        questions: [
-            '¿Cómo saludar respetuosamente en España?',
-            '¿Cuáles son los horarios de comida típicos?',
-            'Derechos laborales en festividades islámicas',
-            'Calendario de festivos en España'
-        ]
-    },
-    {
-        id: 'community',
-        icon: <Users2 className="w-6 h-6" />,
-        title: 'Espacios de Comunidad',
-        description: 'Información sobre centros culturales, mezquitas y asociaciones de apoyo.',
-        questions: [
-            '¿Dónde hay mezquitas en mi ciudad?',
-            'Asociaciones de apoyo al inmigrante',
-            'Centros culturales árabes en Madrid/Barcelona'
-        ]
-    }
-];
-
 export function HalalCulture({ onBack }: HalalCultureProps) {
+    const { t } = useTranslation();
     const { sendMessage } = useChat();
+
+    const sections = [
+        {
+            id: 'alimentacion',
+            icon: <Utensils className="w-6 h-6" />,
+            title: t('halal_page.items.alimentacion.title'),
+            description: t('halal_page.items.alimentacion.desc'),
+            questions: [
+                t('halal_page.items.alimentacion.q1'),
+                t('halal_page.items.alimentacion.q2'),
+                t('halal_page.items.alimentacion.q3')
+            ]
+        },
+        {
+            id: 'mezquitas',
+            icon: <Globe className="w-6 h-6" />,
+            title: t('halal_page.items.mezquitas.title'),
+            description: t('halal_page.items.mezquitas.desc'),
+            questions: [
+                t('halal_page.items.mezquitas.q1'),
+                t('halal_page.items.mezquitas.q2'),
+                t('halal_page.items.mezquitas.q3')
+            ]
+        },
+        {
+            id: 'derechos',
+            icon: <Briefcase className="w-6 h-6" />,
+            title: t('halal_page.items.derechos.title'),
+            description: t('halal_page.items.derechos.desc'),
+            questions: [
+                t('halal_page.items.derechos.q1'),
+                t('halal_page.items.derechos.q2'),
+                t('halal_page.items.derechos.q3')
+            ]
+        },
+        {
+            id: 'educacion',
+            icon: <GraduationCap className="w-6 h-6" />,
+            title: t('halal_page.items.educacion.title'),
+            description: t('halal_page.items.educacion.desc'),
+            questions: [
+                t('halal_page.items.educacion.q1'),
+                t('halal_page.items.educacion.q2'),
+                t('halal_page.items.educacion.q3')
+            ]
+        }
+    ];
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
     return (
-        <div className="min-h-screen bg-emerald-50/30">
+        <div className="min-h-screen bg-[#0a0f1d]">
             {/* Header / Nav Area */}
-            <div className="max-w-7xl mx-auto px-6 pt-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-12">
                 <button
                     onClick={onBack}
-                    className="flex items-center gap-2 text-emerald-700 hover:text-primary transition-colors group mb-12"
+                    className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group mb-12"
                 >
                     <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    <span className="font-medium">Volver al inicio</span>
+                    <span className="font-medium">{t('halal_page.back')}</span>
                 </button>
 
                 <div className="max-w-3xl mb-16">
@@ -71,52 +82,54 @@ export function HalalCulture({ onBack }: HalalCultureProps) {
                         transition={{ duration: 0.5 }}
                     >
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="p-3 bg-white rounded-2xl text-emerald-600 shadow-sm border border-emerald-100">
+                            <div className="p-3 bg-white/5 rounded-2xl text-emerald-400 shadow-sm border border-white/10">
                                 <Heart className="w-8 h-8 fill-current" />
                             </div>
-                            <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-emerald-200">
-                                Vida & Cultura
+                            <span className="bg-emerald-500/10 text-emerald-400 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-emerald-500/20">
+                                {t('landing.trust_bar.secured')}
                             </span>
                         </div>
-                        <h1 className="font-serif text-5xl text-gray-900 mb-6 leading-tight">
-                            Tu Guía de <span className="text-emerald-600 italic">Vida Halal</span> y Cultura en España
+                        <h1 className="font-serif text-4xl sm:text-5xl text-white mb-6 leading-tight">
+                            <Trans i18nKey="halal_page.title">
+                                Vida <span className="text-emerald-400 italic">Halal & Cultural</span>
+                            </Trans>
                         </h1>
-                        <p className="text-xl text-gray-600 font-light leading-relaxed">
-                            Te ayudamos a mantener tus valores y sentirte como en casa. Información práctica sobre estilo de vida, alimentación y convivencia cultural.
+                        <p className="text-lg sm:text-xl text-slate-400 font-light leading-relaxed">
+                            {t('halal_page.desc')}
                         </p>
                     </motion.div>
                 </div>
 
                 {/* Grid de Secciones */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-20">
                     {sections.map((section, idx) => (
                         <motion.div
                             key={section.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: idx * 0.1 }}
-                            className="bg-white rounded-[2rem] p-8 border border-emerald-100 shadow-sm hover:shadow-md transition-all group"
+                            className="glass-card rounded-[2rem] p-6 sm:p-8 border border-white/5 hover:border-emerald-500/20 transition-all group"
                         >
                             <div className="flex items-start justify-between mb-8">
-                                <div className="p-4 bg-emerald-50 rounded-2xl text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                                <div className="p-4 bg-white/5 rounded-2xl text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
                                     {section.icon}
                                 </div>
                                 <Sparkles className="w-5 h-5 text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
 
-                            <h3 className="font-serif text-2xl text-gray-900 mb-4">{section.title}</h3>
-                            <p className="text-gray-600 mb-8 font-light min-h-[3rem]">{section.description}</p>
+                            <h3 className="font-serif text-2xl text-white mb-4">{section.title}</h3>
+                            <p className="text-slate-400 mb-8 font-light min-h-[3rem] text-sm md:text-base">{section.description}</p>
 
                             <div className="space-y-3">
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Consultar a STARK</p>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">{t('halal_page.common_topics')}</p>
                                 {section.questions.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className="w-full flex items-center justify-between p-4 bg-emerald-50/30 rounded-xl text-sm text-gray-700 hover:bg-emerald-600 hover:text-white transition-all text-left group/btn"
+                                        className="w-full flex items-center justify-between p-4 bg-white/5 rounded-xl text-sm text-slate-300 hover:bg-emerald-600 hover:text-white transition-all text-left group/btn"
                                     >
-                                        <span className="font-medium">{q}</span>
-                                        <ChevronRight className="w-4 h-4 opacity-0 group-hover/btn:opacity-100 transition-opacity" />
+                                        <span className="font-medium line-clamp-2">{q}</span>
+                                        <ChevronRight className="w-4 h-4 flex-shrink-0" />
                                     </button>
                                 ))}
                             </div>
@@ -129,37 +142,26 @@ export function HalalCulture({ onBack }: HalalCultureProps) {
                     initial={{ opacity: 0, scale: 0.95 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="relative rounded-[2.5rem] bg-emerald-950 text-white p-12 overflow-hidden mb-24"
+                    className="relative rounded-[2.5rem] bg-emerald-950/30 text-white p-8 sm:p-12 overflow-hidden mb-24 border border-emerald-500/10"
                 >
                     <div className="absolute inset-x-0 bottom-0 top-0 bg-[url('https://images.unsplash.com/photo-1594910413061-0ae6b5809761?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
 
-                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                        <div>
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-full text-xs font-bold uppercase tracking-widest mb-6 border border-emerald-500/30">
+                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center text-center lg:text-left">
+                        <div className="flex flex-col items-center lg:items-start">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-bold uppercase tracking-widest mb-6 border border-emerald-500/30">
                                 <BookmarkCheck size={14} />
                                 Expertos en Estilo de Vida
                             </div>
-                            <h2 className="font-serif text-4xl mb-6 leading-tight">¿Dudas sobre un producto o costumbre?</h2>
-                            <p className="text-emerald-100/80 text-lg font-light mb-8">
+                            <h2 className="font-serif text-3xl sm:text-4xl mb-6 leading-tight">¿Dudas sobre un producto o costumbre?</h2>
+                            <p className="text-emerald-100/60 text-base sm:text-lg font-light mb-8 max-w-xl">
                                 STARK está entrenado para responder cualquier duda sobre compatibilidad Halal o protocolo social en España. No te quedes con la duda.
                             </p>
                             <button
                                 onClick={() => sendMessage('¿Cómo puedo saber si un producto es Halal en España?')}
-                                className="px-8 py-4 bg-emerald-500 text-white rounded-full font-bold hover:bg-emerald-400 transition-all shadow-lg active:scale-95"
+                                className="px-8 py-4 bg-emerald-500 text-white rounded-lg font-bold hover:bg-emerald-400 transition-all shadow-lg active:scale-95 w-full sm:w-auto"
                             >
-                                Hablar con STARK ahora
+                                {t('halal_page.btn_ask')}
                             </button>
-                        </div>
-                        <div className="hidden lg:block">
-                            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20">
-                                <p className="italic text-emerald-50 font-light text-lg">
-                                    "STARK me ayudó a entender por qué mis vecinos se saludaban de cierta forma y cómo pedir permiso en mi trabajo para el Eid. Ahora me siento mucho más integrada."
-                                </p>
-                                <div className="mt-6 flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center font-bold">A</div>
-                                    <span className="text-sm font-medium">Amina, residente en Madrid</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </motion.div>

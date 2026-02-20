@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface HeroProps {
     onCreateOrg: () => void;
@@ -11,37 +11,39 @@ export function Hero({ onCreateOrg, onBookDemo }: HeroProps) {
     return (
         <section className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-4 hero-gradient overflow-hidden">
             <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div className="flex flex-col gap-8 text-left z-10">
+                <div className="flex flex-col gap-8 text-center lg:text-left items-center lg:items-start z-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest w-fit animate-fade-in">
                         <span className="material-symbols-outlined text-sm">verified_user</span>
                         {t('landing.hero.new_tag')}
                     </div>
 
-                    <h1 className="font-serif text-5xl md:text-7xl leading-[1.1] text-white">
-                        Tu nueva vida en España, <span className="text-primary italic">sin complicaciones</span> legales
+                    <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl leading-[1.1] text-white">
+                        <Trans i18nKey="landing.hero.title">
+                            Tu nueva vida en España, <span className="text-primary italic">sin complicaciones</span> legales
+                        </Trans>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-slate-400 max-w-xl leading-relaxed">
+                    <p className="text-base sm:text-lg md:text-xl text-slate-400 max-w-xl leading-relaxed mx-auto lg:mx-0">
                         {t('landing.hero.desc')}
                     </p>
 
-                    <div className="flex flex-wrap gap-4 mt-4">
+                    <div className="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start gap-4 mt-4 w-full sm:w-auto">
                         <button
                             onClick={onCreateOrg}
-                            className="bg-primary text-background-dark px-8 py-4 rounded-lg text-base font-bold flex items-center gap-2 hover:scale-105 transition-transform"
+                            className="bg-primary text-background-dark px-8 py-4 rounded-lg text-base font-bold flex items-center justify-center gap-2 hover:scale-105 transition-transform"
                         >
                             {t('landing.hero.start_free')}
                             <span className="material-symbols-outlined">arrow_forward</span>
                         </button>
                         <button
                             onClick={onBookDemo}
-                            className="bg-white/5 backdrop-blur-md border border-white/10 text-white px-8 py-4 rounded-lg text-base font-bold hover:bg-white/10 transition-all"
+                            className="bg-white/5 backdrop-blur-md border border-white/10 text-white px-8 py-4 rounded-lg text-base font-bold hover:bg-white/10 transition-all flex items-center justify-center"
                         >
                             {t('landing.hero.book_demo')}
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-6 mt-8">
+                    <div className="flex items-center gap-6 mt-8 justify-center lg:justify-start">
                         <div className="flex -space-x-3">
                             {[1, 2, 3].map((i) => (
                                 <div key={i} className="w-10 h-10 rounded-full border-2 border-background-dark bg-slate-800 flex items-center justify-center text-[10px] text-slate-500 overflow-hidden">
@@ -53,7 +55,7 @@ export function Hero({ onCreateOrg, onBookDemo }: HeroProps) {
                                 </div>
                             ))}
                         </div>
-                        <p className="text-sm text-slate-400">
+                        <p className="text-sm text-slate-400 text-left">
                             {t('hero.social_proof')}
                         </p>
                     </div>
@@ -84,7 +86,7 @@ export function Hero({ onCreateOrg, onBookDemo }: HeroProps) {
                                 <div className="flex items-center gap-3">
                                     <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
                                     <p className="text-xs font-medium text-white/90 tracking-wide uppercase">
-                                        Procesando Visado en Tiempo Real • IA Activa
+                                        {t('landing.hero.active_ai_tag')}
                                     </p>
                                 </div>
                             </div>

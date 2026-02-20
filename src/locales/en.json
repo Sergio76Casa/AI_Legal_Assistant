@@ -12,7 +12,204 @@
         "admin_badge": "Admin",
         "superadmin_dashboard": "SUPERADMIN Dashboard",
         "manage_templates": "Manage PDF Templates",
-        "manage_org": "Manage Organization"
+        "manage_org": "Manage Organization",
+        "my_dashboard": "My Dashboard"
+    },
+    "footer": {
+        "sections": {
+            "services": "Services",
+            "legal": "Legal",
+            "contact": "Contact"
+        },
+        "links": {
+            "my_documents": "My Documents",
+            "pdf_templates": "PDF Templates",
+            "my_organization": "My Organization",
+            "affiliate_program": "Affiliate Program",
+            "privacy_policy": "Privacy Policy",
+            "cookie_policy": "Cookie Policy",
+            "legal_notice": "Legal Notice"
+        },
+        "rights": "All rights reserved"
+    },
+    "modals": {
+        "common": {
+            "close": "Close",
+            "understand": "Got it",
+            "update_date": "Last update: February 2026",
+            "query_contact": "For any questions regarding this document, contact {{email}}"
+        },
+        "legal": {
+            "privacy_intro": "At LegalFlow we take your data protection very seriously. This policy explains how we collect, use, and protect your personal information.",
+            "cookies_intro": "This policy explains how we use cookies and similar technologies on legalflow.digital.",
+            "legal_intro": "This notice regulates the general conditions of use of the portal legalflow.digital.",
+            "privacy_content": [
+                {
+                    "title": "1. Data Controller",
+                    "body": "LegalFlow Technologies, S.L. (hereinafter, \"LegalFlow\") with registered office in Madrid, Spain. Contact email: privacy@legalflow.digital."
+                },
+                {
+                    "title": "2. Data We Collect",
+                    "body": "We collect data you provide when registering (name, email, organization), documents you upload for AI analysis, usage and navigation data, and billing information securely processed by Stripe."
+                },
+                {
+                    "title": "3. Purpose of Processing",
+                    "body": "Your data is used for: providing legal assistance service with AI, managing your account and subscription, improving the service through aggregated and anonymous analysis, service-related communications, and compliance with legal obligations."
+                },
+                {
+                    "title": "4. Legal Basis",
+                    "body": "Processing is based on: contract execution (Art. 6.1.b GDPR), your explicit consent for document processing (Art. 6.1.a GDPR), legitimate interest for service improvement (Art. 6.1.f GDPR), and compliance with legal obligations (Art. 6.1.c GDPR)."
+                },
+                {
+                    "title": "5. Iron Silo™ Technology",
+                    "body": "All documents are processed with our Iron Silo™ end-to-end encryption technology. Data is stored on servers located in the EU, complying with GDPR. We do not share documents with third parties and the AI processes data in real-time without persistent storage of the analyzed content."
+                },
+                {
+                    "title": "6. Data Retention",
+                    "body": "Your personal data is kept while you maintain your active account. Uploaded documents can be deleted by you at any time. Upon account cancellation, data is deleted within a maximum period of 30 days, except for legal retention obligations."
+                },
+                {
+                    "title": "7. User Rights",
+                    "body": "You can exercise your rights of access, rectification, erasure, portability, restriction, and objection by contacting privacy@legalflow.digital. You also have the right to file a claim with the Spanish Data Protection Agency (AEPD)."
+                },
+                {
+                    "title": "8. International Transfers",
+                    "body": "We do not perform data transfers outside the European Economic Area. All servers and processing services are located in the EU."
+                }
+            ],
+            "cookies_content": [
+                {
+                    "title": "1. What are Cookies?",
+                    "body": "Cookies are small text files stored on your device when you visit our website. They help us improve your experience and understand how you use the service."
+                },
+                {
+                    "title": "2. Technical Cookies (Necessary)",
+                    "body": "These cookies are essential for the platform's operation: authentication session (keeps you logged in), language preferences (remembers your selected language), and CSRF token (security protection against attacks). They cannot be deactivated."
+                },
+                {
+                    "title": "3. Affiliate Cookies",
+                    "body": "If you arrive at LegalFlow through an affiliate link, we store a reference cookie (referral_code) for 30 days to correctly attribute the recommendation. This cookie only contains the affiliate code."
+                },
+                {
+                    "title": "4. Analytical Cookies",
+                    "body": "We use our own analytical cookies to understand aggregated usage patterns. We do not use Google Analytics or third-party services that track your activity on other sites. Data is completely anonymous."
+                },
+                {
+                    "title": "5. Third-Party Cookies",
+                    "body": "Stripe (payment processor): uses strictly necessary cookies to process payments securely. These cookies are subject to Stripe's privacy policy. We do not use advertising or social media cookies."
+                },
+                {
+                    "title": "6. Cookie Management",
+                    "body": "You can configure your browser to block or delete cookies at any time. Note that deactivating technical cookies may affect the platform's operation. For more information, consult your browser's help."
+                },
+                {
+                    "title": "7. Updates",
+                    "body": "This policy may be updated periodically. The date of the last update is shown at the end of the document. We will notify you of significant changes by email."
+                }
+            ],
+            "legal_content": [
+                {
+                    "title": "1. General Information",
+                    "body": "In compliance with the information duty gathered in article 10 of Law 34/2002, of July 11, on Information Society Services and Electronic Commerce, the data of the website owner are detailed."
+                },
+                {
+                    "title": "2. Website Owner",
+                    "body": "The website legalflow.digital is owned by LegalFlow Technologies, S.L., with NIF B12345678 and registered office in Madrid, Spain. Company registered in the Mercantile Registry of Madrid."
+                },
+                {
+                    "title": "3. Intellectual Property",
+                    "body": "All website contents, including texts, graphics, logos, and images, are property of LegalFlow Technologies, S.L. or its licensors and are protected by intellectual property laws."
+                },
+                {
+                    "title": "4. Conditions of Use",
+                    "body": "The user agrees to make appropriate use of the contents and services of the platform, avoiding illicit activities or those contrary to good faith and public order."
+                },
+                {
+                    "title": "5. Disclaimer",
+                    "body": "LegalFlow is not responsible for damages that may derive from the use of information contained on the website, nor from service interruption or the presence of viruses."
+                },
+                {
+                    "title": "6. Applicable Legislation",
+                    "body": "These conditions are governed by Spanish legislation. For any controversy, the parties submit to the courts and tribunals of the city of Madrid."
+                }
+            ]
+        },
+        "services": {
+            "tagline": "LegalFlow Platform Tools",
+            "certified": "Certified Technology",
+            "documents": {
+                "title": "Smart Document Management",
+                "desc": "Our platform uses state-of-the-art AI to analyze and organize your legal documents automatically.",
+                "features": [
+                    {
+                        "title": "Experimental AI Analysis",
+                        "desc": "Extracts key data, dates, and obligations from any legal PDF or image."
+                    },
+                    {
+                        "title": "Iron Silo™ Technology",
+                        "desc": "Your documents are encrypted with military standards and stored on secure EU servers."
+                    },
+                    {
+                        "title": "Semantic Search",
+                        "desc": "Find information within your documents by asking questions in natural language."
+                    }
+                ]
+            },
+            "templates": {
+                "title": "Dynamic PDF Templates",
+                "desc": "Reduce administrative work by creating complex documents in seconds using our smart templates.",
+                "features": [
+                    {
+                        "title": "Automatic Generation",
+                        "desc": "Automatically fills in client and case data into your contract models."
+                    },
+                    {
+                        "title": "Full Customization",
+                        "desc": "Adapt logos, fonts, and styles of each document to your corporate identity."
+                    },
+                    {
+                        "title": "Instant Export",
+                        "desc": "Generate signature-ready PDF files with a single click."
+                    }
+                ]
+            },
+            "organization": {
+                "title": "My Digital Organization",
+                "desc": "Take full control of your brand and how your clients interact with your firm or business.",
+                "features": [
+                    {
+                        "title": "White Label",
+                        "desc": "Customize your portal with your own colors, logos, and custom domain."
+                    },
+                    {
+                        "title": "Office Management",
+                        "desc": "Configure multiple physical offices and contact points for your clients."
+                    },
+                    {
+                        "title": "Access Control",
+                        "desc": "Assign specific roles and permissions for each member of your team."
+                    }
+                ]
+            },
+            "affiliates": {
+                "title": "Affiliate Program Pro",
+                "desc": "Turn your recommendations into recurring income by joining our partner network.",
+                "features": [
+                    {
+                        "title": "Recurring Commissions",
+                        "desc": "Earn a percentage of each monthly subscription from clients you refer."
+                    },
+                    {
+                        "title": "Control Panel",
+                        "desc": "Monitor your clicks, registrations, and earnings in real-time with detailed statistics."
+                    },
+                    {
+                        "title": "Marketing Material",
+                        "desc": "Access banners, links, and materials designed to maximize your conversions."
+                    }
+                ]
+            }
+        }
     },
     "hero": {
         "title": "Your LegalFlow Consultant in Spain",
@@ -430,15 +627,22 @@
         },
         "hero": {
             "new_tag": "New: Certified Multi-Tenant Architecture",
-            "title": "LegalFlow Compliance",
-            "subtitle": "for Global Teams",
-            "desc": "The AI platform centralizing visas, housing, and regulations for your expat employees. Enterprise-grade security, local empathy.",
-            "start_free": "Start for Free",
-            "book_demo": "Book Demo"
+            "title": "Your new life in Spain, <1>without legal complications</1>",
+            "subtitle": "Legal & Cultural Management",
+            "active_ai_tag": "Processing Visa in Real Time • AI Active",
+            "desc": "The first AI-driven legal partner designed specifically for expats. Secure your visa, residency and procedures with absolute confidence and clarity.",
+            "start_free": "Start now",
+            "book_demo": "Watch demo",
+            "social_proof": "+2,000 professionals trust LegalFlow."
         },
         "features": {
             "title": "Why LegalFlow?",
             "subtitle": "Designed for HR Departments and Consultancies.",
+            "tech_details": "Technical Details",
+            "response_time": "Response Time",
+            "speed_advantage": "50% faster than traditional management",
+            "tech_features": "Tech Features",
+            "request_whitepaper": "Request Whitepaper",
             "security_title": "Iron Silo™ Security",
             "security_desc": "Cryptographically isolated data. Your organization is an impenetrable fortress.",
             "ai_title": "STARK 2.0 Engine",
@@ -451,11 +655,100 @@
             "mobile_title": "App-Like Experience",
             "mobile_desc": "Your employees access from anywhere."
         },
-        "cta": {
-            "title": "Ready to modernize your compliance?",
-            "desc": "Join companies already managing their procedures with Artificial Intelligence.",
-            "btn": "Create Business Account"
+        "partners": {
+            "title": "Partner Program",
+            "subtitle": "Do you know other <1>professionals</1>?",
+            "desc": "Earn recurring commissions by recommending the leading technology in immigration. Every client you bring means passive income for you, month after month.",
+            "commissions": "20% recurring commissions",
+            "commissions_desc": "For every firm or agency that subscribes with your link",
+            "dashboard": "Real-time tracking panel",
+            "dashboard_desc": "View referrals, conversions and payments",
+            "marketing": "Exclusive marketing material",
+            "marketing_desc": "Banners, demos and content to share",
+            "join_btn": "Join the program",
+            "golden_close": "Golden Close",
+            "use_free_title": "Use LegalFlow <1>for free</1>",
+            "use_free_desc": "If you bring <1>3 professionals</1> who subscribe, your <2>Business plan is zero cost</2>. It's that simple.",
+            "step1": "Register as a Partner",
+            "step2": "Share your link with 3 professionals",
+            "step3": "Your Business is free forever!",
+            "savings": "You save €1,788 per year",
+            "savings_desc": "Value of the complete annual Business plan"
         },
+        "pricing": {
+            "title": "Plans & Pricing",
+            "subtitle": "Scale your business with <1>legal AI</1>",
+            "desc": "Choose the plan that best fits the volume of your firm or agency. No long-term contracts.",
+            "monthly": "Monthly",
+            "yearly": "Yearly",
+            "two_months_free": "2 months free",
+            "popular_badge": "Most Popular",
+            "from": "From",
+            "price_suffix": "/month",
+            "yearly_suffix": "/year",
+            "savings_calc": "You save €{{amount}} per year (2 months free)",
+            "custom_quote": "Custom quote",
+            "cta_start": "Start Now",
+            "cta_choose": "Choose Business",
+            "cta_contact": "Contact Sales",
+            "footer_trust": "Secure payment with Stripe • No commitment • Data protected with Iron Silo™",
+            "footer_volume": "Need more than 50 files?",
+            "footer_contact": "Talk to our sales team →",
+            "plans": {
+                "starter": {
+                    "name": "Starter",
+                    "target": "Independent Professionals",
+                    "desc": "Ideal for managers, consultants and mobility experts managing a few files per month.",
+                    "features": [
+                        "Up to 10 new files/month",
+                        "Intelligent document scanning (OCR)",
+                        "Access to basic STARK 2.0 Engine",
+                        "Case management panel",
+                        "Email support"
+                    ]
+                },
+                "business": {
+                    "name": "Business",
+                    "target": "Despachos y Agencias",
+                    "desc": "Designed for firms, relocation agencies and consultancies needing speed and collaboration.",
+                    "features": [
+                        "Up to 50 new files/month",
+                        "Advanced Iron Silo™ security",
+                        "Up to 3 user accounts (managers)",
+                        "Automatic document translation",
+                        "Full STARK 2.0 Engine",
+                        "24/7 priority support"
+                    ]
+                },
+                "enterprise": {
+                    "name": "Enterprise",
+                    "target": "Large Firms and Corporations",
+                    "desc": "For organizations with a high volume of files, HR departments and need for customization.",
+                    "features": [
+                        "Unlimited files",
+                        "API integration with own systems",
+                        "Dedicated Multi-Tenant architecture",
+                        "Personalized training for the team",
+                        "Exclusive account manager",
+                        "Guaranteed SLA"
+                    ]
+                }
+            }
+        },
+        "trust_bar": {
+            "gdpr": "GDPR Compliant",
+            "ministry": "Ministry of Justice",
+            "secured": "Secured by AI",
+            "privacy": "EU Data Privacy"
+        },
+        "cta": {
+            "title": "Digitalize your office with <1>immigration AI</1>",
+            "desc": "Join the professionals already managing files, documents and migration queries in half the time with LegalFlow.",
+            "btn": "Start free trial",
+            "btn_demo": "Request a demo",
+            "footer": "No credit card required. No commitment. Setup in 2 minutes."
+        },
+        "footer_rights": "All rights reserved.",
         "footer": "All rights reserved."
     },
     "org_panel": {
@@ -605,7 +898,10 @@
         "back": "Back",
         "admin_panel": "Admin Panel",
         "plan": "Plan",
-        "documents": "Documents",
+        "documents": "My Documents",
+        "templates": "PDF Templates",
+        "organization": "My Organization",
+        "affiliates": "Affiliate Program",
         "settings": "Settings"
     },
     "demo": {
@@ -653,5 +949,200 @@
         "customize_code": "Customize Code",
         "customize_hint": "You can customize your code only once.",
         "save": "Save"
+    },
+    "procedures_page": {
+        "back": "Back to Home",
+        "title": "Comprehensive Guide to <1>Legal Procedures</1>",
+        "desc": "We simplify Spanish bureaucracy so you can focus on your new life. Up-to-date information on immigration, nationality, and rights.",
+        "common_questions": "Common Questions",
+        "analysis_banner": {
+            "tag": "Intelligent AI Analysis",
+            "title": "Received a letter from the Immigration Office?",
+            "desc": "Don't worry about technical language. Upload it now and <1>STARK will analyze it for you</1> in seconds.",
+            "upload_btn": "Upload photo or document",
+            "processing": "Processing...",
+            "success": "Analyzed!",
+            "formats": "Formats: PDF, JPG, PNG.",
+            "privacy": "Privacy guaranteed under encryption.",
+            "login_required": "Please log in to analyze your documents.",
+            "error_types": "Only PDF, JPG, or PNG files are allowed",
+            "chat_msg": "I've uploaded a document: {{name}}. Please analyze it and tell me if there are any important deadlines or requirements."
+        },
+        "items": {
+            "residencia": {
+                "title": "Residency and Stay",
+                "desc": "Everything about NIE, TIE, Social, Labor, and Family Arraigo. We guide you every step of the way.",
+                "q1": "How do I get social arraigo?",
+                "q2": "Difference between NIE and TIE",
+                "q3": "Requirements for family reunification"
+            },
+            "nacionalidad": {
+                "title": "Spanish Nationality",
+                "desc": "CCSE/DELE exams, residency periods, and electronic submission.",
+                "q1": "How many years do I need for nationality?",
+                "q2": "What is the CCSE exam like?",
+                "q3": "Documents for nationality by residence"
+            },
+            "trabajo": {
+                "title": "Work Permits",
+                "desc": "Self-employed, employed, highly qualified professionals, and digital nomads.",
+                "q1": "Digital Nomad Visa requirements",
+                "q2": "Can I work with my student residency?",
+                "q3": "Changing from stay to work permit"
+            },
+            "asilo": {
+                "title": "International Protection",
+                "desc": "Asylum, subsidiary protection, and humanitarian reasons.",
+                "q1": "How do I request an asylum appointment?",
+                "q2": "Rights during the asylum wait",
+                "q3": "What is the red card?"
+            }
+        }
+    },
+    "halal_page": {
+        "back": "Back to Dashboard",
+        "title": "<1>Halal & Cultural</1> Life",
+        "desc": "Practical guide for cultural integration and the Muslim lifestyle in Spain. Find certified services and coexistence tips.",
+        "common_topics": "Topics of Interest",
+        "btn_ask": "Ask about this",
+        "items": {
+            "alimentacion": {
+                "title": "Halal Food",
+                "desc": "How to identify butcher shops, restaurants, and products certified by the Halal Institute of Spain.",
+                "q1": "Where to buy halal meat in my city?",
+                "q2": "List of common non-halal additives",
+                "q3": "Restaurants with official certification"
+            },
+            "mezquitas": {
+                "title": "Centers and Mosques",
+                "desc": "Location of major Islamic cultural centers and prayer times.",
+                "q1": "Nearest mosque to my location",
+                "q2": "Prayer times in Madrid/Barcelona",
+                "q3": "Activities for children in cultural centers"
+            },
+            "derechos": {
+                "title": "Labor Rights",
+                "desc": "Information on religious festivities and the 1992 Cooperation Agreement.",
+                "q1": "Can I request a day off for Eid?",
+                "q2": "Right to pray at work",
+                "q3": "How to manage Ramadan fasting in the office"
+            },
+            "educacion": {
+                "title": "Education and Family",
+                "desc": "Religious education in public schools and activities for young people.",
+                "q1": "How to request Islamic religion classes?",
+                "q2": "Summer camps for young people",
+                "q3": "Tips for school integration"
+            }
+        }
+    },
+    "housing_page": {
+        "back": "Back to Dashboard",
+        "title": "<1>Housing & Rental</1> Guide",
+        "desc": "Secure your home in Spain. We help you understand contracts, avoid scams, and know your rights as a tenant.",
+        "common_steps": "Essential Steps",
+        "btn_ask": "Consult Doubt",
+        "items": {
+            "contratos": {
+                "title": "Rental Contracts",
+                "desc": "Analysis of the Urban Leasing Law (LAU). Duration, deposits, and abusive clauses.",
+                "q1": "What is the minimum contract duration?",
+                "q2": "How much deposit can they ask me for?",
+                "q3": "What repairs should the landlord pay for?"
+            },
+            "requisitos": {
+                "title": "Necessary Documentation",
+                "desc": "Pay slips, bank guarantees, and non-payment rental insurance. What owners ask for.",
+                "q1": "Can I rent with only my passport?",
+                "q2": "What is non-payment insurance?",
+                "q3": "How to prove solvency without a Spanish pay slip"
+            },
+            "zonas": {
+                "title": "Best Areas",
+                "desc": "Price analysis by neighborhoods, public transport, and nearby services.",
+                "q1": "Cheapest and safest neighborhoods",
+                "q2": "Best connected areas by transport",
+                "q3": "Nearby towns with good quality of life"
+            },
+            "suministros": {
+                "title": "Supplies and Registration",
+                "desc": "How to set up electricity, water, internet, and the importance of the municipal register (padrón).",
+                "q1": "How do I register if I don't have a contract yet?",
+                "q2": "Documents to set up electricity",
+                "q3": "Difference between padrón and residency"
+            }
+        }
+    },
+    "affiliate_terms": {
+        "back": "Back",
+        "title": "Affiliate Program Terms",
+        "last_update": "Last update: February 2026 • LegalFlow Pro",
+        "sections": {
+            "eligibility": {
+                "title": "Eligibility",
+                "content": "The LegalFlow Affiliate Program is open to legal professionals, administrative managers, relocation agencies, immigration consultancies, and content creators who comply with current Spanish regulations.",
+                "sub": "To participate, the applicant must be of legal age and have the legal capacity to enter into contracts. LegalFlow reserves the right to accept or reject affiliate applications at its discretion."
+            },
+            "commissions": {
+                "title": "Commission Structure",
+                "content": "A <1>20% recurring commission</1> (monthly or yearly) will be granted for each new subscriber who signs up for a paid plan through the affiliate's personalized link.",
+                "example": "<1>Example:</1> If you refer a subscriber to the Business Plan (149€/month), you will receive <1>29.80€/month</1> on a recurring basis as long as the subscriber keeps their plan active."
+            },
+            "cookies": {
+                "title": "Attribution and Cookies",
+                "content": "We use a <1>30-day</1> attribution window. If a potential customer clicks on your affiliate link and completes the subscription within that period, the commission will be automatically assigned to you.",
+                "sub": "The tracking cookie is stored in the visitor's browser for a duration of 30 calendar days. If the visitor clicks on another affiliate's link, the most recent attribution (last-click attribution) will prevail."
+            },
+            "payments": {
+                "title": "Payments and Settlement",
+                "content": "Commissions will be settled <1>monthly</1> via Stripe or bank transfer, once a minimum threshold of <1>50€</1> is reached.",
+                "details": [
+                    "Commissions are calculated on the net amount (excluding VAT) of the subscription.",
+                    "The affiliate is responsible for complying with their tax obligations.",
+                    "Pending payments below the threshold accumulate for the next period."
+                ]
+            },
+            "ethics": {
+                "title": "Ethics, Conduct, and Spam",
+                "content": "The use of spam techniques, misleading advertising, identity theft, or any practice that could damage LegalFlow's reputation is <1>strictly prohibited</1>.",
+                "warning": "<1>⚠️ Important:</1> Failure to comply with this rule will result in the <1>immediate termination</1> from the program and the loss of all accumulated and pending commissions."
+            },
+            "modifications": {
+                "title": "Modifications and Validity",
+                "content": "LegalFlow reserves the right to modify these terms at any time, notifying the affiliate in advance by email with a minimum of 15 days notice.",
+                "sub": "Continued participation in the program following the notification of changes will be understood as acceptance of the new terms. The affiliate may leave the program at any time without penalty."
+            }
+        },
+        "footer": "© 2026 LegalFlow Pro. All rights reserved.<br />These terms are subject to Spanish legislation and the jurisdiction of the courts of Madrid."
+    },
+    "register_affiliate": {
+        "back": "Back",
+        "title": "Join the Partner Program",
+        "desc": "Earn a <1>20% recurring commission</1> for each firm or agency that subscribes with your link.",
+        "success_title": "Request received!",
+        "success_desc": "We will review your application within the next <1>24-48 hours</1>. You will receive an email with your affiliate link and access to the tracking panel.",
+        "success_btn": "Back to LegalFlow",
+        "form": {
+            "name": "Full name *",
+            "name_placeholder": "Your name",
+            "email": "Professional email *",
+            "email_placeholder": "you@firm.com",
+            "company": "Company / Firm",
+            "company_placeholder": "Name of the firm or agency",
+            "role": "Professional role",
+            "role_select": "Select your profile",
+            "roles": {
+                "abogado": "Immigration Lawyer",
+                "gestor": "Administrative Manager",
+                "consultor": "Immigration Consultant",
+                "relocation": "Relocation Agent",
+                "rrhh": "HR Department",
+                "creador": "Content Creator",
+                "otro": "Other"
+            },
+            "terms": "I have read and accept the <1>Affiliate Program Terms and Conditions</1>, including the commission policy (20% recurring), the 30-day attribution window, and the conduct rules. *",
+            "submit": "Request access to the program",
+            "footer": "We will process your request in 24-48h. No commitment."
+        }
     }
 }

@@ -58,22 +58,22 @@ export function Features() {
                 <motion.div
                     whileHover={{ y: -5 }}
                     onClick={() => setSelectedFeature(features[0])}
-                    className="md:col-span-8 glass-card p-10 rounded-3xl cursor-pointer group relative overflow-hidden h-[400px] flex flex-col justify-between"
+                    className="md:col-span-8 glass-card p-6 md:p-10 rounded-3xl cursor-pointer group relative overflow-hidden min-h-[350px] md:h-[400px] flex flex-col justify-between"
                 >
                     <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity">
                         <img src={features[0].image} className="w-full h-full object-cover" alt="" />
                     </div>
                     <div className="relative z-10">
-                        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-8 border border-primary/20">
-                            <span className="material-symbols-outlined text-3xl">{features[0].icon}</span>
+                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 md:mb-8 border border-primary/20">
+                            <span className="material-symbols-outlined text-2xl md:text-3xl">{features[0].icon}</span>
                         </div>
-                        <h4 className="text-3xl font-bold mb-4 text-white group-hover:text-primary transition-colors">{features[0].title}</h4>
+                        <h4 className="text-2xl md:text-3xl font-bold mb-4 text-white group-hover:text-primary transition-colors">{features[0].title}</h4>
                         <p className="text-slate-400 max-w-md text-lg leading-relaxed">
                             {features[0].description}
                         </p>
                     </div>
                     <div className="relative z-10 flex items-center gap-2 text-primary font-bold text-sm">
-                        Detalles técnicos <span className="material-symbols-outlined group-hover:translate-x-2 transition-transform">trending_flat</span>
+                        {t('landing.features.tech_details')} <span className="material-symbols-outlined group-hover:translate-x-2 transition-transform">trending_flat</span>
                     </div>
                 </motion.div>
 
@@ -81,7 +81,7 @@ export function Features() {
                 <motion.div
                     whileHover={{ y: -5 }}
                     onClick={() => setSelectedFeature(features[1])}
-                    className="md:col-span-4 glass-card p-10 rounded-3xl cursor-pointer group relative overflow-hidden"
+                    className="md:col-span-4 glass-card p-6 md:p-10 rounded-3xl cursor-pointer group relative overflow-hidden min-h-[300px]"
                 >
                     <div className="absolute inset-0 opacity-5 group-hover:opacity-15 transition-opacity">
                         <img src={features[1].image} className="w-full h-full object-cover shadow-2xl" alt="" />
@@ -101,7 +101,7 @@ export function Features() {
                 <motion.div
                     whileHover={{ y: -5 }}
                     onClick={() => setSelectedFeature(features[2])}
-                    className="md:col-span-8 glass-card p-10 rounded-3xl cursor-pointer group relative overflow-hidden h-[300px] flex flex-col justify-between"
+                    className="md:col-span-8 glass-card p-6 md:p-10 rounded-3xl cursor-pointer group relative overflow-hidden min-h-[300px] flex flex-col justify-between"
                 >
                     <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity">
                         <img src={features[2].image} className="w-full h-full object-cover" alt="" />
@@ -125,13 +125,13 @@ export function Features() {
                 </motion.div>
 
                 {/* Stats Card */}
-                <div className="md:col-span-4 glass-card p-10 rounded-3xl flex flex-col justify-center border-primary/10 bg-primary/5">
+                <div className="md:col-span-4 glass-card p-6 md:p-10 rounded-3xl flex flex-col justify-center border-primary/10 bg-primary/5">
                     <div className="space-y-2">
                         <p className="text-primary text-6xl font-black italic tracking-tighter animate-pulse">24h</p>
-                        <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">Tiempo de Respuesta</p>
+                        <p className="text-xs font-bold tracking-widest text-slate-500 uppercase">{t('landing.features.response_time')}</p>
                         <p className="text-xs text-emerald-400 font-medium mt-4 flex items-center gap-1 bg-emerald-400/10 w-fit px-2 py-1 rounded">
                             <span className="material-symbols-outlined text-xs">verified</span>
-                            50% más rápido que la gestión tradicional
+                            {t('landing.features.speed_advantage')}
                         </p>
                     </div>
                 </div>
@@ -172,7 +172,7 @@ export function Features() {
 
                                     <div>
                                         <h4 className="text-3xl font-bold text-white mb-2">{selectedFeature.title}</h4>
-                                        <p className="text-primary text-sm font-bold tracking-widest uppercase">Características Tech</p>
+                                        <p className="text-primary text-sm font-bold tracking-widest uppercase">{t('landing.features.tech_features')}</p>
                                     </div>
 
                                     <p className="text-slate-300 leading-relaxed text-lg italic">
@@ -184,7 +184,7 @@ export function Features() {
                                             onClick={() => window.location.href = '#about'}
                                             className="w-full bg-primary text-slate-900 font-black uppercase tracking-widest text-[10px] py-4 rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20"
                                         >
-                                            Solicitar Whitepaper
+                                            {t('landing.features.request_whitepaper')}
                                             <span className="material-symbols-outlined text-lg">description</span>
                                         </button>
                                     </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTenant } from '../lib/TenantContext';
 import {
     Phone, Mail, Facebook, Instagram, Twitter, Linkedin,
@@ -12,6 +13,7 @@ interface DynamicFooterProps {
 }
 
 export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant, onOpenLegal, onOpenService }) => {
+    const { t } = useTranslation();
     const { tenant: contextTenant } = useTenant();
     const tenant = propTenant || contextTenant;
 
@@ -37,7 +39,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                         </div>
 
                         <p className="text-slate-500 text-sm leading-relaxed max-w-xs italic">
-                            {config.description || "Soluciones inteligentes para la gestión legal y documental de tu empresa."}
+                            {config.description || t('tenant_page.hero_desc')}
                         </p>
 
                         <div className="flex items-center gap-4 pt-4">
@@ -84,7 +86,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                     </div>
 
                     <div className="space-y-6">
-                        <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">Servicios</h4>
+                        <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">{t('footer.sections.services')}</h4>
                         <ul className="space-y-4 text-sm font-medium">
                             <li>
                                 <button
@@ -92,7 +94,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                     className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
                                 >
                                     <FileText size={16} className="text-primary/40 group-hover:text-primary" />
-                                    Mis Documentos
+                                    {t('footer.links.my_documents')}
                                 </button>
                             </li>
                             <li>
@@ -101,7 +103,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                     className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
                                 >
                                     <LayoutGrid size={16} className="text-primary/40 group-hover:text-primary" />
-                                    Plantillas PDF
+                                    {t('footer.links.pdf_templates')}
                                 </button>
                             </li>
                             <li>
@@ -110,7 +112,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                     className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
                                 >
                                     <Building2 size={16} className="text-primary/40 group-hover:text-primary" />
-                                    Mi Organización
+                                    {t('footer.links.my_organization')}
                                 </button>
                             </li>
                             <li>
@@ -119,7 +121,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                     className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
                                 >
                                     <TrendingUp size={16} className="text-primary/40 group-hover:text-primary" />
-                                    Programa de Afiliados
+                                    {t('footer.links.affiliate_program')}
                                 </button>
                             </li>
                         </ul>
@@ -127,7 +129,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
 
                     {/* Columna 3: Legal */}
                     <div className="space-y-6">
-                        <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">Legal</h4>
+                        <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">{t('footer.sections.legal')}</h4>
                         <ul className="space-y-4 text-sm font-medium">
                             <li>
                                 <button
@@ -135,7 +137,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                     className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
                                 >
                                     <FileText size={16} className="text-primary/40 group-hover:text-primary" />
-                                    Política de Privacidad
+                                    {t('footer.links.privacy_policy')}
                                 </button>
                             </li>
                             <li>
@@ -144,7 +146,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                     className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
                                 >
                                     <Globe size={16} className="text-primary/40 group-hover:text-primary" />
-                                    Política de Cookies
+                                    {t('footer.links.cookie_policy')}
                                 </button>
                             </li>
                             <li>
@@ -153,7 +155,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                     className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
                                 >
                                     <ShieldCheck size={16} className="text-primary/40 group-hover:text-primary" />
-                                    Aviso Legal
+                                    {t('footer.links.legal_notice')}
                                 </button>
                             </li>
                         </ul>
@@ -161,7 +163,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
 
                     {/* Columna 4: Contacto */}
                     <div className="space-y-6">
-                        <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">Contacto</h4>
+                        <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">{t('footer.sections.contact')}</h4>
                         <div className="space-y-6">
                             {/* Sedes */}
                             {offices.map((office: any, idx: number) => (
@@ -204,7 +206,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
 
                 <div className="mt-20 pt-8 border-t border-white/5 text-center">
                     <p className="text-[10px] font-bold text-slate-700 uppercase tracking-[0.3em]">
-                        &copy; {new Date().getFullYear()} {tenant.name} • Todos los derechos reservados
+                        &copy; {new Date().getFullYear()} {tenant.name} • {t('footer.rights')}
                     </p>
                 </div>
             </div>
