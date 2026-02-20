@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Globe } from 'lucide-react';
 
 const languages = [
     { code: 'es', name: 'Español', flagCode: 'es', dir: 'ltr' },
@@ -31,15 +31,14 @@ export const LanguageSelector: React.FC = () => {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-1.5 px-2 py-1.5 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all"
+                className="flex items-center gap-1.5 px-2 py-1.5 text-slate-500 hover:text-primary transition-all cursor-pointer group"
                 title="Cambiar idioma / Change language"
             >
-                <img
-                    src={`https://flagcdn.com/w20/${currentLang.flagCode}.png`}
-                    alt={currentLang.name}
-                    className="w-5 h-auto rounded-sm"
-                />
-                <ChevronDown size={12} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                <Globe size={16} className="opacity-70 group-hover:opacity-100 transition-opacity" />
+                <span className="text-[10px] font-black uppercase tracking-wider">
+                    {currentLang.code}
+                </span>
+                <ChevronDown size={12} className={`transition-transform opacity-50 group-hover:opacity-100 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isOpen && (
@@ -48,12 +47,12 @@ export const LanguageSelector: React.FC = () => {
                         className="fixed inset-0 z-40"
                         onClick={() => setIsOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-slate-200 py-1.5 z-50 overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-44 bg-slate-900/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/10 py-1.5 z-50 overflow-hidden">
                         {languages.map((lang) => (
                             <button
                                 key={lang.code}
                                 onClick={() => changeLanguage(lang)}
-                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-slate-50 transition-colors ${i18n.language === lang.code ? 'text-emerald-700 bg-emerald-50/50 font-semibold' : 'text-slate-600'}`}
+                                className={`w-full flex items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-white/10 transition-colors ${i18n.language === lang.code ? 'text-primary bg-primary/10 font-semibold' : 'text-slate-300'}`}
                             >
                                 <img
                                     src={`https://flagcdn.com/w20/${lang.flagCode}.png`}

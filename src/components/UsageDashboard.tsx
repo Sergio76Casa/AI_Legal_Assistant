@@ -27,14 +27,12 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
 
     const fetchUsage = async () => {
         try {
-            // 1. Obtener perfil para ver rol y tier manual
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('role, subscription_tier, created_at')
                 .eq('id', userId)
                 .maybeSingle();
 
-            // 2. Obtener suscripción de Stripe
             const { data: subscription } = await supabase
                 .from('subscriptions')
                 .select('tier, current_period_end')
@@ -42,7 +40,6 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                 .eq('status', 'active')
                 .maybeSingle();
 
-            // Prioridad: Rol Admin > Suscripción Stripe (si no es free) > Perfil Tier > Free
             let tier = 'free';
 
             if (profile?.role === 'superadmin' || profile?.role === 'admin') {
@@ -55,7 +52,6 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
 
             if (tier === 'premium') tier = 'pro';
 
-            // 3. Obtener uso actual
             const { data: usageData } = await supabase
                 .from('usage_tracking')
                 .select('chat_queries_count')
@@ -65,20 +61,17 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                 .limit(1)
                 .maybeSingle();
 
-            // 4. Contar documentos del usuario
             const { count: docsCount } = await supabase
                 .from('documents')
                 .select('*', { count: 'exact', head: true })
                 .eq('user_id', userId);
 
-            // 5. Obtener límites según el tier
             const { data: limits } = await supabase
                 .rpc('get_tier_limits', { p_tier: tier })
                 .maybeSingle();
 
             const typedLimits = limits as { max_chat_queries: number; max_documents: number } | null;
 
-            // Si es admin, forzamos ilimitado aunque no esté en la tabla de límites
             const isAdmin = profile?.role === 'superadmin' || profile?.role === 'admin';
 
             setUsage({
@@ -99,7 +92,7 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
     if (loading) {
         return (
             <div className="flex items-center justify-center p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
         );
     }
@@ -125,41 +118,41 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
 
     const tierColors: Record<string, string> = {
         free: 'from-slate-500 to-slate-600',
-        pro: 'from-emerald-500 to-emerald-600',
+        pro: 'from-primary to-emerald-500',
         business: 'from-purple-500 to-purple-600',
     };
 
     return (
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-            {/* Header con Plan Actual */}
+        <div className="bg-white/5 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/10">
+            {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-1">Tu Uso Actual</h2>
-                    <p className="text-slate-600 text-sm">
+                    <h2 className="text-2xl font-bold text-white mb-1">Tu Uso Actual</h2>
+                    <p className="text-slate-400 text-sm">
                         Período actual hasta el {new Date(usage.periodEnd).toLocaleDateString('es-ES')}
                     </p>
                 </div>
-                <div className={`px-4 py-2 rounded-lg bg-gradient-to-r ${tierColors[usage.tier]} text-white font-semibold flex items-center gap-2`}>
+                <div className={`px-4 py-2 rounded-lg bg-gradient-to-r ${tierColors[usage.tier]} text-white font-semibold flex items-center gap-2 shadow-lg`}>
                     <Crown className="w-5 h-5" />
                     Plan {tierNames[usage.tier]}
                 </div>
             </div>
 
-            {/* Alerta si está cerca del límite */}
+            {/* Alert near limit */}
             {isNearLimit && usage.tier === 'free' && (
-                <div className={`mb-6 p-4 rounded-lg border-2 ${isAtLimit
-                    ? 'bg-red-50 border-red-200'
-                    : 'bg-amber-50 border-amber-200'
+                <div className={`mb-6 p-4 rounded-lg border ${isAtLimit
+                    ? 'bg-red-500/10 border-red-500/30'
+                    : 'bg-amber-500/10 border-amber-500/30'
                     }`}>
                     <div className="flex items-start gap-3">
-                        <AlertCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isAtLimit ? 'text-red-600' : 'text-amber-600'
+                        <AlertCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isAtLimit ? 'text-red-400' : 'text-amber-400'
                             }`} />
                         <div>
-                            <p className={`font-semibold ${isAtLimit ? 'text-red-900' : 'text-amber-900'
+                            <p className={`font-semibold ${isAtLimit ? 'text-red-300' : 'text-amber-300'
                                 }`}>
                                 {isAtLimit ? '¡Has alcanzado tu límite!' : '¡Cerca del límite!'}
                             </p>
-                            <p className={`text-sm mt-1 ${isAtLimit ? 'text-red-700' : 'text-amber-700'
+                            <p className={`text-sm mt-1 ${isAtLimit ? 'text-red-400' : 'text-amber-400'
                                 }`}>
                                 {isAtLimit
                                     ? 'Actualiza a Pro para continuar usando el servicio sin límites.'
@@ -167,7 +160,7 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                             </p>
                             <button
                                 onClick={onUpgradeClick}
-                                className="mt-3 px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all text-sm"
+                                className="mt-3 px-4 py-2 bg-primary text-slate-900 rounded-lg font-semibold hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all text-sm"
                             >
                                 Ver Planes
                             </button>
@@ -176,17 +169,17 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                 </div>
             )}
 
-            {/* Métricas de Uso */}
+            {/* Usage Metrics */}
             <div className="grid md:grid-cols-2 gap-6">
-                {/* Consultas al Chat */}
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
+                {/* Chat Queries */}
+                <div className="bg-blue-500/10 p-6 rounded-xl border border-blue-500/20">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-blue-500 rounded-lg">
-                            <MessageSquare className="w-5 h-5 text-white" />
+                        <div className="p-2 bg-blue-500/20 rounded-lg border border-blue-500/30">
+                            <MessageSquare className="w-5 h-5 text-blue-400" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-blue-900">Consultas al Chat IA</p>
-                            <p className="text-xs text-blue-700">
+                            <p className="text-sm font-medium text-white">Consultas al Chat IA</p>
+                            <p className="text-xs text-blue-300">
                                 {usage.maxChatQueries === -1
                                     ? `${usage.chatQueriesCount} consultas (Ilimitado)`
                                     : `${usage.chatQueriesCount} de ${usage.maxChatQueries}`}
@@ -194,13 +187,13 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                         </div>
                     </div>
                     {usage.maxChatQueries !== -1 && (
-                        <div className="w-full bg-blue-200 rounded-full h-3 overflow-hidden">
+                        <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
                             <div
                                 className={`h-full transition-all duration-500 ${chatPercentage >= 100
                                     ? 'bg-red-500'
                                     : chatPercentage >= 80
                                         ? 'bg-amber-500'
-                                        : 'bg-blue-600'
+                                        : 'bg-blue-400'
                                     }`}
                                 style={{ width: `${Math.min(chatPercentage, 100)}%` }}
                             />
@@ -208,15 +201,15 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                     )}
                 </div>
 
-                {/* Documentos */}
-                <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-6 rounded-xl border border-emerald-200">
+                {/* Documents */}
+                <div className="bg-primary/10 p-6 rounded-xl border border-primary/20">
                     <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-emerald-500 rounded-lg">
-                            <FileText className="w-5 h-5 text-white" />
+                        <div className="p-2 bg-primary/20 rounded-lg border border-primary/30">
+                            <FileText className="w-5 h-5 text-primary" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-emerald-900">Documentos Subidos</p>
-                            <p className="text-xs text-emerald-700">
+                            <p className="text-sm font-medium text-white">Documentos Subidos</p>
+                            <p className="text-xs text-primary/70">
                                 {usage.maxDocuments === -1
                                     ? `${usage.documentsCount} documentos (Ilimitado)`
                                     : `${usage.documentsCount} de ${usage.maxDocuments}`}
@@ -224,13 +217,13 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                         </div>
                     </div>
                     {usage.maxDocuments !== -1 && (
-                        <div className="w-full bg-emerald-200 rounded-full h-3 overflow-hidden">
+                        <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
                             <div
                                 className={`h-full transition-all duration-500 ${docsPercentage >= 100
                                     ? 'bg-red-500'
                                     : docsPercentage >= 80
                                         ? 'bg-amber-500'
-                                        : 'bg-emerald-600'
+                                        : 'bg-primary'
                                     }`}
                                 style={{ width: `${Math.min(docsPercentage, 100)}%` }}
                             />
@@ -239,16 +232,16 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                 </div>
             </div>
 
-            {/* Beneficios de Actualizar */}
+            {/* Upgrade Benefits */}
             {usage.tier === 'free' && (
-                <div className="mt-8 p-6 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl border border-emerald-200">
+                <div className="mt-8 p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-xl border border-primary/20">
                     <div className="flex items-start gap-3">
-                        <TrendingUp className="w-6 h-6 text-emerald-600 flex-shrink-0" />
+                        <TrendingUp className="w-6 h-6 text-primary flex-shrink-0" />
                         <div>
-                            <h3 className="font-semibold text-slate-900 mb-2">
+                            <h3 className="font-semibold text-white mb-2">
                                 Desbloquea todo el potencial con Pro
                             </h3>
-                            <ul className="space-y-1 text-sm text-slate-700">
+                            <ul className="space-y-1 text-sm text-slate-300">
                                 <li>✅ 100 consultas al mes (vs 5 actuales)</li>
                                 <li>✅ 20 documentos (vs 1 actual)</li>
                                 <li>✅ Análisis avanzado de documentos</li>
@@ -257,7 +250,7 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                             </ul>
                             <button
                                 onClick={onUpgradeClick}
-                                className="mt-4 px-6 py-2 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                                className="mt-4 px-6 py-2 bg-primary text-slate-900 rounded-lg font-semibold hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all"
                             >
                                 Actualizar a Pro por €9.99/mes
                             </button>

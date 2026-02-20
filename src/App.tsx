@@ -5,20 +5,23 @@ import { ChatDrawer } from './components/ChatDrawer';
 import { ChatProvider } from './lib/ChatContext';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AuthForm } from './components/AuthForm';
-import { UserDocuments } from './components/UserDocuments';
 import { LegalPage } from './components/LegalPage';
 import { createClient } from '@supabase/supabase-js';
 import { LegalProcedures } from './components/LegalProcedures';
 import { HalalCulture } from './components/HalalCulture';
 import { HousingGuide } from './components/HousingGuide';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { TenantProvider } from './lib/TenantContext';
 import { LandingPage } from './components/LandingPage';
 import { CreateOrgForm } from './components/CreateOrgForm';
 import { TenantDashboard } from './components/TenantDashboard';
 import { TenantPublicPage } from './components/TenantPublicPage';
-import { TemplateManager } from './components/TemplateManager';
-import { AffiliatePanel } from './components/AffiliatePanel';
+import { AffiliateTerms } from './components/AffiliateTerms';
+import { RegisterAffiliate } from './components/RegisterAffiliate';
+import { SplashScreen } from './components/SplashScreen';
+import { DynamicFooter } from './components/DynamicFooter';
+import { LegalModal } from './components/Landing/LegalModal';
+import { ServicesModal } from './components/Landing/ServicesModal';
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -29,8 +32,12 @@ const supabase = createClient(
 function App() {
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'tenant-settings' | 'tenant-public' | 'affiliates'>('home');
+    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate'>('home');
     const [currentSlug, setCurrentSlug] = useState<string | null>(null);
+    const [showSplash, setShowSplash] = useState(false);
+    const [legalModal, setLegalModal] = useState<'privacy' | 'cookies' | 'legal' | null>(null);
+    const [serviceModal, setServiceModal] = useState<'documents' | 'templates' | 'organization' | 'affiliates' | null>(null);
+    const lastSlugRef = useRef<string | null>(null);
 
     const fetchProfile = async (userId: string) => {
         const { data } = await supabase
@@ -39,6 +46,10 @@ function App() {
             .eq('id', userId)
             .maybeSingle();
         setProfile(data);
+        if (data?.tenants?.slug) {
+            setCurrentSlug(data.tenants.slug);
+            lastSlugRef.current = data.tenants.slug;
+        }
     };
 
     // 🔍 ROUTING & REFERRAL SYSTEM
@@ -47,7 +58,7 @@ function App() {
             const params = new URLSearchParams(window.location.search);
             let ref = params.get('ref');
             let path = window.location.pathname.replace(/^\/|\/$/g, '');
-            const reservedPublic = ['login', 'create-org', 'privacy', 'cookies', 'home', ''];
+            const reservedPublic = ['login', 'create-org', 'privacy', 'cookies', 'home', 'afiliados-terminos', 'register-affiliate', ''];
 
             // Dashboard views mapping
             const dashboardMap: Record<string, string> = {
@@ -55,7 +66,8 @@ function App() {
                 'dashboard/documents': 'documents',
                 'dashboard/templates': 'templates',
                 'dashboard/affiliates': 'affiliates',
-                'dashboard/settings': 'tenant-settings',
+                'dashboard/organization': 'organization',
+                'dashboard/settings': 'settings',
                 'dashboard/admin': 'admin'
             };
 
@@ -82,10 +94,19 @@ function App() {
             }
 
             // C. Resolve View
+            const userIsAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
+            const adminOnlyViews = ['admin', 'organization', 'settings', 'templates'];
+
             if (path === '' || path === 'home') {
                 setView('home');
             } else if (dashboardMap[path]) {
-                setView(user ? dashboardMap[path] as any : 'login');
+                const targetView = dashboardMap[path];
+                if (adminOnlyViews.includes(targetView) && !userIsAdmin && user) {
+                    setView('documents');
+                    window.history.replaceState({}, '', '/dashboard/documents');
+                } else {
+                    setView(user ? targetView as any : 'login');
+                }
             } else if (reservedPublic.includes(path.toLowerCase())) {
                 setView(path.toLowerCase() as any);
             } else if (['legal-procedures', 'halal-culture', 'housing-guide'].includes(path)) {
@@ -97,7 +118,7 @@ function App() {
         };
 
         handleRouting();
-    }, [user]);
+    }, [user, profile]);
 
     // 🚀 AUTH LISTENER
     useEffect(() => {
@@ -111,9 +132,16 @@ function App() {
             if (session?.user) {
                 fetchProfile(session.user.id);
             } else {
+                const slugToRedirect = lastSlugRef.current;
                 setProfile(null);
-                setView('home');
-                window.history.pushState({}, '', '/');
+                if (slugToRedirect) {
+                    setCurrentSlug(slugToRedirect);
+                    setView('tenant-public');
+                    window.history.pushState({}, '', `/${slugToRedirect}`);
+                } else {
+                    setView('home');
+                    window.history.pushState({}, '', '/');
+                }
             }
         });
 
@@ -128,7 +156,7 @@ function App() {
         }
     }, [user, view]);
 
-    const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
+    const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
     const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));
 
     return (
@@ -150,9 +178,10 @@ function App() {
                                 v === 'templates' ? '/dashboard/templates' :
                                     v === 'affiliates' ? '/dashboard/affiliates' :
                                         v === 'admin' ? '/dashboard/admin' :
-                                            v === 'tenant-settings' ? '/dashboard/settings' : `/${v}`);
+                                            v === 'organization' ? '/dashboard/organization' :
+                                                v === 'settings' ? '/dashboard/settings' : `/${v}`);
                         window.history.pushState({}, '', path);
-                    }} user={user} profile={profile}>
+                    }} user={user} profile={profile} hideNavFooter={view === 'home'} hideFooter={!!user} currentView={view}>
                         {view === 'home' ? (
                             <LandingPage
                                 onLogin={() => { setView('login'); window.history.pushState({}, '', '/login'); }}
@@ -160,7 +189,11 @@ function App() {
                             />
                         ) : view === 'login' && !user ? (
                             <AuthForm
-                                onAuthSuccess={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
+                                onAuthSuccess={() => {
+                                    setShowSplash(true);
+                                    setView('dashboard');
+                                    window.history.pushState({}, '', '/dashboard');
+                                }}
                                 onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }}
                             />
                         ) : view === 'create-org' && !user ? (
@@ -170,18 +203,22 @@ function App() {
                             />
                         ) : showAdmin ? (
                             <AdminDashboard />
-                        ) : view === 'tenant-settings' && user ? (
-                            <TenantDashboard onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} onNavigate={(v) => { setView(v); window.history.pushState({}, '', `/dashboard/settings`); }} />
-                        ) : view === 'templates' && user ? (
-                            <TemplateManager />
-                        ) : view === 'affiliates' && user ? (
-                            <AffiliatePanel />
-                        ) : view === 'documents' && user ? (
-                            <UserDocuments userId={user.id} onNavigate={(v) => { setView(v); window.history.pushState({}, '', `/dashboard/documents`); }} />
+                        ) : (view === 'organization' || view === 'documents' || view === 'templates' || view === 'affiliates' || view === 'settings') && user ? (
+                            <TenantDashboard
+                                user={user}
+                                profile={profile}
+                                initialTab={view}
+                                onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
+                                onNavigate={(v) => { setView(v as any); window.history.pushState({}, '', `/dashboard/${v}`); }}
+                            />
                         ) : view === 'privacy' ? (
                             <LegalPage type="privacy" onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
                         ) : view === 'cookies' ? (
                             <LegalPage type="cookies" onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                        ) : view === 'afiliados-terminos' ? (
+                            <AffiliateTerms onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                        ) : view === 'register-affiliate' ? (
+                            <RegisterAffiliate onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
                         ) : view === 'legal-procedures' ? (
                             <LegalProcedures onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} user={user} />
                         ) : view === 'halal-culture' ? (
@@ -194,10 +231,13 @@ function App() {
                                 <BentoGrid onNavigate={(v) => {
                                     setView(v);
                                     const path = v === 'documents' ? '/dashboard/documents' :
-                                        v === 'templates' ? '/dashboard/templates' :
-                                            v === 'affiliates' ? '/dashboard/affiliates' : `/${v}`;
+                                        v === 'affiliates' ? '/dashboard/affiliates' : `/${v}`;
                                     window.history.pushState({}, '', path);
                                 }} />
+                                <DynamicFooter
+                                    onOpenLegal={(type) => setLegalModal(type)}
+                                    onOpenService={(type) => setServiceModal(type)}
+                                />
                             </>
                         ) : (
                             <LandingPage
@@ -206,6 +246,15 @@ function App() {
                             />
                         )}
                         <ChatDrawer />
+                        <LegalModal
+                            type={legalModal}
+                            onClose={() => setLegalModal(null)}
+                        />
+                        <ServicesModal
+                            type={serviceModal}
+                            onClose={() => setServiceModal(null)}
+                        />
+                        {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
                     </Layout>
                 )}
             </ChatProvider>

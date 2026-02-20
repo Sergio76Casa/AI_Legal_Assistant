@@ -86,29 +86,29 @@ export const TemplateSelectorModal: React.FC<TemplateSelectorModalProps> = ({
     );
 
     return (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[80vh] flex flex-col">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-300">
+            <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[85vh] flex flex-col border border-white/10">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div className="px-6 py-6 border-b border-white/10 flex justify-between items-center bg-white/5">
                     <div>
-                        <h3 className="text-lg font-bold text-slate-800">{t('templates.generate_title')}</h3>
-                        <p className="text-xs text-slate-500">
-                            {t('templates.for_client')} <span className="font-semibold text-emerald-600">{clientProfile.email}</span>
+                        <h3 className="text-xl font-bold text-white tracking-tight">{t('templates.generate_title')}</h3>
+                        <p className="text-sm text-slate-400 mt-1">
+                            {t('templates.for_client')} <span className="font-bold text-primary">{clientProfile.email}</span>
                         </p>
                     </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
-                        <X size={20} />
+                    <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors">
+                        <X size={24} />
                     </button>
                 </div>
 
                 {/* Sub-header / Search */}
-                <div className="p-4 border-b border-slate-100 bg-white sticky top-0 z-10">
+                <div className="p-6 border-b border-white/10 bg-slate-900/50 sticky top-0 z-10 backdrop-blur-md">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
                             type="text"
                             placeholder={t('templates.search_placeholder')}
-                            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-medium placeholder:text-slate-600"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             autoFocus
@@ -117,40 +117,49 @@ export const TemplateSelectorModal: React.FC<TemplateSelectorModalProps> = ({
                 </div>
 
                 {/* Body */}
-                <div className="flex-1 overflow-y-auto p-4 bg-slate-50">
+                <div className="flex-1 overflow-y-auto p-6 space-y-4">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-10 opacity-50">
-                            <Loader2 className="animate-spin mb-2" />
-                            <p className="text-xs">{t('templates.loading')}</p>
+                        <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                            <Loader2 className="animate-spin mb-4 text-primary" size={32} />
+                            <p className="text-sm font-medium text-slate-400">{t('templates.loading')}</p>
                         </div>
                     ) : filteredTemplates.length === 0 ? (
-                        <div className="text-center py-10 text-slate-400">
-                            <FileText size={32} className="mx-auto mb-2 opacity-20" />
-                            <p className="text-sm">{t('templates.not_found')}</p>
+                        <div className="text-center py-20 text-slate-500">
+                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/5">
+                                <FileText size={32} className="opacity-20" />
+                            </div>
+                            <p className="text-lg font-medium">{t('templates.not_found')}</p>
                         </div>
                     ) : (
-                        <div className="grid gap-3">
+                        <div className="grid gap-4">
                             {filteredTemplates.map(template => (
                                 <button
                                     key={template.id}
                                     onClick={() => handleGenerate(template)}
                                     disabled={generating}
-                                    className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-xl hover:border-emerald-300 hover:shadow-md transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center justify-between p-5 bg-white/5 border border-white/10 rounded-2xl hover:border-primary/40 hover:bg-white/10 transition-all text-left group disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-primary/5 active:scale-[0.99]"
                                 >
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-2.5 bg-slate-100 text-slate-500 rounded-lg group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
-                                            <FileText size={20} />
+                                    <div className="flex items-center gap-5">
+                                        <div className="p-3 bg-white/10 text-slate-400 rounded-xl group-hover:bg-primary/15 group-hover:text-primary transition-all group-hover:scale-110">
+                                            <FileText size={24} />
                                         </div>
                                         <div>
-                                            <h4 className="font-semibold text-slate-800 group-hover:text-emerald-700 transition-colors">
+                                            <h4 className="font-bold text-white group-hover:text-primary transition-colors text-lg">
                                                 {template.name}
                                             </h4>
-                                            <span className="text-xs uppercase tracking-wider font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">
-                                                {template.category || t('templates.category_default')}
-                                            </span>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <span className="text-[10px] uppercase tracking-widest font-black text-slate-500 bg-white/5 px-2 py-0.5 rounded border border-white/5">
+                                                    {template.category || t('templates.category_default')}
+                                                </span>
+                                                {template.tenant_id === '00000000-0000-0000-0000-000000000000' && (
+                                                    <span className="text-[10px] uppercase tracking-widest font-black text-primary/70 bg-primary/10 px-2 py-0.5 rounded border border-primary/20">
+                                                        Oficial
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-75 group-hover:scale-100">
                                         <Download size={20} />
                                     </div>
                                 </button>
@@ -161,23 +170,38 @@ export const TemplateSelectorModal: React.FC<TemplateSelectorModalProps> = ({
 
                 {/* Footer Status Overlay */}
                 {generating && (
-                    <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center z-20 animate-in fade-in duration-300">
+                    <div className="fixed inset-0 bg-slate-900/90 backdrop-blur-md flex flex-col items-center justify-center z-[60] animate-in fade-in duration-500">
                         {status?.includes('Error') ? (
-                            <div className="text-red-500 flex flex-col items-center">
-                                <X size={48} className="mb-4" />
-                                <p className="font-bold text-lg">Error</p>
-                                <p className="text-sm">{status}</p>
+                            <div className="text-red-400 flex flex-col items-center animate-in zoom-in duration-300">
+                                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6 border border-red-500/20">
+                                    <X size={48} />
+                                </div>
+                                <p className="font-black text-2xl mb-2">Error</p>
+                                <p className="text-lg text-slate-400">{status}</p>
+                                <button
+                                    onClick={() => setGenerating(false)}
+                                    className="mt-8 px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white font-bold transition-all"
+                                >
+                                    Cerrar
+                                </button>
                             </div>
                         ) : status?.includes('correctamente') ? (
-                            <div className="text-emerald-600 flex flex-col items-center">
-                                <CheckCircle2 size={48} className="mb-4 animate-bounce" />
-                                <p className="font-bold text-lg">{t('templates.status.ready')}</p>
+                            <div className="text-primary flex flex-col items-center animate-in zoom-in duration-300">
+                                <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6 border border-primary/20 shadow-2xl shadow-primary/20">
+                                    <CheckCircle2 size={56} className="animate-bounce" />
+                                </div>
+                                <p className="font-black text-3xl tracking-tight">{t('templates.status.ready')}</p>
                             </div>
                         ) : (
-                            <div className="text-emerald-600 flex flex-col items-center">
-                                <Loader2 size={48} className="animate-spin mb-4" />
-                                <p className="font-bold text-lg">{status}</p>
-                                <p className="text-xs text-slate-400 mt-2">{t('templates.status.cross_referencing')}</p>
+                            <div className="text-primary flex flex-col items-center">
+                                <div className="relative mb-8">
+                                    <Loader2 size={80} className="animate-spin opacity-20" />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <FileText size={32} className="text-primary animate-pulse" />
+                                    </div>
+                                </div>
+                                <p className="font-black text-2xl tracking-tight mb-2">{status}</p>
+                                <p className="text-slate-500 animate-pulse">{t('templates.status.cross_referencing')}</p>
                             </div>
                         )}
                     </div>

@@ -1,36 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTenant } from '../lib/TenantContext';
 import { OrganizationPanel } from './OrganizationPanel';
-import { Building2, Settings, ArrowLeft, FileText, ExternalLink } from 'lucide-react';
+import { UserDocuments } from './UserDocuments';
+import { TemplateManager } from './TemplateManager';
+import { AffiliatePanel } from './AffiliatePanel';
+import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { cn } from '../lib/utils';
+import { ConfigPanel } from './ConfigPanel';
 
 interface TenantDashboardProps {
     onBack?: () => void;
     onNavigate?: (view: any) => void;
+    user: any;
+    profile: any;
+    initialTab?: string;
 }
 
-import { useTranslation } from 'react-i18next';
-
-export const TenantDashboard: React.FC<TenantDashboardProps> = ({ onBack, onNavigate }) => {
+export const TenantDashboard: React.FC<TenantDashboardProps> = ({
+    onBack,
+    onNavigate,
+    user,
+    profile,
+    initialTab = 'documents'
+}) => {
     const { t } = useTranslation();
-    const { tenant, loading } = useTenant();
+    const { tenant } = useTenant();
+    const [activeTab, setActiveTab] = useState(initialTab);
 
-    if (loading) {
-        return (
-            <div className="flex h-screen items-center justify-center">
-                <div className="animate-pulse text-slate-400">{t('tenant_dashboard.loading')}</div>
-            </div>
-        );
-    }
+    React.useEffect(() => {
+        setActiveTab(initialTab);
+    }, [initialTab]);
+
+    const handleTabChange = (tabId: string) => {
+        setActiveTab(tabId);
+        onNavigate?.(tabId);
+    };
 
     if (!tenant) {
         return (
             <div className="flex h-screen flex-col items-center justify-center p-8 text-center text-slate-500">
-                <Building2 size={48} className="mb-4 text-slate-300" />
-                <h2 className="text-xl font-semibold text-slate-700">{t('tenant_dashboard.not_found')}</h2>
-                <p className="mt-2">{t('tenant_dashboard.no_permission')}</p>
+                <Building2 size={48} className="mb-4 text-slate-600" />
+                <h2 className="text-xl font-semibold text-white">{t('tenant_dashboard.not_found')}</h2>
+                <p className="mt-2 text-slate-400">{t('tenant_dashboard.no_permission')}</p>
                 <button
                     onClick={onBack}
-                    className="mt-6 text-sm text-emerald-600 hover:underline"
+                    className="mt-6 px-6 py-2 bg-primary text-slate-900 rounded-full font-bold hover:bg-primary/90 transition-all"
                 >
                     {t('tenant_dashboard.back_home')}
                 </button>
@@ -38,54 +53,75 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({ onBack, onNavi
         );
     }
 
+    const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
+
+    const tabs = [
+        { id: 'documents', label: 'Mis Documentos', icon: FileText },
+        { id: 'templates', label: 'Plantillas PDF', icon: LayoutGrid, adminOnly: true },
+        { id: 'organization', label: 'Mi Organización', icon: Building2, adminOnly: true },
+        { id: 'affiliates', label: 'Programa de Afiliados', icon: TrendingUp },
+        { id: 'settings', label: 'Configuración', icon: Settings, adminOnly: true },
+    ];
+
+    const filteredTabs = tabs.filter(tab => !tab.adminOnly || isAdmin);
+
     return (
-        <div className="min-h-screen bg-slate-50 pb-20 pt-8">
-            <div className="mx-auto max-w-5xl px-6">
-                {/* Header */}
-                <div className="mb-8 flex items-center justify-between">
-                    <div>
-                        <button
-                            onClick={onBack}
-                            className="mb-2 flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors"
-                        >
-                            <ArrowLeft size={14} /> {t('tenant_dashboard.back')}
-                        </button>
-                        <h1 className="flex items-center gap-3 text-3xl font-bold text-slate-900">
-                            <span className="p-2 bg-white rounded-lg border border-slate-200 shadow-sm">
-                                <Building2 size={24} className="text-emerald-600" />
-                            </span>
-                            {tenant.name}
-                        </h1>
-                        <p className="mt-1 text-slate-500 ml-14">
-                            {t('tenant_dashboard.admin_panel')} • {t('tenant_dashboard.plan')} <span className="font-semibold uppercase text-emerald-600">{tenant.plan || 'Free'}</span>
-                        </p>
-                    </div>
+        <div className="min-h-screen bg-[#0a0f1d] pb-20 pt-12">
+            <div className="mx-auto max-w-6xl px-6">
+                {/* 1. Bloque Superior (Identidad y Contexto) */}
+                <div className="mb-12">
+                    <button
+                        onClick={onBack}
+                        className="mb-6 flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-white transition-colors group"
+                    >
+                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                        {t('tenant_dashboard.back')}
+                    </button>
 
-                    <div className="flex gap-3">
-                        {/* Documents Link */}
-                        <button
-                            onClick={() => onNavigate?.('documents')}
-                            className="flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100 shadow-sm transition-all"
-                        >
-                            <FileText size={16} />
-                            {t('tenant_dashboard.documents')}
-                            <ExternalLink size={12} className="ml-1 opacity-50" />
-                        </button>
+                    <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight mb-3">
+                        {tenant.name}
+                    </h1>
 
-                        {/* Settings Button */}
-                        <button className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 shadow-sm transition-all">
-                            <Settings size={16} />
-                            {t('tenant_dashboard.settings')}
-                        </button>
+                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500/80">
+                        <span>Rol:</span>
+                        <span className="text-primary font-black">{isAdmin ? 'Administrador' : 'Usuario'}</span>
+                        <span className="mx-2 opacity-20">|</span>
+                        <span className="uppercase tracking-[0.15em]">Email: <span className="text-slate-500 font-bold not-italic">{user?.email}</span></span>
                     </div>
                 </div>
 
-                {/* Main Config Panel */}
-                <div className="space-y-8">
-                    {/* Team Management */}
-                    <section>
-                        <OrganizationPanel tenantId={tenant.id} />
-                    </section>
+                {/* 2. Navegación en Fila (Secciones Horizontales) */}
+                <div className="mb-12 flex items-center gap-1 bg-[#0f172a] p-1 rounded-xl border border-white/5 w-full overflow-x-auto">
+                    {filteredTabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => handleTabChange(tab.id)}
+                            className={cn(
+                                "flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-lg text-[10px] font-black uppercase tracking-[0.15em] transition-all relative overflow-hidden group",
+                                activeTab === tab.id
+                                    ? "text-primary bg-primary/10 shadow-[inset_0_0_12px_rgba(19,236,200,0.05)]"
+                                    : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                            )}
+                        >
+                            <tab.icon size={14} className={cn(
+                                "transition-transform duration-300",
+                                activeTab === tab.id ? "scale-110" : "group-hover:scale-110"
+                            )} />
+                            <span className="truncate">{tab.label}</span>
+                            {activeTab === tab.id && (
+                                <div className="absolute bottom-0 left-1 right-1 h-0.5 bg-primary shadow-[0_0_8px_rgba(19,236,200,0.5)] rounded-full" />
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {/* 3. Contenido Dinámico */}
+                <div className="page-enter">
+                    {activeTab === 'documents' && <UserDocuments userId={user.id} />}
+                    {activeTab === 'templates' && <TemplateManager />}
+                    {activeTab === 'organization' && <OrganizationPanel tenantId={tenant.id} />}
+                    {activeTab === 'affiliates' && <AffiliatePanel />}
+                    {activeTab === 'settings' && <ConfigPanel />}
                 </div>
             </div>
         </div>

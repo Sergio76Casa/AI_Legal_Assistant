@@ -2,54 +2,59 @@ import React from 'react';
 import { Navbar } from './Navbar';
 import { useTranslation } from 'react-i18next';
 
-export function Layout({ children, onNavigate, user, profile }: {
+export function Layout({ children, onNavigate, user, profile, hideNavFooter = false, hideFooter = false, currentView }: {
     children: React.ReactNode,
     onNavigate?: (v: any) => void,
     user?: any,
-    profile?: any
+    profile?: any,
+    hideNavFooter?: boolean,
+    hideFooter?: boolean,
+    currentView?: string
 }) {
     const { t } = useTranslation();
 
     return (
-        <div className="min-h-screen flex flex-col bg-background font-sans selection:bg-emerald-100 selection:text-emerald-900">
-            <Navbar onNavigate={onNavigate} user={user} profile={profile} />
-            <main className="flex-grow pt-20">
+        <div className="min-h-screen flex flex-col bg-[#0a0f1d] font-sans text-slate-100 antialiased">
+            {!hideNavFooter && <Navbar onNavigate={onNavigate} user={user} profile={profile} currentView={currentView} />}
+            <main className={`flex-grow ${hideNavFooter ? '' : 'pt-20'} page-enter`}>
                 {children}
             </main>
-            <footer className="py-12 bg-white border-t border-gray-100">
-                <div className="max-w-7xl mx-auto px-6 text-center">
-                    <p className="text-sm text-gray-400">
-                        © {new Date().getFullYear()} LegalFlow. {t('nav.contact')}.
-                    </p>
-                    <div className="flex justify-center gap-6 mt-4">
-                        <button
-                            onClick={() => onNavigate?.('privacy')}
-                            className="text-xs text-gray-400 hover:text-primary transition-colors"
-                        >
-                            {t('legal.footer_privacy')}
-                        </button>
-                        <button
-                            onClick={() => onNavigate?.('cookies')}
-                            className="text-xs text-gray-400 hover:text-primary transition-colors"
-                        >
-                            {t('legal.footer_cookies')}
-                        </button>
+            {!hideNavFooter && !hideFooter && (
+                <footer className="py-12 border-t border-white/5 bg-[#0a0f1d]">
+                    <div className="max-w-7xl mx-auto px-6 text-center">
+                        <p className="text-sm text-slate-500">
+                            © {new Date().getFullYear()} LegalFlow. {t('nav.contact')}.
+                        </p>
+                        <div className="flex justify-center gap-6 mt-4">
+                            <button
+                                onClick={() => onNavigate?.('privacy')}
+                                className="text-xs text-slate-500 hover:text-primary transition-colors"
+                            >
+                                {t('legal.footer_privacy')}
+                            </button>
+                            <button
+                                onClick={() => onNavigate?.('cookies')}
+                                className="text-xs text-slate-500 hover:text-primary transition-colors"
+                            >
+                                {t('legal.footer_cookies')}
+                            </button>
+                        </div>
+                        <div className="mt-8 pt-8 border-t border-white/5">
+                            <a
+                                href="https://legalflow.digital"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    onNavigate?.('home');
+                                    window.location.href = 'https://legalflow.digital';
+                                }}
+                                className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary/80 bg-primary/10 px-3 py-1.5 rounded-full transition-colors border border-primary/20"
+                            >
+                                ⚡ Powered by LegalFlow Platform
+                            </a>
+                        </div>
                     </div>
-                    <div className="mt-8 pt-8 border-t border-gray-50">
-                        <a
-                            href="https://legalflow.digital"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                onNavigate?.('home');
-                                window.location.href = 'https://legalflow.digital';
-                            }}
-                            className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-full transition-colors"
-                        >
-                            ⚡ Powered by LegalFlow Platform
-                        </a>
-                    </div>
-                </div>
-            </footer>
+                </footer>
+            )}
         </div>
     );
 }

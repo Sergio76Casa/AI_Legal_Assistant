@@ -36,10 +36,16 @@ export const LegalPage: React.FC<LegalPageProps> = ({ type, onBack }) => {
                         {t(isPrivacy ? 'legal.privacy_content' : 'legal.cookies_content')}
                     </p>
 
-                    <div className="mt-12 pt-8 border-t border-slate-100">
+                    <div className="mt-12 pt-8 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <p className="text-sm text-slate-400">
                             Última actualización: {new Date().toLocaleDateString()}
                         </p>
+                        <button
+                            onClick={onBack}
+                            className="w-full md:w-auto px-8 py-3 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all active:scale-95"
+                        >
+                            Cerrar
+                        </button>
                     </div>
                 </div>
             </div>

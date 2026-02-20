@@ -70,99 +70,109 @@ export const PDFUploader: React.FC<PDFUploaderProps> = ({ onUploadSuccess }) => 
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Upload size={20} className="text-emerald-600" />
+        <div className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 shadow-xl">
+            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                <div className="p-2 bg-primary/15 rounded-lg border border-primary/20">
+                    <Upload size={20} className="text-primary" />
+                </div>
                 Nueva Plantilla PDF
             </h3>
 
             {error && (
-                <div className="mb-4 p-3 bg-red-50 text-red-700 text-sm rounded-lg flex items-center gap-2">
-                    <AlertCircle size={16} />
+                <div className="mb-6 p-4 bg-red-500/10 text-red-400 text-sm rounded-xl flex items-center gap-2 border border-red-500/20">
+                    <AlertCircle size={18} />
                     {error}
                 </div>
             )}
 
-            <form onSubmit={handleUpload} className="space-y-4">
+            <form onSubmit={handleUpload} className="space-y-6">
                 {/* File Input */}
                 {!file ? (
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative">
+                    <div className="border-2 border-dashed border-white/10 rounded-2xl p-10 text-center bg-white/5 hover:bg-white/10 transition-all cursor-pointer relative group">
                         <input
                             type="file"
                             accept=".pdf"
                             onChange={handleFileSelect}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                         />
-                        <FileText className="mx-auto h-10 w-10 text-slate-400 mb-2" />
-                        <p className="text-sm font-medium text-slate-600">
+                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform bg-white/10">
+                            <FileText className="h-8 w-8 text-slate-400 group-hover:text-primary transition-colors" />
+                        </div>
+                        <p className="text-sm font-medium text-slate-300">
                             Haz clic o arrastra un PDF aquí
                         </p>
-                        <p className="text-xs text-slate-400 mt-1">Sólo archivos PDF planos</p>
+                        <p className="text-xs text-slate-500 mt-1">Sólo archivos PDF planos</p>
                     </div>
                 ) : (
-                    <div className="flex items-center justify-between p-3 bg-emerald-50 border border-emerald-100 rounded-lg">
-                        <div className="flex items-center gap-3">
-                            <FileText className="text-emerald-600" size={20} />
-                            <span className="text-sm font-medium text-emerald-900 truncate max-w-[200px]">
-                                {file.name}
-                            </span>
+                    <div className="flex items-center justify-between p-4 bg-primary/10 border border-primary/20 rounded-xl">
+                        <div className="flex items-center gap-4">
+                            <div className="p-2 bg-primary/20 rounded-lg">
+                                <FileText className="text-primary" size={24} />
+                            </div>
+                            <div>
+                                <span className="text-sm font-bold text-white block truncate max-w-[200px]">
+                                    {file.name}
+                                </span>
+                                <span className="text-[10px] text-primary/70 uppercase font-bold tracking-wider">Listo para subir</span>
+                            </div>
                         </div>
                         <button
                             type="button"
                             onClick={() => setFile(null)}
-                            className="text-emerald-700 hover:text-emerald-900"
+                            className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                         >
-                            <X size={18} />
+                            <X size={20} />
                         </button>
                     </div>
                 )}
 
                 {/* Metadata Inputs */}
                 {file && (
-                    <div className="animate-in fade-in slide-in-from-top-2">
-                        <div className="grid gap-4">
+                    <div className="animate-in fade-in slide-in-from-top-2 space-y-6">
+                        <div className="grid gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                                     Nombre de la Plantilla
                                 </label>
                                 <input
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none text-white placeholder:text-slate-600 transition-all font-medium"
                                     required
+                                    placeholder="Ej: Formulario EX-15"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
                                     Categoría
                                 </label>
                                 <select
                                     value={category}
                                     onChange={(e) => setCategory(e.target.value)}
-                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none text-white appearance-none transition-all font-medium"
                                 >
-                                    <option value="general">General</option>
-                                    <option value="immigration">Extranjería</option>
-                                    <option value="taxes">Fiscal / Hacienda</option>
-                                    <option value="legal">Legal</option>
-                                    <option value="housing">Vivienda</option>
+                                    <option value="general" className="bg-slate-900">General</option>
+                                    <option value="immigration" className="bg-slate-900">Extranjería</option>
+                                    <option value="taxes" className="bg-slate-900">Fiscal / Hacienda</option>
+                                    <option value="legal" className="bg-slate-900">Legal</option>
+                                    <option value="housing" className="bg-slate-900">Vivienda</option>
                                 </select>
                             </div>
 
                             <button
                                 type="submit"
                                 disabled={uploading}
-                                className="w-full py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2"
+                                className="w-full py-4 bg-primary text-slate-900 rounded-xl font-bold hover:bg-primary/90 transition-all flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-[0.98]"
                             >
                                 {uploading ? (
                                     <>
-                                        <Loader2 size={18} className="animate-spin" />
+                                        <Loader2 size={20} className="animate-spin" />
                                         Subiendo...
                                     </>
                                 ) : (
                                     <>
-                                        <CheckCircle2 size={18} />
+                                        <CheckCircle2 size={20} />
                                         Guardar Plantilla
                                     </>
                                 )}

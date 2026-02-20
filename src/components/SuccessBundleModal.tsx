@@ -48,47 +48,47 @@ export const SuccessBundleModal: React.FC<SuccessBundleModalProps> = ({ isOpen, 
     if (!isOpen || !data) return null;
 
     return (
-        <div className="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[100] backdrop-blur-sm p-4 animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all scale-100 animate-in zoom-in-95 duration-200 border border-emerald-100">
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] backdrop-blur-sm p-4 animate-in fade-in duration-200">
+            <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all scale-100 animate-in zoom-in-95 duration-200 border border-white/10">
                 {/* Header */}
-                <div className="bg-emerald-600 px-6 py-6 text-center relative overflow-hidden">
+                <div className="bg-primary px-6 py-6 text-center relative overflow-hidden">
                     {/* Decorative circles */}
                     <div className="absolute top-0 left-0 w-20 h-20 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
-                    <div className="absolute bottom-0 right-0 w-32 h-32 bg-emerald-500/30 rounded-full translate-x-1/3 translate-y-1/3 blur-xl"></div>
+                    <div className="absolute bottom-0 right-0 w-32 h-32 bg-primary/30 rounded-full translate-x-1/3 translate-y-1/3 blur-xl"></div>
 
                     <div className="relative z-10 flex flex-col items-center">
-                        <div className="bg-white p-3 rounded-full shadow-lg mb-3">
-                            <CheckCircle2 size={42} className="text-emerald-600" />
+                        <div className="bg-slate-900 p-3 rounded-full shadow-lg mb-3">
+                            <CheckCircle2 size={42} className="text-primary" />
                         </div>
-                        <h2 className="text-2xl font-bold text-white tracking-tight">{t('success_bundle.title')}</h2>
-                        <p className="text-emerald-100 text-sm mt-1 font-medium">{t('success_bundle.subtitle')}</p>
+                        <h2 className="text-2xl font-bold text-slate-900 tracking-tight">{t('success_bundle.title')}</h2>
+                        <p className="text-slate-900/70 text-sm mt-1 font-medium">{t('success_bundle.subtitle')}</p>
                     </div>
                 </div>
 
                 {/* Content */}
                 <div className="p-8 space-y-6">
                     <div className="text-center space-y-2">
-                        <p className="text-slate-600">
+                        <p className="text-slate-300">
                             {t('success_bundle.generated_msg', { bundle: data.bundleName, client: data.clientName })}
                         </p>
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-800 rounded-full text-sm font-medium border border-emerald-100">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium border border-primary/20">
                             <Download size={16} />
                             {t('success_bundle.docs_generated', { count: data.fileCount })}
                         </div>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm text-slate-500 break-all">
-                        <span className="block text-xs font-semibold text-slate-400 uppercase mb-1">{t('success_bundle.file_downloaded')}</span>
+                    <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-sm text-slate-400 break-all">
+                        <span className="block text-xs font-semibold text-slate-500 uppercase mb-1">{t('success_bundle.file_downloaded')}</span>
                         {data.fileName}
                     </div>
 
-                    <p className="text-xs text-center text-slate-400">
+                    <p className="text-xs text-center text-slate-500">
                         {t('success_bundle.download_note')}
                     </p>
 
                     <button
                         onClick={onClose}
-                        className="w-full bg-slate-900 text-white py-3 rounded-xl font-medium hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
+                        className="w-full bg-primary text-slate-900 py-3 rounded-xl font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
                     >
                         {t('success_bundle.close_btn')}
                     </button>

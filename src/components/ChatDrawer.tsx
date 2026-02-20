@@ -34,18 +34,15 @@ export function ChatDrawer() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    // Auto-scroll al final cuando hay nuevos mensajes o se abre el chat
     useEffect(() => {
         scrollToBottom();
     }, [messages, isOpen]);
 
-    // Obtener usuario actual y escuchar cambios
     useEffect(() => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
         });
 
-        // Carga inicial
         supabase.auth.getUser().then(({ data }) => {
             setUser(data.user);
         });
@@ -53,7 +50,6 @@ export function ChatDrawer() {
         return () => subscription.unsubscribe();
     }, []);
 
-    // Hook de límites de uso
     const { canPerformAction, incrementUsage } = useUsageLimits(
         user?.id || null,
         'chat_query'
@@ -61,11 +57,10 @@ export function ChatDrawer() {
 
     const toggleDrawer = () => setIsOpen(!isOpen);
 
-    // Efecto para manejar búsquedas desde el exterior
     useEffect(() => {
         if (query) {
             setInputValue(query);
-            setQuery(''); // Limpiar para no repetir
+            setQuery('');
         }
     }, [query, setQuery]);
 
@@ -73,7 +68,6 @@ export function ChatDrawer() {
         e.preventDefault();
         if (!inputValue.trim()) return;
 
-        // Verificar límites antes de enviar
         if (!canPerformAction) {
             setShowUpgradeModal(true);
             return;
@@ -89,7 +83,6 @@ export function ChatDrawer() {
         const userQuery = inputValue;
         setInputValue('');
 
-        // Llamada real a la Edge Function
         try {
             setIsTyping(true);
 
@@ -107,14 +100,12 @@ export function ChatDrawer() {
             const fullResponse = data.answer || t('hero.subtitle');
             const assistantMsgId = Date.now().toString();
 
-            // Mensaje vacío inicial para el efecto máquina de escribir
             setMessages(prev => [...prev, {
                 id: assistantMsgId,
                 role: 'assistant',
                 content: ''
             }]);
 
-            // Efecto Máquina de Escribir (Typewriter)
             let currentContent = '';
             const words = fullResponse.split(' ');
             let wordIndex = 0;
@@ -129,16 +120,14 @@ export function ChatDrawer() {
                 } else {
                     clearInterval(typingInterval);
                 }
-            }, 100); // Ajustado de 60ms a 100ms para una lectura pausada
+            }, 100);
 
-            // Incrementar contador de uso después de respuesta exitosa
             await incrementUsage();
 
         } catch (error: any) {
             console.error('Error al contactar con el asistente:', error);
 
-            // Intentar extraer el mensaje de error detallado
-            let errorMessage = t('chat.error_fallback'); // Fallback por defecto
+            let errorMessage = t('chat.error_fallback');
 
             if (error.context?.message) {
                 errorMessage = error.context.message;
@@ -157,12 +146,12 @@ export function ChatDrawer() {
 
     return (
         <>
-            {/* Botón Flotante para abrir Chat */}
+            {/* Floating Button */}
             <button
                 onClick={toggleDrawer}
                 className={cn(
                     "fixed bottom-6 right-6 z-40 p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95",
-                    isOpen ? "bg-white text-gray-800 rotate-90" : "bg-primary text-white"
+                    isOpen ? "bg-slate-800 text-slate-300 rotate-90 border border-white/10" : "bg-primary text-slate-900 shadow-primary/30"
                 )}
             >
                 {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
@@ -176,7 +165,7 @@ export function ChatDrawer() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={toggleDrawer}
-                        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
                     />
                 )}
             </AnimatePresence>
@@ -189,26 +178,26 @@ export function ChatDrawer() {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-white/95 backdrop-blur-xl shadow-2xl z-50 flex flex-col border-l border-white/20"
+                        className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 flex flex-col border-l border-white/10"
                     >
-                        {/* Header del Chat */}
-                        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-white/50">
+                        {/* Chat Header */}
+                        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-slate-900/50">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-emerald-100 rounded-lg">
+                                <div className="p-2 bg-primary/15 rounded-lg border border-primary/20">
                                     <Bot className="w-6 h-6 text-primary" />
                                 </div>
                                 <div>
-                                    <h3 className="font-serif text-lg text-gray-900">{t('nav.brand_assistant')}</h3>
-                                    <p className="text-xs text-emerald-600 font-medium">{t('chat.status_verified')}</p>
+                                    <h3 className="font-serif text-lg text-white">{t('nav.brand_assistant')}</h3>
+                                    <p className="text-xs text-primary font-medium">{t('chat.status_verified')}</p>
                                 </div>
                             </div>
-                            <button onClick={toggleDrawer} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500">
+                            <button onClick={toggleDrawer} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400">
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
-                        {/* Area de Mensajes */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50">
+                        {/* Messages Area */}
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#0b1120]">
                             {messages.map((msg) => (
                                 <div
                                     key={msg.id}
@@ -220,8 +209,8 @@ export function ChatDrawer() {
                                     <div className={cn(
                                         "max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed shadow-sm",
                                         msg.role === 'user'
-                                            ? "bg-primary text-white rounded-tr-none"
-                                            : "bg-white text-gray-800 border border-gray-100 rounded-tl-none"
+                                            ? "bg-primary text-slate-900 rounded-tr-none"
+                                            : "bg-white/5 text-slate-200 border border-white/10 rounded-tl-none"
                                     )}>
                                         {msg.content}
                                     </div>
@@ -230,10 +219,10 @@ export function ChatDrawer() {
 
                             {isTyping && (
                                 <div className="flex justify-start animate-in fade-in slide-in-from-left-2 duration-300">
-                                    <div className="bg-white text-gray-800 border border-gray-100 rounded-2xl rounded-tl-none p-4 shadow-sm flex items-center gap-1.5">
-                                        <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                                        <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full animate-bounce"></div>
+                                    <div className="bg-white/5 text-slate-200 border border-white/10 rounded-2xl rounded-tl-none p-4 shadow-sm flex items-center gap-1.5">
+                                        <div className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                        <div className="w-1.5 h-1.5 bg-primary/80 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                        <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
                                     </div>
                                 </div>
                             )}
@@ -242,24 +231,24 @@ export function ChatDrawer() {
                         </div>
 
                         {/* Input Area */}
-                        <div className="p-4 bg-white border-t border-gray-100">
+                        <div className="p-4 bg-slate-900/80 border-t border-white/10">
                             <form onSubmit={handleSendMessage} className="relative flex items-center">
                                 <input
                                     type="text"
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                     placeholder={t('hero.search_placeholder')}
-                                    className="w-full py-4 pl-6 pr-14 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all placeholder:text-gray-400"
+                                    className="w-full py-4 pl-6 pr-14 bg-white/5 border border-white/10 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all placeholder:text-slate-500 text-white"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!inputValue.trim()}
-                                    className="absolute right-2 p-2 bg-primary text-white rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-800 transition-colors"
+                                    className="absolute right-2 p-2 bg-primary text-slate-900 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
                                 >
                                     <Send className="w-5 h-5" />
                                 </button>
                             </form>
-                            <p className="text-center text-[10px] text-gray-400 mt-3">
+                            <p className="text-center text-[10px] text-slate-600 mt-3">
                                 {t('chat.disclaimer')}
                             </p>
                         </div>
@@ -267,7 +256,6 @@ export function ChatDrawer() {
                 )}
             </AnimatePresence>
 
-            {/* Modal de Upgrade */}
             <UpgradeModal
                 isOpen={showUpgradeModal}
                 onClose={() => setShowUpgradeModal(false)}

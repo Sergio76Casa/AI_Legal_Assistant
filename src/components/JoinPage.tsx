@@ -60,8 +60,6 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
                 options: {
                     data: {
                         username: invitation.email.split('@')[0],
-                        // CRITICAL: We don't verify email again because they clicked the invite link
-                        // But standard flow might require verify. For B2B invites, we usually pre-verify.
                     }
                 }
             });
@@ -69,9 +67,6 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
             if (authError) throw authError;
 
             // B. Mark Invitation as Accepted & Link User to Tenant
-            // We call a secure RPC or Edge Function for this usually.
-            // For MVP, we can try client-side if Policies allow, but BETTER use an Edge Function 'accept-invite'.
-
             const { error: acceptError } = await supabase.functions.invoke('accept-invite', {
                 body: { token, user_id: authData.user?.id }
             });
@@ -91,53 +86,60 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <Loader2 className="animate-spin text-emerald-600" size={48} />
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+                <Loader2 className="animate-spin text-primary" size={48} />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-                <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border-l-4 border-red-500">
+            <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+                <div className="bg-white/5 backdrop-blur-xl p-8 rounded-2xl shadow-xl max-w-md w-full text-center border border-red-500/20">
                     <AlertOctagon size={48} className="mx-auto text-red-500 mb-4" />
-                    <h2 className="text-xl font-bold text-gray-800 mb-2">Invitación Inválida</h2>
-                    <p className="text-gray-600">{error}</p>
-                    <a href="/" className="mt-6 inline-block text-emerald-600 font-medium hover:underline">Volver al Inicio</a>
+                    <h2 className="text-xl font-bold text-white mb-2">Invitación Inválida</h2>
+                    <p className="text-slate-400">{error}</p>
+                    <a href="/" className="mt-6 inline-block text-primary font-bold hover:underline">Volver al Inicio</a>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden">
-                <div className="bg-slate-900 p-8 text-center">
-                    <ShieldCheck size={48} className="text-emerald-400 mx-auto mb-4" />
-                    <h1 className="text-2xl font-bold text-white mb-2">Únete al Equipo</h1>
-                    <p className="text-slate-400">
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Background Glow */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[150px] -mr-48 -mt-48"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[150px] -ml-48 -mb-48"></div>
+
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-white/10 relative z-10">
+                <div className="bg-slate-900/80 p-8 text-center border-b border-white/5">
+                    <ShieldCheck size={48} className="text-primary mx-auto mb-4 animate-pulse" />
+                    <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Únete al Equipo</h1>
+                    <p className="text-slate-400 text-sm">
                         Has sido invitado a colaborar en <br />
-                        <span className="text-white font-semibold text-lg">{invitation.tenants?.name || 'Organización'}</span>
+                        <span className="text-primary font-black text-lg tracking-tight uppercase">{invitation.tenants?.name || 'Organización'}</span>
                     </p>
                 </div>
 
                 <div className="p-8">
-                    <div className="mb-6 bg-blue-50 text-blue-800 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
-                        <CheckCircle size={16} />
-                        Invitación verificada para: <strong>{invitation.email}</strong>
+                    <div className="mb-6 bg-primary/10 text-primary px-4 py-3 rounded-xl text-xs font-bold flex items-center gap-3 border border-primary/20">
+                        <CheckCircle size={16} className="shrink-0" />
+                        <div>
+                            <p className="opacity-70 uppercase tracking-widest text-[10px] mb-0.5">Invitación verificada</p>
+                            <p className="text-sm font-black">{invitation.email}</p>
+                        </div>
                     </div>
 
-                    <form onSubmit={handleJoin} className="space-y-4">
+                    <form onSubmit={handleJoin} className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Crea tu Contraseña</label>
+                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Crea tu Contraseña</label>
                             <input
                                 type="password"
                                 required
                                 minLength={6}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none transition-all placeholder:text-slate-600 font-medium"
                                 placeholder="••••••••"
                             />
                         </div>
@@ -145,7 +147,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
                         <button
                             type="submit"
                             disabled={processing}
-                            className="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full bg-primary text-slate-900 py-4 rounded-xl font-bold hover:brightness-110 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-primary/20 active:scale-[0.98]"
                         >
                             {processing ? (
                                 <>
@@ -160,8 +162,8 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
                         </button>
                     </form>
 
-                    <p className="mt-6 text-center text-xs text-gray-400">
-                        Al unirte, aceptas los términos de LegalFlow y de {invitation.tenants?.name}.
+                    <p className="mt-8 text-center text-[10px] uppercase font-black tracking-widest text-slate-600">
+                        Al unirte, aceptas los términos de <span className="text-white">LegalFlow</span> y de <span className="text-white">{invitation.tenants?.name}</span>.
                     </p>
                 </div>
             </div>

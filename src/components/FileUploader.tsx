@@ -21,7 +21,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Límites de uso
     const { canPerformAction, refresh } = useUsageLimits(userId, 'upload_document');
 
     const handleDrag = (e: React.DragEvent) => {
@@ -59,7 +58,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
     const uploadFile = async () => {
         if (!file || !userId) return;
 
-        // 0. Verificar límites antes de empezar
         if (!canPerformAction) {
             setShowUpgradeModal(true);
             return;
@@ -73,11 +71,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
         const filePath = `${userId}/${fileName}`;
 
         try {
-            // Obtener país del usuario
             const { data: { user } } = await supabase.auth.getUser();
             const userCountry = user?.user_metadata?.country || 'ES';
 
-            // 1. Subir a Storage con progreso
             const { error: uploadError } = await supabase.storage
                 .from('user-documents')
                 .upload(filePath, file, {
@@ -89,7 +85,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
 
             if (uploadError) throw uploadError;
 
-            // 1.5 Registrar en la tabla de documentos con país
             const { data: docData, error: dbError } = await supabase
                 .from('documents')
                 .insert({
@@ -105,7 +100,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
 
             if (dbError) throw dbError;
 
-            // 2. Llamar a la Edge Function para procesar
             setStatus('processing');
             const { data, error: invokeError } = await supabase.functions.invoke('process-pdf', {
                 body: {
@@ -121,9 +115,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
 
             setStatus('success');
             onUploadSuccess?.(filePath);
-            refresh(); // Actualizar límites tras éxito
+            refresh();
 
-            // Reset después de unos segundos
             setTimeout(() => {
                 setFile(null);
                 setStatus('idle');
@@ -145,7 +138,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
                 onDrop={handleDrop}
                 className={cn(
                     "relative border-2 border-dashed rounded-2xl p-8 transition-all duration-200 text-center",
-                    isDragging ? "border-primary bg-primary/5 scale-[1.01]" : "border-slate-200 bg-slate-50/50 hover:bg-slate-50",
+                    isDragging ? "border-primary bg-primary/10 scale-[1.01]" : "border-white/15 bg-white/5 hover:bg-white/8",
                     status === 'uploading' || status === 'processing' ? "pointer-events-none opacity-80" : ""
                 )}
             >
@@ -159,32 +152,32 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
 
                 {!file ? (
                     <div className="flex flex-col items-center gap-4">
-                        <div className="p-4 bg-white rounded-full shadow-sm text-slate-400">
+                        <div className="p-4 bg-white/10 rounded-full text-slate-400 border border-white/10">
                             <Upload size={32} />
                         </div>
                         <div>
-                            <p className="text-lg font-semibold text-slate-900">
+                            <p className="text-lg font-semibold text-white">
                                 {t('docs.upload_title') || 'Sube tus documentos'}
                             </p>
-                            <p className="text-sm text-slate-500 mt-1">
+                            <p className="text-sm text-slate-400 mt-1">
                                 {t('docs.upload_subtitle') || 'Arrastra tu PDF aquí o haz clic para buscar'}
                             </p>
                         </div>
                         <button
                             onClick={() => fileInputRef.current?.click()}
-                            className="mt-2 px-6 py-2 bg-white border border-slate-200 rounded-full text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+                            className="mt-2 px-6 py-2 bg-white/10 border border-white/15 rounded-full text-sm font-medium text-slate-300 hover:bg-white/15 transition-colors"
                         >
                             {t('docs.select_file') || 'Seleccionar Archivo'}
                         </button>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center gap-4">
-                        <div className="flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border border-slate-100 w-full">
-                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                        <div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10 w-full">
+                            <div className="p-2 bg-primary/15 text-primary rounded-lg border border-primary/20">
                                 <File size={24} />
                             </div>
                             <div className="flex-1 text-left">
-                                <p className="text-sm font-medium text-slate-900 truncate max-w-[200px]">
+                                <p className="text-sm font-medium text-white truncate max-w-[200px]">
                                     {file.name}
                                 </p>
                                 <p className="text-xs text-slate-500">
@@ -194,7 +187,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
                             {status === 'idle' && (
                                 <button
                                     onClick={() => setFile(null)}
-                                    className="p-1 hover:bg-slate-100 rounded-full text-slate-400"
+                                    className="p-1 hover:bg-white/10 rounded-full text-slate-400"
                                 >
                                     <X size={18} />
                                 </button>
@@ -204,7 +197,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
                         {status === 'idle' && (
                             <button
                                 onClick={uploadFile}
-                                className="w-full py-3 bg-primary text-white rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-emerald-800 transition-all"
+                                className="w-full py-3 bg-primary text-slate-900 rounded-xl font-semibold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
                             >
                                 {t('docs.confirm_upload') || 'Confirmar subida y procesar'}
                             </button>
@@ -214,12 +207,12 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
                             <div className="flex flex-col items-center gap-3 w-full max-w-xs mx-auto">
                                 <div className="flex items-center gap-2">
                                     <Loader2 className="animate-spin text-primary" size={24} />
-                                    <p className="text-sm font-medium text-slate-600">
+                                    <p className="text-sm font-medium text-slate-300">
                                         {status === 'uploading' ? t('docs.status_uploading') || 'Subiendo archivo...' : t('docs.status_processing') || 'La IA está analizando tu documento...'}
                                     </p>
                                 </div>
 
-                                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden shadow-inner">
+                                <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
                                     <div
                                         className="bg-primary h-full transition-all duration-300 ease-out"
                                         style={{ width: `${status === 'processing' ? 100 : uploadProgress}%` }}
@@ -233,14 +226,14 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
                         )}
 
                         {status === 'success' && (
-                            <div className="flex flex-col items-center gap-2 text-emerald-600">
+                            <div className="flex flex-col items-center gap-2 text-primary">
                                 <CheckCircle2 size={32} />
                                 <p className="text-sm font-medium">{t('docs.status_success') || '¡Documento listo!'}</p>
                             </div>
                         )}
 
                         {status === 'error' && (
-                            <div className="flex flex-col items-center gap-2 text-rose-600">
+                            <div className="flex flex-col items-center gap-2 text-red-400">
                                 <AlertCircle size={32} />
                                 <p className="text-sm font-medium">{error || t('docs.status_error') || 'Error al procesar'}</p>
                                 <button
@@ -254,11 +247,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
                     </div>
                 )}
             </div>
-            <p className="text-[10px] text-slate-400 mt-4 text-center">
+            <p className="text-[10px] text-slate-500 mt-4 text-center">
                 {t('docs.privacy_notice') || 'Tus documentos se procesan de forma segura y solo son accesibles por ti y el asistente de IA durante tu sesión.'}
             </p>
 
-            {/* Modal de Upgrade */}
             <UpgradeModal
                 isOpen={showUpgradeModal}
                 onClose={() => setShowUpgradeModal(false)}

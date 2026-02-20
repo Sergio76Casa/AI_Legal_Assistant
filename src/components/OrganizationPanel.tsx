@@ -62,15 +62,15 @@ const UserBundlesSection = ({ userId, tenantId, onBundleSuccess }: { userId: str
     if (bundles.length === 0) return null;
 
     return (
-        <div className="mt-2 pt-2 border-t border-gray-100">
-            <p className="text-xs font-semibold text-gray-500 mb-2">{t('org_panel.quick_bundles')}</p>
+        <div className="mt-2 pt-2 border-t border-white/10">
+            <p className="text-xs font-semibold text-slate-500 mb-2">{t('org_panel.quick_bundles')}</p>
             <div className="flex flex-wrap gap-2">
                 {bundles.map(bundle => (
                     <button
                         key={bundle.id}
                         onClick={() => handleGenerateBundle(bundle)}
                         disabled={!!generatingBundleId}
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-indigo-100"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500/20 rounded text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-indigo-500/20"
                     >
                         {generatingBundleId === bundle.id ? (
                             <>
@@ -175,18 +175,18 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-                    <BuildingIcon size={24} className="text-emerald-600" />
+                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                    <BuildingIcon size={24} className="text-primary" />
                     {t('org_panel.title')}
                 </h2>
-                <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                <div className="text-sm text-slate-400 bg-white/10 px-3 py-1 rounded-full border border-white/10">
                     {t('org_panel.id', { id: tenantId })}
                 </div>
             </div>
 
             {/* Invite Form */}
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-emerald-100">
-                <h3 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
+            <div className="bg-white/5 backdrop-blur-md p-6 rounded-xl shadow-sm border border-primary/20">
+                <h3 className="text-sm font-semibold text-slate-300 mb-4 flex items-center gap-2">
                     <UserPlus size={18} />
                     {t('org_panel.invite_title')}
                 </h3>
@@ -196,19 +196,19 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                         placeholder={t('org_panel.invite_placeholder')}
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
-                        className="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="flex-1 px-4 py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white/5 text-white placeholder-slate-500"
                         required
                     />
                     <button
                         type="submit"
-                        className="bg-emerald-600 text-white px-6 py-2 rounded-lg hover:bg-emerald-700 transition-colors font-medium flex items-center gap-2"
+                        className="bg-primary text-slate-900 px-6 py-2 rounded-lg hover:bg-primary/90 transition-colors font-bold flex items-center gap-2"
                     >
                         <Mail size={18} />
                         {t('org_panel.invite_btn')}
                     </button>
                 </form>
                 {status && (
-                    <div className={`mt-4 p-3 rounded-lg flex items-center gap-2 text-sm ${status.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                    <div className={`mt-4 p-3 rounded-lg flex items-center gap-2 text-sm ${status.type === 'success' ? 'bg-primary/10 text-primary border border-primary/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
                         {status.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
                         {status.message}
                     </div>
@@ -216,35 +216,35 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
             </div>
 
             {/* Users List */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                    <h3 className="font-semibold text-gray-700">{t('org_panel.users_list')} ({users.length})</h3>
+            <div className="bg-white/5 backdrop-blur-md rounded-xl shadow-sm border border-white/10 overflow-hidden">
+                <div className="px-6 py-4 border-b border-white/10 bg-white/5 flex justify-between items-center">
+                    <h3 className="font-semibold text-white">{t('org_panel.users_list')} ({users.length})</h3>
                 </div>
 
                 {loading ? (
-                    <div className="p-8 text-center text-gray-400">{t('org_panel.loading_users')}</div>
+                    <div className="p-8 text-center text-slate-500">{t('org_panel.loading_users')}</div>
                 ) : (
-                    <table className="w-full text-left text-sm">
-                        <thead className="bg-gray-50 text-gray-500">
+                    <table className="w-full text-left text-base">
+                        <thead className="bg-white/5 text-slate-400">
                             <tr>
-                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.user')}</th>
-                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.role')}</th>
-                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.join_date')}</th>
-                                <th className="px-6 py-3 font-medium">{t('org_panel.headers.status')}</th>
-                                <th className="px-6 py-3 font-medium text-right">{t('org_panel.headers.actions')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.user')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.role')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.join_date')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.status')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px] text-right">{t('org_panel.headers.actions')}</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-white/5">
                             {users.map((user) => (
-                                <tr key={user.id} className="hover:bg-gray-50/50">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                                <tr key={user.id} className="hover:bg-white/5 transition-colors">
+                                    <td className="px-6 py-5">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-primary/15 text-primary flex items-center justify-center font-bold border border-primary/20 text-lg">
                                                 {user.email?.charAt(0).toUpperCase() || 'U'}
                                             </div>
                                             <div>
-                                                <div className="font-medium text-gray-900">{user.email}</div>
-                                                <div className="text-xs text-gray-500">{user.id}</div>
+                                                <div className="font-bold text-white text-base">{user.email}</div>
+                                                <div className="text-[11px] text-slate-500 font-medium tracking-tight mt-0.5">{user.id}</div>
 
                                                 {/* Sección de Packs */}
                                                 <UserBundlesSection userId={user.id} tenantId={tenantId} onBundleSuccess={handleBundleSuccess} />
@@ -253,37 +253,37 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'admin'
-                                            ? 'bg-purple-100 text-purple-800'
-                                            : 'bg-gray-100 text-gray-800'
+                                            ? 'bg-purple-500/15 text-purple-400 border border-purple-500/20'
+                                            : 'bg-white/10 text-slate-400 border border-white/10'
                                             }`}>
                                             {user.role === 'admin' ? <Shield size={12} className="mr-1" /> : null}
                                             {user.role === 'admin' ? t('org_panel.role_admin') : t('org_panel.role_user')}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-500">
+                                    <td className="px-6 py-4 text-slate-400">
                                         {new Date(user.created_at).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-emerald-600 bg-emerald-50 px-2 py-1 rounded text-xs font-medium">
+                                        <span className="text-primary bg-primary/10 px-2 py-1 rounded text-xs font-medium border border-primary/20">
                                             {t('org_panel.status_active')}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right flex items-center justify-end gap-2">
                                         <button
                                             onClick={() => setEditingUser(user)}
-                                            className="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-colors tooltip"
+                                            className="text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 p-2 rounded-lg transition-colors"
                                             title={t('org_panel.tooltips.edit_client')}
                                         >
                                             <Pencil size={16} />
                                         </button>
                                         <button
                                             onClick={() => setSelectedUserForPDF(user)}
-                                            className="text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-lg transition-colors tooltip"
+                                            className="text-primary hover:text-primary/80 bg-primary/10 hover:bg-primary/20 p-2 rounded-lg transition-colors"
                                             title={t('org_panel.tooltips.generate_doc')}
                                         >
                                             <FileText size={16} />
                                         </button>
-                                        <button className="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-lg">
+                                        <button className="text-slate-500 hover:text-red-400 transition-colors p-2 hover:bg-red-500/10 rounded-lg">
                                             <Trash2 size={16} />
                                         </button>
                                     </td>
@@ -291,7 +291,7 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                             ))}
                             {users.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-8 text-center text-gray-500 italic">
+                                    <td colSpan={5} className="px-6 py-8 text-center text-slate-500 italic">
                                         {t('org_panel.no_users')}
                                     </td>
                                 </tr>

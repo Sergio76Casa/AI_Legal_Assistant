@@ -129,27 +129,27 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white text-slate-900 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-slate-900/95 backdrop-blur-xl text-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col border border-white/10">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-white/5">
                     <h2 className="text-lg font-bold flex items-center gap-2">
-                        <User className="text-emerald-600" size={20} />
+                        <User className="text-primary" size={20} />
                         {t('profile.edit_title')}
                     </h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+                    <button onClick={onClose} className="text-slate-400 hover:text-white hover:bg-white/10 p-1.5 rounded-lg transition-colors">
                         <X size={20} />
                     </button>
                 </div>
 
                 {loading ? (
                     <div className="flex-1 flex items-center justify-center p-12">
-                        <Loader2 className="animate-spin text-emerald-600" size={32} />
+                        <Loader2 className="animate-spin text-primary" size={32} />
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="flex-1 flex flex-col overflow-hidden">
                         {/* Tabs */}
-                        <div className="flex border-b border-slate-200">
+                        <div className="flex border-b border-white/10">
                             {[
                                 { id: 'basic', label: t('profile.tabs.personal'), icon: User },
                                 { id: 'address', label: t('profile.tabs.address'), icon: MapPin },
@@ -161,8 +161,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                                     type="button"
                                     onClick={() => setActiveTab(tab.id as any)}
                                     className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 border-b-2 transition-colors ${activeTab === tab.id
-                                        ? 'border-emerald-500 text-emerald-700 bg-emerald-50/50'
-                                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                                        ? 'border-primary text-primary bg-primary/10'
+                                        : 'border-transparent text-slate-400 hover:text-white hover:bg-white/5'
                                         }`}
                                 >
                                     <tab.icon size={16} />
@@ -172,7 +172,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                         </div>
 
                         {/* Scrollable Content */}
-                        <div className="flex-1 overflow-y-auto p-6 bg-white">
+                        <div className="flex-1 overflow-y-auto p-6">
 
                             {/* BASIC INFO */}
                             {activeTab === 'basic' && (
@@ -187,12 +187,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                                     <FormInput label={t('fields.phone')} name="phone" value={formData.phone} onChange={handleChange} />
 
                                     <div className="flex flex-col gap-1">
-                                        <label className="text-xs font-semibold text-slate-500">{t('profile.sex')}</label>
+                                        <label className="text-xs font-semibold text-slate-400">{t('profile.sex')}</label>
                                         <select
                                             name="sex"
                                             value={formData.sex}
                                             onChange={handleChange}
-                                            className="px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm bg-white"
+                                            className="px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm bg-white/5 text-white"
                                         >
                                             <option value="">{t('profile.select')}</option>
                                             <option value="male">{t('fields.sex_male')}</option>
@@ -201,12 +201,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                                     </div>
 
                                     <div className="flex flex-col gap-1">
-                                        <label className="text-xs font-semibold text-slate-500">{t('civil_status')}</label>
+                                        <label className="text-xs font-semibold text-slate-400">{t('civil_status')}</label>
                                         <select
                                             name="civil_status"
                                             value={formData.civil_status}
                                             onChange={handleChange}
-                                            className="px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm bg-white"
+                                            className="px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm bg-white/5 text-white"
                                         >
                                             <option value="">{t('profile.select')}</option>
                                             <option value="S">{t('profile.civil_status_s')}</option>
@@ -224,8 +224,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                                 <div className="space-y-4">
                                     <FormInput label={t('fields.address')} name="address" value={formData.address} onChange={handleChange} placeholder={t('profile.placeholders.address')} />
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-slate-100 pt-4 mt-2">
-                                        <span className="col-span-full text-xs font-bold text-slate-400 uppercase tracking-wider mb-[-10px]">{t('profile.address_breakdown')}</span>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-white/10 pt-4 mt-2">
+                                        <span className="col-span-full text-xs font-bold text-slate-500 uppercase tracking-wider mb-[-10px]">{t('profile.address_breakdown')}</span>
                                         <div className="md:col-span-2">
                                             <FormInput label={t('fields.address_street')} name="address_street" value={formData.address_street} onChange={handleChange} placeholder={t('profile.placeholders.street')} />
                                         </div>
@@ -241,7 +241,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                             {/* FILIATION */}
                             {activeTab === 'filiation' && (
                                 <div className="grid grid-cols-1 gap-4">
-                                    <div className="p-4 bg-blue-50 text-blue-800 text-sm rounded-lg mb-2">
+                                    <div className="p-4 bg-blue-500/10 text-blue-300 text-sm rounded-lg mb-2 border border-blue-500/20">
                                         {t('profile.filiation_note')}
                                     </div>
                                     <FormInput label={t('fields.father_name')} name="father_name" value={formData.father_name} onChange={handleChange} />
@@ -252,7 +252,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                             {/* REPRESENTATION */}
                             {activeTab === 'representation' && (
                                 <div className="grid grid-cols-1 gap-4">
-                                    <div className="p-4 bg-amber-50 text-amber-800 text-sm rounded-lg mb-2">
+                                    <div className="p-4 bg-amber-500/10 text-amber-300 text-sm rounded-lg mb-2 border border-amber-500/20">
                                         {t('profile.rep_note')}
                                     </div>
                                     <FormInput label={t('fields.representative_name')} name="representative_name" value={formData.representative_name} onChange={handleChange} />
@@ -262,18 +262,18 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                         </div>
 
                         {/* Footer */}
-                        <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+                        <div className="px-6 py-4 border-t border-white/10 bg-white/5 flex justify-end gap-3">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors font-medium"
+                                className="px-4 py-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors font-medium"
                             >
                                 {t('profile.cancel')}
                             </button>
                             <button
                                 type="submit"
                                 disabled={saving}
-                                className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium flex items-center gap-2 disabled:opacity-50"
+                                className="px-6 py-2 bg-primary text-slate-900 rounded-lg hover:bg-primary/90 transition-colors font-bold flex items-center gap-2 disabled:opacity-50"
                             >
                                 {saving ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                                 {t('profile.save_btn')}
@@ -288,14 +288,14 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
 
 const FormInput = ({ label, name, value, onChange, type = "text", placeholder = "" }: any) => (
     <div className="flex flex-col gap-1">
-        <label className="text-xs font-semibold text-slate-500">{label}</label>
+        <label className="text-xs font-semibold text-slate-400">{label}</label>
         <input
             type={type}
             name={name}
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            className="px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm transition-all"
+            className="px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm transition-all bg-white/5 text-white placeholder-slate-500"
         />
     </div>
 );

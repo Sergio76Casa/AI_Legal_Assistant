@@ -445,6 +445,9 @@
             "ai_desc": "Our AI doesn't just read laws, it *understands* your internal contracts. Upload PDFs, images, or employee guides.",
             "global_title": "Global Coverage",
             "global_desc": "Adapted for employees in Spain, Morocco, and LATAM.",
+            "security_expanded": "We use military-grade AES-256 encryption for all documents and personal data. Furthermore, our Iron Silo™ architecture ensures total data isolation per firm, guaranteeing that only authorized personnel can access confidential information.",
+            "ai_expanded": "The STARK 2.0 Engine is capable of analyzing complex official documents in seconds. It allows for intelligent data extraction for direct export to immigration forms (EX-01, EX-11, etc.), reducing manual management time by 80%.",
+            "global_expanded": "We offer full support for a wide range of procedures, including Social Rooting (Arraigo Social), Digital Nomad Visa, Residency by Investment (Golden Visa), and family reunification. Our coverage extends across the major migration corridors to Spain.",
             "mobile_title": "App-Like Experience",
             "mobile_desc": "Your employees access from anywhere."
         },

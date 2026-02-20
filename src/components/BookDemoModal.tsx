@@ -33,7 +33,7 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={onClose}
-                    className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                    className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                 />
 
                 {/* Modal Content */}
@@ -41,11 +41,11 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
                     initial={{ scale: 0.95, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                    className="relative w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+                    className="relative w-full max-w-xl bg-slate-900/95 backdrop-blur-xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/10"
                 >
                     <button
                         onClick={onClose}
-                        className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 transition-colors z-10 text-slate-400 hover:text-slate-600"
+                        className="absolute top-6 right-6 p-2 rounded-full hover:bg-white/10 transition-colors z-10 text-slate-400 hover:text-white"
                     >
                         <X className="w-6 h-6" />
                     </button>
@@ -54,10 +54,10 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
                         {!isSubmitted ? (
                             <>
                                 <div className="mb-8">
-                                    <h2 className="text-3xl font-serif font-bold text-slate-900 mb-3">
+                                    <h2 className="text-3xl font-serif font-bold text-white mb-3">
                                         {t('demo.title')}
                                     </h2>
-                                    <p className="text-slate-500 leading-relaxed">
+                                    <p className="text-slate-400 leading-relaxed">
                                         {t('demo.subtitle')}
                                     </p>
                                 </div>
@@ -65,50 +65,50 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
                                 <form onSubmit={handleSubmit} className="space-y-5">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                         <div className="space-y-1.5">
-                                            <label className="text-sm font-semibold text-slate-700 ml-1">
+                                            <label className="text-sm font-semibold text-slate-300 ml-1">
                                                 {t('demo.fields.name')}
                                             </label>
                                             <input
                                                 required
                                                 type="text"
-                                                className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all bg-slate-50/50"
+                                                className="w-full px-4 py-3 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white/5 text-white placeholder-slate-500"
                                                 placeholder={t('demo.placeholders.name')}
                                             />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-sm font-semibold text-slate-700 ml-1">
+                                            <label className="text-sm font-semibold text-slate-300 ml-1">
                                                 {t('demo.fields.email')}
                                             </label>
                                             <input
                                                 required
                                                 type="email"
-                                                className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all bg-slate-50/50"
+                                                className="w-full px-4 py-3 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white/5 text-white placeholder-slate-500"
                                                 placeholder={t('demo.placeholders.email')}
                                             />
                                         </div>
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-semibold text-slate-700 ml-1 flex items-center gap-2">
-                                            <Building2 className="w-4 h-4 text-slate-400" />
+                                        <label className="text-sm font-semibold text-slate-300 ml-1 flex items-center gap-2">
+                                            <Building2 className="w-4 h-4 text-slate-500" />
                                             {t('demo.fields.org')}
                                         </label>
                                         <input
                                             required
                                             type="text"
-                                            className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all bg-slate-50/50"
+                                            className="w-full px-4 py-3 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white/5 text-white placeholder-slate-500"
                                             placeholder={t('demo.placeholders.org')}
                                         />
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-semibold text-slate-700 ml-1 flex items-center gap-2">
-                                            <Users className="w-4 h-4 text-slate-400" />
+                                        <label className="text-sm font-semibold text-slate-300 ml-1 flex items-center gap-2">
+                                            <Users className="w-4 h-4 text-slate-500" />
                                             {t('demo.fields.size')}
                                         </label>
                                         <select
                                             required
-                                            className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all bg-slate-50/50 appearance-none cursor-pointer"
+                                            className="w-full px-4 py-3 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white/5 text-white appearance-none cursor-pointer"
                                         >
                                             <option value="">{t('demo.placeholders.select_size')}</option>
                                             <option value="small">&lt; 50 {t('demo.fields.employees')}</option>
@@ -118,13 +118,13 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="text-sm font-semibold text-slate-700 ml-1 flex items-center gap-2">
-                                            <MessageSquare className="w-4 h-4 text-slate-400" />
+                                        <label className="text-sm font-semibold text-slate-300 ml-1 flex items-center gap-2">
+                                            <MessageSquare className="w-4 h-4 text-slate-500" />
                                             {t('demo.fields.message')}
                                         </label>
                                         <textarea
                                             rows={3}
-                                            className="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all bg-slate-50/50 resize-none"
+                                            className="w-full px-4 py-3 rounded-2xl border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all bg-white/5 text-white placeholder-slate-500 resize-none"
                                             placeholder={t('demo.placeholders.message')}
                                         />
                                     </div>
@@ -132,13 +132,13 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
                                     <button
                                         disabled={loading}
                                         type="submit"
-                                        className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-all shadow-lg hover:shadow-emerald-200/50 flex items-center justify-center gap-2 disabled:opacity-50 mt-4 active:scale-[0.98]"
+                                        className="w-full py-4 bg-primary text-slate-900 rounded-2xl font-bold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 disabled:opacity-50 mt-4 active:scale-[0.98]"
                                     >
                                         {loading ? (
                                             <motion.div
                                                 animate={{ rotate: 360 }}
                                                 transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                                                className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full"
+                                                className="w-6 h-6 border-2 border-slate-900/30 border-t-slate-900 rounded-full"
                                             />
                                         ) : (
                                             <>
@@ -154,18 +154,18 @@ export function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="py-12 text-center"
                             >
-                                <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+                                <div className="w-20 h-20 bg-primary/15 rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20">
+                                    <CheckCircle2 className="w-10 h-10 text-primary" />
                                 </div>
-                                <h3 className="text-3xl font-serif font-bold text-slate-900 mb-4">
+                                <h3 className="text-3xl font-serif font-bold text-white mb-4">
                                     {t('demo.success_title')}
                                 </h3>
-                                <p className="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed">
+                                <p className="text-slate-400 mb-8 max-w-sm mx-auto leading-relaxed">
                                     {t('demo.success_message')}
                                 </p>
                                 <button
                                     onClick={onClose}
-                                    className="px-8 py-3 border-2 border-slate-200 rounded-full font-bold text-slate-600 hover:bg-slate-50 transition-all"
+                                    className="px-8 py-3 border-2 border-white/15 rounded-full font-bold text-slate-300 hover:bg-white/10 transition-all"
                                 >
                                     {t('demo.close')}
                                 </button>

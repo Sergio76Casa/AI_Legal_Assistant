@@ -4,9 +4,91 @@
 
 @layer base {
   body {
-    @apply bg-background text-gray-900 font-sans antialiased;
+    @apply bg-[#0a0f1d] text-foreground font-sans antialiased;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
+  }
+
+  :root {
+    /* Dark Premium — единственная тема */
+    --background: 224 49% 8%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 170 85% 50%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 170 85% 50%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 170 85% 50%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer components {
+  .glass-nav {
+    @apply bg-slate-900/80 backdrop-blur-xl border-b border-white/10;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-primary/50 bg-primary/5;
+  }
+
+  .hero-gradient {
+    background: radial-gradient(circle at 50% 50%, rgba(19, 236, 200, 0.15) 0%, rgba(10, 15, 29, 0) 70%);
+  }
+
+  /* Page transitions */
+  .page-enter {
+    animation: pageIn 0.3s ease-out;
+  }
+
+  @keyframes pageIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Splash pulse */
+  .pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+
+    0%,
+    100% {
+      filter: drop-shadow(0 0 20px rgba(19, 236, 200, 0.3));
+    }
+
+    50% {
+      filter: drop-shadow(0 0 40px rgba(19, 236, 200, 0.7));
+    }
   }
 }

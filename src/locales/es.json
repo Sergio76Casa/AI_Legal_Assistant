@@ -430,11 +430,11 @@
         },
         "hero": {
             "new_tag": "Nuevo: Arquitectura Multi-Tenant Certificada",
-            "title": "Cumplimiento Legal y Halal",
-            "subtitle": "para Equipos Globales",
-            "desc": "La plataforma de IA que centraliza visados, vivienda y normativas para tus empleados expatriados. Seguridad de grado empresarial, empatía local.",
-            "start_free": "Empezar Gratis",
-            "book_demo": "Agendar Demo"
+            "title": "Tu nueva vida en España, sin complicaciones legales",
+            "subtitle": "Gestión Legal & Cultural",
+            "desc": "El primer partner legal impulsado por IA diseñado específicamente para expatriados. Asegura tu visado, residencia y trámites con confianza y claridad absoluta.",
+            "start_free": "Empezar ahora",
+            "book_demo": "Ver demostración"
         },
         "features": {
             "title": "¿Por qué LegalFlow?",
@@ -445,13 +445,16 @@
             "ai_desc": "Nuestra IA no solo lee leyes, *entiende* tus contratos internos. Sube PDFs, imágenes o guías de empleado.",
             "global_title": "Cobertura Global",
             "global_desc": "Adaptado para empleados en España, Marruecos y LATAM.",
+            "security_expanded": "Utilizamos cifrado AES-256 de grado militar para todos los documentos y datos personales. Además, nuestra arquitectura Iron Silo™ garantiza el aislamiento total de datos por despacho, asegurando que solo el personal autorizado pueda acceder a la información confidencial.",
+            "ai_expanded": "El Motor STARK 2.0 es capaz de analizar documentos oficiales complejos en segundos. Permite la extracción inteligente de datos para la exportación directa a formularios de extranjería (EX-01, EX-11, etc.), reduciendo el tiempo de gestión manual en un 80%.",
+            "global_expanded": "Ofrecemos soporte completo para una amplia gama de trámites, incluyendo el Arraigo Social, Visado de Nómada Digital, Residencia por Inversión (Golden Visa) y reagrupación familiar. Nuestra cobertura se extiende a los principales corredores migratorios hacia España.",
             "mobile_title": "Experiencia App-Like",
             "mobile_desc": "Tus empleados acceden desde cualquier lugar."
         },
         "cta": {
-            "title": "¿Listo para modernizar tu compliance?",
-            "desc": "Únete a las empresas que ya gestionan sus trámites con Inteligencia Artificial.",
-            "btn": "Crear Cuenta de Empresa"
+            "title": "¿Listo para asegurar tu futuro en España?",
+            "desc": "Únete a miles de expatriados que han simplificado sus trámites legales con nuestra inteligencia artificial.",
+            "btn": "Crear mi cuenta gratuita"
         },
         "footer": "Todos los derechos reservados."
     },
