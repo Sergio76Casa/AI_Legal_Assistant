@@ -3,9 +3,9 @@ import { Document, Page } from 'react-pdf';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabase';
 import {
-    Loader2, Save, MousePointerClick, X, Eye, Trash2,
+    Loader2, MousePointerClick, X, Eye, Trash2,
     ArrowLeft, ArrowRight, Minus, Plus, Settings,
-    CheckSquare, Type, Layout, Briefcase, DownloadCloud
+    CheckSquare, Type, DownloadCloud
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import '../../lib/pdf-worker'; // Import worker config
@@ -34,7 +34,6 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
     const [numPages, setNumPages] = useState<number>(0);
     const [pageNumber, setPageNumber] = useState(1);
     const [mappings, setMappings] = useState<FieldMapping[]>([]);
-    const [loading, setLoading] = useState(true);
     const [scale, setScale] = useState(1.0);
     const [generatingPreview, setGeneratingPreview] = useState(false);
     const [selectedMappingId, setSelectedMappingId] = useState<string | null>(null);
@@ -89,7 +88,6 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
             .eq('template_id', templateId);
 
         if (data) setMappings(data as FieldMapping[]);
-        setLoading(false);
     };
 
     const updateMapping = async (id: string, updates: Partial<FieldMapping>) => {
@@ -110,7 +108,7 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
             field_type: 'text'
         };
 
-        const { data, error } = await supabase.from('form_fields_mapping').insert(newMapping).select().single();
+        const { data } = await supabase.from('form_fields_mapping').insert(newMapping).select().single();
         if (data) {
             setMappings([...mappings, data as FieldMapping]);
             setSelectedPoint(null);

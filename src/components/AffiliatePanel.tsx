@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     Users,
     Link as LinkIcon,
@@ -17,7 +17,6 @@ import {
     MousePointer2,
     X
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
 import {
     XAxis,
@@ -28,7 +27,6 @@ import {
     AreaChart,
     Area
 } from 'recharts';
-import { AnimatePresence } from 'framer-motion';
 
 interface AffiliateData {
     id: string;
@@ -38,7 +36,6 @@ interface AffiliateData {
     created_at: string;
 }
 
-const COMMISSION_RATE = 0.20; // 20% fijo
 const MIN_PAYOUT = 50; // Umbral mínimo en €
 
 // Datos de prueba para el gráfico
@@ -60,7 +57,6 @@ const referralData = [
 ];
 
 export const AffiliatePanel: React.FC = () => {
-    const { t } = useTranslation();
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
     const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
@@ -69,8 +65,6 @@ export const AffiliatePanel: React.FC = () => {
     const [copied, setCopied] = useState(false);
     const [customizing, setCustomizing] = useState(false);
     const [newCode, setNewCode] = useState('');
-    const [savingCode, setSavingCode] = useState(false);
-    const [payoutRequested, setPayoutRequested] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     // Mock Stats based on requirements
@@ -152,7 +146,6 @@ export const AffiliatePanel: React.FC = () => {
 
     const handleSaveCustomCode = async () => {
         if (!affiliate || !newCode.trim()) return;
-        setSavingCode(true);
         setError(null);
         try {
             const cleanCode = newCode.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
@@ -168,15 +161,7 @@ export const AffiliatePanel: React.FC = () => {
             setCustomizing(false);
         } catch (err: any) {
             setError(err.message);
-        } finally {
-            setSavingCode(false);
         }
-    };
-
-    const handleRequestPayout = () => {
-        if (affiliate?.status !== 'active') return;
-        setPayoutRequested(true);
-        setTimeout(() => setPayoutRequested(false), 4000);
     };
 
     if (loading) {
@@ -287,7 +272,9 @@ export const AffiliatePanel: React.FC = () => {
                         </div>
                     </motion.div>
                 )}
-            </AnimatePresence>            {/* Header */}
+            </AnimatePresence>
+
+            {/* Header */}
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-1">
                     <h2 className="text-3xl font-black text-white flex items-center gap-3 tracking-tight">
@@ -441,7 +428,7 @@ export const AffiliatePanel: React.FC = () => {
                                     </td>
                                     <td className="px-8 py-6">
                                         <span className={cn(
-                                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider",
+                                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px) font-black uppercase tracking-wider",
                                             item.status === 'Activo'
                                                 ? 'bg-[#13ecc8]/10 text-[#13ecc8] border border-[#13ecc8]/20'
                                                 : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'

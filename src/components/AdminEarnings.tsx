@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
 import {
     TrendingUp,
-    TrendingDown,
     DollarSign,
     Users,
     ArrowUpRight,
