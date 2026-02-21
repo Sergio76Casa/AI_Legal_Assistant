@@ -23,6 +23,8 @@ import { SplashScreen } from './components/SplashScreen';
 import { DynamicFooter } from './components/DynamicFooter';
 import { LegalModal } from './components/Landing/LegalModal';
 import { ServicesModal } from './components/Landing/ServicesModal';
+import { SignaturePage } from './components/SignaturePage';
+import { JoinPage } from './components/JoinPage';
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -33,7 +35,10 @@ const supabase = createClient(
 function App() {
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate' | 'affiliate-kit'>('home');
+    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'signatures' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate' | 'affiliate-kit' | 'sign' | 'join'>(
+        new URLSearchParams(window.location.search).get('token') ? 'join' : 'home'
+    );
+    const [signDocumentId, setSignDocumentId] = useState<string | null>(null);
     const [currentSlug, setCurrentSlug] = useState<string | null>(null);
     const [showSplash, setShowSplash] = useState(false);
     const [legalModal, setLegalModal] = useState<'privacy' | 'cookies' | 'legal' | null>(null);
@@ -58,14 +63,34 @@ function App() {
         const handleRouting = async () => {
             const params = new URLSearchParams(window.location.search);
             let ref = params.get('ref');
+            const token = params.get('token');
             let path = window.location.pathname.replace(/^\/|\/$/g, '');
-            const reservedPublic = ['login', 'create-org', 'privacy', 'cookies', 'home', 'afiliados-terminos', 'register-affiliate', 'affiliate-kit', ''];
+            console.log('Routing Debug:', { path, token, ref, view });
+            const reservedPublic = ['login', 'create-org', 'privacy', 'cookies', 'home', 'afiliados-terminos', 'register-affiliate', 'affiliate-kit', 'join', 'pro', 'pro/pricing', 'personal', 'personal/pricing', ''];
+
+            // 1. Force 'join' if token is present and path is join
+            if (path === 'join' || (path === '' && token)) {
+                setView('join');
+                if (path === '') window.history.replaceState({}, '', `/join?${params.toString()}`);
+                return;
+            }
+
+            // 🖊️ SIGNATURE ROUTE: /sign/[token]
+            if (path.startsWith('sign/')) {
+                const token = path.replace('sign/', '');
+                if (token) {
+                    setSignDocumentId(token);
+                    setView('sign');
+                    return;
+                }
+            }
 
             // Dashboard views mapping
             const dashboardMap: Record<string, string> = {
                 'dashboard': 'dashboard',
                 'dashboard/documents': 'documents',
                 'dashboard/templates': 'templates',
+                'dashboard/signatures': 'signatures',
                 'dashboard/affiliates': 'affiliates',
                 'dashboard/organization': 'organization',
                 'dashboard/settings': 'settings',
@@ -96,7 +121,7 @@ function App() {
 
             // C. Resolve View
             const userIsAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
-            const adminOnlyViews = ['admin', 'organization', 'settings', 'templates'];
+            const adminOnlyViews = ['admin', 'organization', 'settings', 'templates', 'signatures'];
 
             if (path === '' || path === 'home') {
                 setView('home');
@@ -114,7 +139,7 @@ function App() {
                 setView(path as any);
             } else if (/^[a-z0-9-]+$/.test(path)) {
                 setCurrentSlug(path);
-                if (!user) setView('tenant-public');
+                setView('tenant-public');
             }
         };
 
@@ -133,6 +158,10 @@ function App() {
             if (session?.user) {
                 fetchProfile(session.user.id);
             } else {
+                // GUARD: Never redirect away from the signature or join page
+                const currentPath = window.location.pathname;
+                if (currentPath.startsWith('/sign/') || currentPath.startsWith('/join')) return;
+
                 const slugToRedirect = lastSlugRef.current;
                 setProfile(null);
                 if (slugToRedirect) {
@@ -152,14 +181,17 @@ function App() {
     // 🚀 REDIRECTION LOGIC: Auto-navigate to dashboard on login
     useEffect(() => {
         // If we have a user and they are on the root/home, send them to dashboard
+        // GUARD: Never redirect away from sign or join pages
+        if (view === 'sign' || view === 'join') return;
         if (user && view === 'home' && (window.location.pathname === '/' || window.location.pathname === '/home')) {
             setView('dashboard');
             window.history.replaceState({}, '', '/dashboard');
         }
     }, [user, view]);
 
-    // Handle initial state and deep linking
     useEffect(() => {
+        // GUARD: Never redirect away from sign or join pages
+        if (view === 'sign' || view === 'join') return;
         const path = window.location.pathname.substring(1);
         if (!path || path === '') {
             // Root
@@ -170,7 +202,7 @@ function App() {
                 setView('home');
             }
         }
-    }, [user]);
+    }, [user, view]);
 
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
     const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));
@@ -178,7 +210,10 @@ function App() {
     return (
         <TenantProvider>
             <ChatProvider>
-                {view === 'tenant-public' && !user ? (
+                {/* 🖊️ SIGNATURE PAGE: Rendered outside layout for mobile-first fullscreen experience */}
+                {view === 'sign' && signDocumentId ? (
+                    <SignaturePage documentId={signDocumentId} />
+                ) : view === 'tenant-public' ? (
                     <TenantPublicPage
                         slug={currentSlug || ''}
                         onLogin={() => {
@@ -192,34 +227,46 @@ function App() {
                         const path = v === 'home' ? '/' : (v === 'dashboard' ? '/dashboard' :
                             v === 'documents' ? '/dashboard/documents' :
                                 v === 'templates' ? '/dashboard/templates' :
-                                    v === 'affiliates' ? '/dashboard/affiliates' :
-                                        v === 'admin' ? '/dashboard/admin' :
-                                            v === 'organization' ? '/dashboard/organization' :
-                                                v === 'settings' ? '/dashboard/settings' : `/${v}`);
+                                    v === 'signatures' ? '/dashboard/signatures' :
+                                        v === 'affiliates' ? '/dashboard/affiliates' :
+                                            v === 'admin' ? '/dashboard/admin' :
+                                                v === 'organization' ? '/dashboard/organization' :
+                                                    v === 'settings' ? '/dashboard/settings' : `/${v}`);
                         window.history.pushState({}, '', path);
-                    }} user={user} profile={profile} hideNavFooter={view === 'home'} hideFooter={!!user} currentView={view}>
-                        {view === 'home' ? (
-                            <LandingPage
-                                onLogin={() => { setView('login'); window.history.pushState({}, '', '/login'); }}
-                                onCreateOrg={() => { setView('create-org'); window.history.pushState({}, '', '/create-org'); }}
-                            />
-                        ) : view === 'login' && !user ? (
+                    }} user={user} profile={profile} hideNavFooter={view === 'home'} hideFooter={!!user || view === 'join'} currentView={view}>
+                        {view === 'login' && !user ? (
                             <AuthForm
                                 onAuthSuccess={() => {
                                     setShowSplash(true);
                                     setView('dashboard');
                                     window.history.pushState({}, '', '/dashboard');
                                 }}
-                                onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }}
+                                onBack={() => {
+                                    if (currentSlug) {
+                                        setView('tenant-public');
+                                        window.history.pushState({}, '', `/${currentSlug}`);
+                                    } else {
+                                        setView('home');
+                                        window.history.pushState({}, '', '/');
+                                    }
+                                }}
                             />
                         ) : view === 'create-org' && !user ? (
                             <CreateOrgForm
                                 onSuccess={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
-                                onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }}
+                                onBack={() => {
+                                    if (currentSlug) {
+                                        setView('tenant-public');
+                                        window.history.pushState({}, '', `/${currentSlug}`);
+                                    } else {
+                                        setView('home');
+                                        window.history.pushState({}, '', '/');
+                                    }
+                                }}
                             />
                         ) : showAdmin ? (
                             <AdminDashboard />
-                        ) : (view === 'organization' || view === 'documents' || view === 'templates' || view === 'affiliates' || view === 'settings') && user ? (
+                        ) : (view === 'organization' || view === 'documents' || view === 'templates' || view === 'signatures' || view === 'affiliates' || view === 'settings') && user ? (
                             <TenantDashboard
                                 user={user}
                                 profile={profile}
@@ -243,6 +290,23 @@ function App() {
                             <HalalCulture onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
                         ) : view === 'housing-guide' ? (
                             <HousingGuide onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
+                        ) : view === 'join' ? (
+                            <>
+                                <JoinPage onSuccess={(slug) => {
+                                    if (slug) {
+                                        setCurrentSlug(slug);
+                                        setView('tenant-public');
+                                        window.history.pushState({}, '', `/${slug}`);
+                                    } else {
+                                        setView('dashboard');
+                                        window.history.pushState({}, '', '/dashboard');
+                                    }
+                                }} />
+                                <DynamicFooter
+                                    onOpenLegal={(type) => setLegalModal(type)}
+                                    onOpenService={(type) => setServiceModal(type)}
+                                />
+                            </>
                         ) : user || view === 'dashboard' ? (
                             <>
                                 <Hero />

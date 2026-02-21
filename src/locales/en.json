@@ -773,6 +773,8 @@
         "headers": {
             "user": "User",
             "role": "Role",
+            "plan": "Plan",
+            "access": "Access",
             "join_date": "Joined",
             "status": "Status",
             "actions": "Actions"
@@ -885,6 +887,7 @@
         "postal_code": "Postal Code",
         "address_province": "Province",
         "nationality": "Nationality",
+        "user_id": "Technical ID (UUID)",
         "birth_date": "Date of Birth",
         "representative_name": "Representative Name",
         "representative_nie": "Representative NIE",

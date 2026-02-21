@@ -4,7 +4,7 @@ import { OrganizationPanel } from './OrganizationPanel';
 import { UserDocuments } from './UserDocuments';
 import { TemplateManager } from './TemplateManager';
 import { AffiliatePanel } from './AffiliatePanel';
-import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings } from 'lucide-react';
+import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings, PenTool } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
 import { ConfigPanel } from './ConfigPanel';
@@ -27,6 +27,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     const { t } = useTranslation();
     const { tenant } = useTenant();
     const [activeTab, setActiveTab] = useState(initialTab);
+    const [subTab, setSubTab] = useState('members');
 
     React.useEffect(() => {
         setActiveTab(initialTab);
@@ -35,6 +36,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId);
         onNavigate?.(tabId);
+        if (tabId === 'organization') setSubTab('members');
     };
 
     if (!tenant) {
@@ -55,7 +57,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
 
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
 
-    const tabs = [
+    const mainTabs = [
         { id: 'documents', label: t('tenant_dashboard.documents'), icon: FileText },
         { id: 'templates', label: t('tenant_dashboard.templates'), icon: LayoutGrid, adminOnly: true },
         { id: 'organization', label: t('tenant_dashboard.organization'), icon: Building2, adminOnly: true },
@@ -63,7 +65,13 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
         { id: 'settings', label: t('tenant_dashboard.settings'), icon: Settings, adminOnly: true },
     ];
 
-    const filteredTabs = tabs.filter(tab => !tab.adminOnly || isAdmin);
+    const organizationSubTabs = [
+        { id: 'members', label: t('tenant_dashboard.subtabs.members'), icon: LayoutGrid },
+        { id: 'invite', label: t('tenant_dashboard.subtabs.invite'), icon: PenTool },
+        { id: 'signatures', label: t('tenant_dashboard.subtabs.signatures'), icon: PenTool },
+    ];
+
+    const filteredTabs = mainTabs.filter(tab => !tab.adminOnly || isAdmin);
 
     return (
         <div className="min-h-screen bg-[#0a0f1d] pb-20 pt-12">
@@ -92,8 +100,8 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                     </div>
                 </div>
 
-                {/* 2. Navegación en Fila (Secciones Horizontales) */}
-                <div className="mb-10 flex items-center gap-1 bg-[#0f172a] p-1.5 rounded-2xl border border-white/5 w-full overflow-x-auto scrollbar-hide no-scrollbar">
+                {/* 2. Navegación Principal */}
+                <div className="mb-4 flex items-center gap-1 bg-[#0f172a] p-1.5 rounded-2xl border border-white/5 w-full overflow-x-auto scrollbar-hide no-scrollbar">
                     {filteredTabs.map((tab) => (
                         <button
                             key={tab.id}
@@ -117,13 +125,39 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                     ))}
                 </div>
 
-                {/* 3. Contenido Dinámico */}
+                {/* 3. Sub-Navegación para Organización */}
+                {activeTab === 'organization' && (
+                    <div className="mb-10 flex items-center gap-4 px-2 overflow-x-auto scrollbar-hide no-scrollbar">
+                        {organizationSubTabs.map((sub) => (
+                            <button
+                                key={sub.id}
+                                onClick={() => setSubTab(sub.id)}
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap",
+                                    subTab === sub.id
+                                        ? "text-primary bg-primary/5 border border-primary/20"
+                                        : "text-slate-500 hover:text-slate-300 border border-transparent"
+                                )}
+                            >
+                                <sub.icon size={14} />
+                                {sub.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {/* 4. Contenido Dinámico */}
                 <div className="page-enter">
                     {activeTab === 'documents' && <UserDocuments userId={user.id} />}
                     {activeTab === 'templates' && <TemplateManager />}
-                    {activeTab === 'organization' && <OrganizationPanel tenantId={tenant.id} />}
+                    {activeTab === 'organization' && (
+                        <OrganizationPanel
+                            tenantId={tenant.id}
+                            subView={subTab as any}
+                        />
+                    )}
                     {activeTab === 'affiliates' && <AffiliatePanel />}
-                    {activeTab === 'settings' && <ConfigPanel />}
+                    {activeTab === 'settings' && <ConfigPanel tenant={tenant} refreshTenant={async () => { window.location.reload(); }} />}
                 </div>
             </div>
         </div>

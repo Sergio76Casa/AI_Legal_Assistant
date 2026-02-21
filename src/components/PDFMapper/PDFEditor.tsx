@@ -49,37 +49,90 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
     const pdfWrapperRef = useRef<HTMLDivElement>(null);
 
     const AVAILABLE_FIELDS = React.useMemo(() => [
-        // Personal Data
-        { group: 'Personal', key: 'first_name', label: t('fields.first_name') },
-        { group: 'Personal', key: 'last_name', label: t('fields.last_name') },
-        { group: 'Personal', key: 'second_last_name', label: t('fields.second_last_name') },
-        { group: 'Personal', key: 'nie', label: t('fields.nie') },
-        { group: 'Personal', key: 'passport_num', label: t('fields.passport_num') },
-        { group: 'Personal', key: 'birth_date', label: t('fields.birth_date') },
-        { group: 'Personal', key: 'sex', label: t('fields.sex') },
-        { group: 'Personal', key: 'civil_status', label: t('fields.civil_status') },
+        // Personal
+        { group: 'Datos Personales', key: 'first_name', label: t('fields.first_name') },
+        { group: 'Datos Personales', key: 'last_name', label: t('fields.last_name') },
+        { group: 'Datos Personales', key: 'second_last_name', label: t('fields.second_last_name') },
+        { group: 'Datos Personales', key: 'nie', label: t('fields.nie') },
+        { group: 'Datos Personales', key: 'passport_num', label: t('fields.passport_num') },
+        { group: 'Datos Personales', key: 'birth_date', label: t('fields.birth_date') },
+        { group: 'Datos Personales', key: 'birth_day', label: t('fields.birth_day') },
+        { group: 'Datos Personales', key: 'birth_month', label: t('fields.birth_month') },
+        { group: 'Datos Personales', key: 'birth_year', label: t('fields.birth_year') },
+        { group: 'Datos Personales', key: 'birth_place', label: t('fields.birth_place') },
+        { group: 'Datos Personales', key: 'birth_country', label: t('fields.birth_country') },
+        { group: 'Datos Personales', key: 'nationality', label: t('fields.nationality') },
+        { group: 'Datos Personales', key: 'sex', label: t('fields.sex') },
+        { group: 'Datos Personales', key: 'sex_male', label: t('fields.sex_male') },
+        { group: 'Datos Personales', key: 'sex_female', label: t('fields.sex_female') },
+        { group: 'Datos Personales', key: 'sex_x', label: t('fields.sex_x') },
+        { group: 'Datos Personales', key: 'civil_status', label: t('fields.civil_status') },
+
+        // Family
+        { group: 'Filiación', key: 'father_name', label: t('fields.father_name') },
+        { group: 'Filiación', key: 'mother_name', label: t('fields.mother_name') },
 
         // Contact & Address
-        { group: 'Contacto', key: 'email', label: t('fields.email') },
-        { group: 'Contacto', key: 'phone', label: t('fields.phone') },
-        { group: 'Ubicación', key: 'address', label: t('fields.address') },
-        { group: 'Ubicación', key: 'city', label: t('fields.city') },
-        { group: 'Ubicación', key: 'postal_code', label: t('fields.postal_code') },
-        { group: 'Ubicación', key: 'address_province', label: t('fields.address_province') },
+        { group: 'Contacto y Dirección', key: 'email', label: t('fields.email') },
+        { group: 'Contacto y Dirección', key: 'phone', label: t('fields.phone') },
+        { group: 'Contacto y Dirección', key: 'address', label: t('fields.address') },
+        { group: 'Contacto y Dirección', key: 'address_street', label: t('fields.address_street') },
+        { group: 'Contacto y Dirección', key: 'address_number', label: t('fields.address_number') },
+        { group: 'Contacto y Dirección', key: 'address_floor', label: t('fields.address_floor') },
+        { group: 'Contacto y Dirección', key: 'city', label: t('fields.city') },
+        { group: 'Contacto y Dirección', key: 'postal_code', label: t('fields.postal_code') },
+        { group: 'Contacto y Dirección', key: 'address_province', label: t('fields.address_province') },
 
-        // Organization (White Label)
-        { group: 'Organización', key: 'org_name', label: 'Nombre Despacho' },
-        { group: 'Organización', key: 'org_address', label: 'Dirección Sede' },
-        { group: 'Organización', key: 'org_phone', label: 'Teléfono Despacho' },
-        { group: 'Organización', key: 'org_logo', label: 'Logo Corporativo' },
+        // Representation
+        { group: 'Representación', key: 'representative_name', label: t('fields.representative_name') },
+        { group: 'Representación', key: 'representative_nie', label: t('fields.representative_nie') },
 
         // System
         { group: 'Sistema', key: 'today_date', label: t('fields.today_date') },
+        { group: 'Sistema', key: 'today_day', label: t('fields.today_day') },
+        { group: 'Sistema', key: 'today_month', label: t('fields.today_month') },
+        { group: 'Sistema', key: 'today_year', label: t('fields.today_year') },
+
+        // Actions
+        { group: 'Acciones', key: 'client_signature', label: 'Firma del Cliente' },
     ], [t]);
 
     useEffect(() => {
         fetchMappings();
     }, [templateId]);
+
+    // Keyboard shortcuts for fine-tuning
+    useEffect(() => {
+        const handleKeyDown = async (e: KeyboardEvent) => {
+            if (!selectedMappingId || isDragging || isResizing) return;
+
+            const step = e.shiftKey ? 10 : 1;
+            let dx = 0;
+            let dy = 0;
+
+            if (e.key === 'ArrowLeft') dx = -step;
+            else if (e.key === 'ArrowRight') dx = step;
+            else if (e.key === 'ArrowUp') dy = -step;
+            else if (e.key === 'ArrowDown') dy = step;
+            else return;
+
+            e.preventDefault();
+
+            setMappings(prev => prev.map(m => {
+                if (m.id === selectedMappingId) {
+                    const newX = m.x_coordinate + dx;
+                    const newY = m.y_coordinate + dy;
+                    // Auto-save to DB (debounced or immediate)
+                    updateMapping(m.id!, { x_coordinate: newX, y_coordinate: newY });
+                    return { ...m, x_coordinate: newX, y_coordinate: newY };
+                }
+                return m;
+            }));
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedMappingId, isDragging, isResizing]);
 
     const fetchMappings = async () => {
         const { data } = await supabase
@@ -97,15 +150,22 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
 
     const addMapping = async (fieldKey: string) => {
         if (!selectedPoint) return;
+
+        const isSignature = fieldKey === 'client_signature';
+        const isSexMale = fieldKey === 'sex_male';
+        const isSexFemale = fieldKey === 'sex_female';
+        const isSexX = fieldKey === 'sex_x';
+
         const newMapping: any = {
             template_id: templateId,
-            field_key: fieldKey,
+            field_key: (isSexMale || isSexFemale || isSexX) ? 'sex' : fieldKey,
             page_number: pageNumber,
             x_coordinate: selectedPoint.x,
             y_coordinate: selectedPoint.y,
-            width: 150,
-            height: 20,
-            field_type: 'text'
+            width: isSignature ? 200 : (isSexMale || isSexFemale || isSexX ? 20 : 150),
+            height: isSignature ? 60 : (isSexMale || isSexFemale || isSexX ? 20 : 20),
+            field_type: isSignature ? 'signature' : ((isSexMale || isSexFemale || isSexX) ? 'checkbox' : 'text'),
+            trigger_value: isSexMale ? 'male' : (isSexFemale ? 'female' : (isSexX ? 'other' : undefined))
         };
 
         const { data } = await supabase.from('form_fields_mapping').insert(newMapping).select().single();
@@ -228,6 +288,7 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
                     <div className="relative shadow-2xl" ref={pdfWrapperRef}>
                         <Document file={templateUrl} onLoadSuccess={({ numPages }) => setNumPages(numPages)} loading={<Loader2 className="animate-spin text-primary" size={40} />}>
                             <Page pageNumber={pageNumber} scale={scale} onClick={(e) => {
+                                e.stopPropagation();
                                 if (isDragging || isResizing) return;
                                 const rect = pdfWrapperRef.current!.getBoundingClientRect();
                                 setSelectedPoint({ x: (e.clientX - rect.left) / scale, y: (e.clientY - rect.top) / scale });

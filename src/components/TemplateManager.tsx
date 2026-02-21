@@ -3,7 +3,8 @@ import { supabase } from '../lib/supabase';
 import { useTenant } from '../lib/TenantContext';
 import { PDFUploader } from './PDFMapper/PDFUploader';
 import { PDFEditor } from './PDFMapper/PDFEditor';
-import { FileText, Map, Trash2, Calendar, Loader2, Plus, LayoutGrid } from 'lucide-react';
+import { FileText, Map, Trash2, Calendar, Loader2, Plus, LayoutGrid, PenTool, X } from 'lucide-react';
+import { SignatureManager } from './PDFMapper/SignatureManager';
 
 export const TemplateManager = () => {
     const { tenant } = useTenant();
@@ -11,6 +12,7 @@ export const TemplateManager = () => {
     const [loading, setLoading] = useState(true);
     const [showUploader, setShowUploader] = useState(false);
     const [editorTemplate, setEditorTemplate] = useState<any | null>(null);
+    const [signaturesTemplate, setSignaturesTemplate] = useState<any | null>(null);
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -111,6 +113,13 @@ export const TemplateManager = () => {
                                         <Map size={18} />
                                     </button>
                                     <button
+                                        onClick={() => setSignaturesTemplate(tpl)}
+                                        className="p-2 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg"
+                                        title="Ver Firmas"
+                                    >
+                                        <PenTool size={18} />
+                                    </button>
+                                    <button
                                         onClick={() => handleDelete(tpl.id, tpl.storage_path)}
                                         className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
                                         title="Eliminar"
@@ -148,6 +157,29 @@ export const TemplateManager = () => {
                     templateUrl={signedUrl}
                     onClose={() => { setEditorTemplate(null); setSignedUrl(null); }}
                 />
+            )}
+
+            {/* Signatures Modal */}
+            {signaturesTemplate && (
+                <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
+                    <div className="bg-[#0f172a] border border-white/10 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-1">Gestión de Firmas</h3>
+                                <p className="text-xs text-slate-400">Documento: <span className="text-primary font-medium">{signaturesTemplate.name}</span></p>
+                            </div>
+                            <button onClick={() => setSignaturesTemplate(null)} className="p-2 hover:bg-white/5 rounded-full text-slate-400 hover:text-white transition-colors">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                            <SignatureManager
+                                templateId={signaturesTemplate.id}
+                                templateName={signaturesTemplate.name}
+                            />
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

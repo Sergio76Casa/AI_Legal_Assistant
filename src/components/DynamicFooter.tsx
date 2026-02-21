@@ -1,10 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTenant } from '../lib/TenantContext';
+import { supabase } from '../lib/supabase';
 import {
     Phone, Mail, Facebook, Instagram, Twitter, Linkedin,
-    Globe, FileText, LayoutGrid, Building2, TrendingUp, ShieldCheck
+    Globe, FileText, ShieldCheck, X, LucideIcon,
+    HelpCircle, Info, Scale, Scroll, FileDigit, Briefcase, MessageSquare, Zap, Building
 } from 'lucide-react';
+
+const IconMap: Record<string, LucideIcon> = {
+    FileText, ShieldCheck, Globe, Building, HelpCircle, Info, Scale, Scroll, FileDigit, Briefcase, MessageSquare, Zap
+};
 
 interface DynamicFooterProps {
     tenant?: any;
@@ -13,15 +19,55 @@ interface DynamicFooterProps {
 }
 
 export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant, onOpenLegal, onOpenService }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { tenant: contextTenant } = useTenant();
     const tenant = propTenant || contextTenant;
+    const [footerLinks, setFooterLinks] = React.useState<any[]>([]);
+    const [activeModal, setActiveModal] = React.useState<any | null>(null);
+
+    React.useEffect(() => {
+        const fetchFooterLinks = async () => {
+            if (!tenant?.id) return;
+            const { data } = await supabase
+                .from('organization_settings')
+                .select('footer_custom_links')
+                .eq('tenant_id', tenant.id)
+                .single();
+
+            if (data?.footer_custom_links) {
+                setFooterLinks(data.footer_custom_links);
+            }
+        };
+        fetchFooterLinks();
+    }, [tenant?.id]);
 
     if (!tenant) return null;
 
     const config = tenant.config || {};
     const offices = config.offices || [];
     const social = config.social_media || {};
+
+    const getLocalized = (link: any, field: 'title' | 'content') => {
+        const lang = i18n.language.split('-')[0];
+        // 1. Check AI Translations object
+        if (link.translations?.[lang]?.[field]) return link.translations[lang][field];
+        // 2. Check localized fields if they exist as objects
+        if (typeof link[field] === 'object' && link[field]?.[lang]) return link[field][lang];
+        // 3. Fallback to Spanish translations
+        if (link.translations?.es?.[field]) return link.translations.es[field];
+        // 4. Fallback to raw field (if it's a string)
+        return typeof link[field] === 'string' ? link[field] : (link[field]?.es || '');
+    };
+
+    const servicesLinks = footerLinks.filter(l => l.section === 'services');
+    const legalLinks = footerLinks.filter(l => l.section === 'legal');
+
+    const finalServices = servicesLinks;
+    const finalLegal = legalLinks.length > 0 ? legalLinks : [
+        { id: 'privacy', title: t('footer.links.privacy_policy'), url: 'privacy', isLegal: true },
+        { id: 'cookies', title: t('footer.links.cookie_policy'), url: 'cookies', isLegal: true },
+        { id: 'legal', title: t('footer.links.legal_notice'), url: 'legal', isLegal: true }
+    ];
 
     return (
         <footer className="w-full bg-[#0a0f1d] pt-20 pb-12 border-t border-white/5">
@@ -65,42 +111,23 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                     <div className="space-y-6">
                         <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">{t('footer.sections.services')}</h4>
                         <ul className="space-y-4 text-sm font-medium">
-                            <li>
-                                <button
-                                    onClick={() => onOpenService?.('documents')}
-                                    className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
-                                >
-                                    <FileText size={16} className="text-primary/40 group-hover:text-primary" />
-                                    {t('footer.links.my_documents')}
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={() => onOpenService?.('templates')}
-                                    className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
-                                >
-                                    <LayoutGrid size={16} className="text-primary/40 group-hover:text-primary" />
-                                    {t('footer.links.pdf_templates')}
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={() => onOpenService?.('organization')}
-                                    className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
-                                >
-                                    <Building2 size={16} className="text-primary/40 group-hover:text-primary" />
-                                    {t('footer.links.my_organization')}
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={() => onOpenService?.('affiliates')}
-                                    className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
-                                >
-                                    <TrendingUp size={16} className="text-primary/40 group-hover:text-primary" />
-                                    {t('footer.links.affiliate_program')}
-                                </button>
-                            </li>
+                            {finalServices.map((link: any) => {
+                                const Icon = IconMap[link.icon] || FileText;
+                                return (
+                                    <li key={link.id}>
+                                        <button
+                                            onClick={() => {
+                                                if (link.isAction) onOpenService?.(link.url);
+                                                else setActiveModal(link);
+                                            }}
+                                            className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
+                                        >
+                                            <Icon size={16} className="text-primary/40 group-hover:text-primary" />
+                                            {link.isAction ? link.title : getLocalized(link, 'title')}
+                                        </button>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
 
@@ -108,33 +135,23 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                     <div className="space-y-6">
                         <h4 className="text-white font-black text-sm uppercase tracking-[0.2em] mb-8">{t('footer.sections.legal')}</h4>
                         <ul className="space-y-4 text-sm font-medium">
-                            <li>
-                                <button
-                                    onClick={() => onOpenLegal?.('privacy')}
-                                    className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
-                                >
-                                    <FileText size={16} className="text-primary/40 group-hover:text-primary" />
-                                    {t('footer.links.privacy_policy')}
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={() => onOpenLegal?.('cookies')}
-                                    className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
-                                >
-                                    <Globe size={16} className="text-primary/40 group-hover:text-primary" />
-                                    {t('footer.links.cookie_policy')}
-                                </button>
-                            </li>
-                            <li>
-                                <button
-                                    onClick={() => onOpenLegal?.('legal')}
-                                    className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
-                                >
-                                    <ShieldCheck size={16} className="text-primary/40 group-hover:text-primary" />
-                                    {t('footer.links.legal_notice')}
-                                </button>
-                            </li>
+                            {finalLegal.map((link: any) => {
+                                const Icon = IconMap[link.icon] || ShieldCheck;
+                                return (
+                                    <li key={link.id}>
+                                        <button
+                                            onClick={() => {
+                                                if (link.isLegal) onOpenLegal?.(link.url as any);
+                                                else setActiveModal(link);
+                                            }}
+                                            className="flex items-center gap-3 text-slate-500 hover:text-primary transition-all group w-full text-left"
+                                        >
+                                            <Icon size={16} className="text-primary/40 group-hover:text-primary" />
+                                            {link.isLegal ? link.title : getLocalized(link, 'title')}
+                                        </button>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
 
@@ -211,6 +228,51 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                     </p>
                 </div>
             </div>
+
+            {/* Modal para Enlaces Personalizados */}
+            {activeModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-md bg-slate-950/80 animate-fade-in">
+                    <div className="relative w-full max-w-2xl bg-slate-900 border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden animate-scale-in">
+                        {/* Header del Modal */}
+                        <div className="p-8 pb-4 flex items-center justify-between border-b border-white/5">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 text-primary">
+                                    {(() => {
+                                        const Icon = IconMap[activeModal.icon] || Info;
+                                        return <Icon size={24} />;
+                                    })()}
+                                </div>
+                                <h3 className="text-2xl font-black text-white tracking-tight uppercase">
+                                    {getLocalized(activeModal, 'title')}
+                                </h3>
+                            </div>
+                            <button
+                                onClick={() => setActiveModal(null)}
+                                className="p-3 text-slate-500 hover:text-white bg-white/5 hover:bg-white/10 rounded-2xl transition-all"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Contenido del Modal */}
+                        <div className="p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                            <div className="text-slate-300 leading-relaxed text-lg font-medium whitespace-pre-wrap">
+                                {getLocalized(activeModal, 'content')}
+                            </div>
+                        </div>
+
+                        {/* Footer del Modal */}
+                        <div className="p-8 pt-4 flex justify-end">
+                            <button
+                                onClick={() => setActiveModal(null)}
+                                className="px-8 py-3 bg-primary text-slate-900 font-bold rounded-2xl hover:bg-primary/90 transition-all shadow-lg shadow-primary/20"
+                            >
+                                Entendido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </footer>
     );
 };

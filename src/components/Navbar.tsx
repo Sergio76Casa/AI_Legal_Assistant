@@ -17,7 +17,7 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
     const { t } = useTranslation();
     const { tenant } = useTenant();
 
-    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
+    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
 
     const username = user?.user_metadata?.username || user?.email?.split('@')[0] || t('nav.user_fallback');
 
@@ -27,7 +27,7 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                 {/* Logo */}
                 <div
                     className="flex items-center gap-3 cursor-pointer group"
-                    onClick={() => onNavigate?.(user ? 'dashboard' : 'home')}
+                    onClick={() => onNavigate?.(user ? 'dashboard' : (tenant ? 'tenant-public' : 'home'))}
                 >
                     <div className="relative">
                         {tenant?.config?.show_logo && tenant?.config?.logo_url ? (
@@ -36,35 +36,31 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                                 alt={tenant.name}
                                 className="h-10 w-auto group-hover:scale-105 transition-transform object-contain min-w-[40px]"
                             />
+                        ) : tenant ? (
+                            <div className="bg-primary/10 p-2 rounded-xl border border-primary/20 group-hover:bg-primary/20 transition-all">
+                                <Building2 size={24} className="text-primary" />
+                            </div>
                         ) : (
-                            <>
-                                <img
-                                    src="/logo.svg"
-                                    alt="LegalFlow"
-                                    className="w-10 h-10 group-hover:scale-105 transition-transform"
-                                />
-                                {tenant && (
-                                    <div className="absolute -bottom-1 -right-1 bg-slate-800 rounded-full p-0.5 border border-white/10 shadow-sm">
-                                        <Building2 size={10} className="text-primary" />
-                                    </div>
-                                )}
-                            </>
+                            <div className="text-primary flex items-center group-hover:scale-105 transition-transform">
+                                <span className="material-symbols-outlined text-3xl font-bold">gavel</span>
+                            </div>
+                        )}
+                        {tenant && (
+                            <div className="absolute -bottom-1 -right-1 bg-slate-800 rounded-full p-0.5 border border-white/10 shadow-sm">
+                                <Building2 size={10} className="text-primary" />
+                            </div>
                         )}
                     </div>
                     <div className="flex flex-col">
-                        {!tenant?.config?.show_logo && (
-                            <span className="font-serif text-lg font-bold tracking-tight text-white leading-none">
-                                {tenant ? tenant.name : 'LegalFlow'}
-                            </span>
-                        )}
-                        {tenant ? (
-                            !tenant?.config?.show_logo && (
-                                <span className="text-[10px] uppercase tracking-wider font-semibold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full w-fit mt-0.5 border border-primary/20">
-                                    {t('tenant_dashboard.admin_panel')}
+                        {!tenant && (
+                            <>
+                                <span className="font-serif text-lg font-bold tracking-tight text-white leading-none">
+                                    LegalFlow
                                 </span>
-                            )
-                        ) : (
-                            <span className="text-[10px] text-slate-500 font-medium leading-none mt-0.5">{t('nav.brand_assistant')}</span>
+                                <span className="text-[10px] text-slate-500 font-medium leading-none mt-1">
+                                    {t('nav.brand_assistant')}
+                                </span>
+                            </>
                         )}
                     </div>
                 </div>
@@ -76,8 +72,15 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                         <div className="flex items-center gap-6">
                             {/* 1. Nombre del Logueado (Static) */}
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold ring-2 ring-slate-900 overflow-hidden border border-white/10">
-                                    {username.charAt(0).toUpperCase()}
+                                <div className="relative">
+                                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold ring-2 ring-slate-900 overflow-hidden border border-white/10">
+                                        {username.charAt(0).toUpperCase()}
+                                    </div>
+                                    {profile?.role === 'admin' && (
+                                        <div className="absolute -top-1 -right-1 bg-primary text-[8px] font-black text-slate-900 px-1 rounded-full border border-slate-900 shadow-sm" title="Administrador de Organización">
+                                            ADM
+                                        </div>
+                                    )}
                                 </div>
                                 <span className="text-xs font-bold text-slate-400">{username}</span>
                             </div>
@@ -144,6 +147,6 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                     )}
                 </div>
             </div>
-        </nav>
+        </nav >
     );
 }

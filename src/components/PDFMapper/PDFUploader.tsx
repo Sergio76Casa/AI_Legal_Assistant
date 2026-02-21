@@ -88,20 +88,22 @@ export const PDFUploader: React.FC<PDFUploaderProps> = ({ onUploadSuccess }) => 
             <form onSubmit={handleUpload} className="space-y-6">
                 {/* File Input */}
                 {!file ? (
-                    <div className="border-2 border-dashed border-white/10 rounded-2xl p-10 text-center bg-white/5 hover:bg-white/10 transition-all cursor-pointer relative group">
+                    <div className="border-2 border-dashed border-white/10 rounded-2xl p-10 text-center bg-white/5 hover:bg-white/10 transition-all cursor-pointer relative group overflow-hidden">
+                        <div className="pointer-events-none">
+                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform bg-white/10">
+                                <FileText className="h-8 w-8 text-slate-400 group-hover:text-primary transition-colors" />
+                            </div>
+                            <p className="text-sm font-medium text-slate-300">
+                                Haz clic o arrastra un PDF aquí
+                            </p>
+                            <p className="text-xs text-slate-500 mt-1">Compatible con cualquier PDF estándar</p>
+                        </div>
                         <input
                             type="file"
                             accept=".pdf"
                             onChange={handleFileSelect}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                         />
-                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform bg-white/10">
-                            <FileText className="h-8 w-8 text-slate-400 group-hover:text-primary transition-colors" />
-                        </div>
-                        <p className="text-sm font-medium text-slate-300">
-                            Haz clic o arrastra un PDF aquí
-                        </p>
-                        <p className="text-xs text-slate-500 mt-1">Sólo archivos PDF planos</p>
                     </div>
                 ) : (
                     <div className="flex items-center justify-between p-4 bg-primary/10 border border-primary/20 rounded-xl">

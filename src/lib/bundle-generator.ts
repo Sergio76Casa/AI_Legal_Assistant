@@ -57,7 +57,7 @@ export const generateBundleZIP = async (
         // Construct Folder Name inside ZIP (optional, but good practice)
         // Format: EXPEDIENTE_[CLIENT]_[DATE]
         const dateStr = new Date().toLocaleDateString('es-ES').replace(/\//g, '-');
-        const clientNameClean = `${profile.first_name}_${profile.last_name}`.toUpperCase().replace(/\s+/g, '_');
+        const clientNameClean = (profile.full_name || 'CLIENTE').toUpperCase().replace(/\s+/g, '_');
         const zipFileName = `EXPEDIENTE_${clientNameClean}_${dateStr}.zip`;
 
         const rootFolder = zip.folder(zipFileName.replace('.zip', ''));
@@ -98,7 +98,7 @@ export const generateBundleZIP = async (
             blob: content,
             fileName: zipFileName,
             fileCount: generatedCount,
-            clientName: `${profile.first_name} ${profile.last_name}`,
+            clientName: profile.full_name || profile.email || 'Cliente',
             bundleName: bundle.name
         };
 

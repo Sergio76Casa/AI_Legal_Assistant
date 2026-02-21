@@ -699,7 +699,7 @@
                     "target": "Profesionales Independientes",
                     "desc": "Ideal para gestores, consultores y expertos en movilidad que gestionan pocos expedientes al mes.",
                     "features": [
-                        "Hasta 10 expedientes nuevos/mes",
+                        "Hasta 10 expedientes/mes",
                         "Escaneo inteligente de documentos (OCR)",
                         "Acceso al Motor STARK 2.0 básico",
                         "Panel de gestión de casos",
@@ -711,8 +711,8 @@
                     "target": "Despachos y Agencias",
                     "desc": "Diseñado para despachos, agencias de relocation y consultorías que necesitan velocidad y colaboración.",
                     "features": [
-                        "Hasta 50 expedientes nuevos/mes",
-                        "Seguridad Iron Silo™ avanzada",
+                        "Hasta 50 expedientes/mes",
+                        "Seguridad protegida con Iron Silo™",
                         "Hasta 3 cuentas de usuario (gestores)",
                         "Traducción automática de documentos",
                         "Motor STARK 2.0 completo",
@@ -772,6 +772,8 @@
         "headers": {
             "user": "Usuario",
             "role": "Rol",
+            "plan": "Plan",
+            "access": "Acceso",
             "join_date": "Fecha Unión",
             "status": "Estado",
             "actions": "Acciones"
@@ -869,8 +871,10 @@
         "second_last_name": "Segundo Apellido",
         "nie": "NIE / DNI",
         "passport_num": "Pasaporte",
+        "sex": "Sexo",
         "sex_male": "Sexo: Hombre (X)",
         "sex_female": "Sexo: Mujer (X)",
+        "sex_x": "Sexo: No Binario / X",
         "civil_status": "Estado Civil (S/C/V/D/Sp)",
         "email": "Email",
         "phone": "Teléfono Móvil",
@@ -884,10 +888,19 @@
         "postal_code": "Código Postal",
         "address_province": "Provincia",
         "nationality": "Nacionalidad",
+        "user_id": "ID Técnico (UUID)",
         "birth_date": "Fecha de Nacimiento",
+        "birth_day": "Día de Nacimiento (DD)",
+        "birth_month": "Mes de Nacimiento (MM)",
+        "birth_year": "Año de Nacimiento (AAAA)",
+        "birth_place": "Lugar de Nacimiento",
+        "birth_country": "País de Nacimiento",
         "representative_name": "Nombre Representante",
         "representative_nie": "NIE Representante",
-        "today_date": "Fecha de Hoy (Auto)"
+        "today_date": "Fecha de Hoy (Auto)",
+        "today_day": "Día de Hoy (DD)",
+        "today_month": "Mes de Hoy (MM)",
+        "today_year": "Año de Hoy (AAAA)"
     },
     "tenant_dashboard": {
         "loading": "Cargando organización...",
@@ -899,9 +912,15 @@
         "plan": "Plan",
         "documents": "Mis Documentos",
         "templates": "Plantillas PDF",
+        "signatures": "Firmas Digitales",
         "organization": "Mi Organización",
         "affiliates": "Programa de Afiliados",
-        "settings": "Configuración"
+        "settings": "Configuración",
+        "subtabs": {
+            "members": "Miembros",
+            "invite": "Invitar a Miembro",
+            "signatures": "Firmas Digitales"
+        }
     },
     "demo": {
         "title": "Solicita una Demo",

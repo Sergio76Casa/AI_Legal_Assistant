@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 import { ShieldCheck, ArrowRight, Loader2, CheckCircle, AlertOctagon } from 'lucide-react';
 
 interface JoinPageProps {
-    onSuccess: () => void;
+    onSuccess: (slug?: string) => void;
 }
 
 export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
@@ -31,7 +31,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
             // Check if invitation exists and is valid
             const { data, error } = await supabase
                 .from('tenant_invitations')
-                .select('*, tenants(name)')
+                .select('*, tenants(name, slug)')
                 .eq('token', token)
                 .eq('status', 'pending')
                 .single();
@@ -74,7 +74,7 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
             if (acceptError) throw acceptError;
 
             // C. Success!
-            onSuccess(); // Redirect to Dashboard
+            onSuccess(invitation.tenants?.slug);
 
         } catch (err: any) {
             console.error(err);
@@ -106,17 +106,17 @@ export const JoinPage: React.FC<JoinPageProps> = ({ onSuccess }) => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="bg-[#0a0f1d] flex flex-col items-center justify-center p-4 relative overflow-hidden pt-32 pb-20">
             {/* Background Glow */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[150px] -mr-48 -mt-48"></div>
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[150px] -ml-48 -mb-48"></div>
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -mr-48 -mt-48"></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -ml-48 -mb-48"></div>
 
             <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-white/10 relative z-10">
                 <div className="bg-slate-900/80 p-8 text-center border-b border-white/5">
                     <ShieldCheck size={48} className="text-primary mx-auto mb-4 animate-pulse" />
-                    <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Únete al Equipo</h1>
+                    <h1 className="text-2xl font-black text-white mb-2 tracking-tight">Bienvenido al Portal</h1>
                     <p className="text-slate-400 text-sm">
-                        Has sido invitado a colaborar en <br />
+                        Has sido invitado a acceder a <br />
                         <span className="text-primary font-black text-lg tracking-tight uppercase">{invitation.tenants?.name || 'Organización'}</span>
                     </p>
                 </div>

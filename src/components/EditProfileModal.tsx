@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { X, Save, User, MapPin, Users, FileText, Loader2 } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 interface EditProfileModalProps {
     isOpen: boolean;
@@ -177,6 +178,15 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                             {/* BASIC INFO */}
                             {activeTab === 'basic' && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="md:col-span-2">
+                                        <FormInput
+                                            label={t('fields.user_id')}
+                                            name="user_id"
+                                            value={userId}
+                                            readOnly
+                                            className="font-mono bg-white/[0.02] border-white/5 text-slate-400"
+                                        />
+                                    </div>
                                     <FormInput label={t('fields.first_name')} name="first_name" value={formData.first_name} onChange={handleChange} />
                                     <FormInput label={t('fields.last_name')} name="last_name" value={formData.last_name} onChange={handleChange} />
                                     <FormInput label={t('fields.second_last_name')} name="second_last_name" value={formData.second_last_name} onChange={handleChange} />
@@ -286,7 +296,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
     );
 };
 
-const FormInput = ({ label, name, value, onChange, type = "text", placeholder = "" }: any) => (
+const FormInput = ({ label, name, value, onChange, type = "text", placeholder = "", readOnly = false, className = "" }: any) => (
     <div className="flex flex-col gap-1">
         <label className="text-xs font-semibold text-slate-400">{label}</label>
         <input
@@ -294,8 +304,13 @@ const FormInput = ({ label, name, value, onChange, type = "text", placeholder = 
             name={name}
             value={value}
             onChange={onChange}
+            readOnly={readOnly}
             placeholder={placeholder}
-            className="px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm transition-all bg-white/5 text-white placeholder-slate-500"
+            className={cn(
+                "px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm transition-all bg-white/5 text-white placeholder-slate-500",
+                readOnly && "cursor-default select-all",
+                className
+            )}
         />
     </div>
 );
