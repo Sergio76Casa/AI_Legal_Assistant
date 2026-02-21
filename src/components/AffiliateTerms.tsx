@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useTranslation, Trans } from 'react-i18next';
+import { useEffect } from 'react'; // Ensure useEffect is imported
 
 interface AffiliateTermsProps {
     onBack: () => void;
@@ -7,6 +8,16 @@ interface AffiliateTermsProps {
 
 export function AffiliateTerms({ onBack }: AffiliateTermsProps) {
     const { t } = useTranslation();
+
+    useEffect(() => {
+        const meta = document.createElement('meta');
+        meta.name = "robots";
+        meta.content = "noindex";
+        document.head.appendChild(meta);
+        return () => {
+            document.head.removeChild(meta);
+        };
+    }, []);
 
     const sections = [
         {

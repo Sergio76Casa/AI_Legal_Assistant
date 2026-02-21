@@ -1,5 +1,4 @@
-import React from 'react';
-import { FileText, Home, Heart, ArrowUpRight } from 'lucide-react';
+import { FileText, Home, Heart, ArrowUpRight, Shield } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
 
@@ -41,17 +40,29 @@ function ServiceCard({ title, description, icon, className, colorClass, onClick 
     );
 }
 
-export function BentoGrid({ onNavigate }: { onNavigate: (view: any) => void }) {
+export function BentoGrid({ onNavigate, isAdmin }: { onNavigate: (view: any) => void, isAdmin?: boolean }) {
     const { t } = useTranslation();
     return (
         <section className="px-4 md:px-6 pb-32 max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[400px]">
+                {/* Admin Card (Dynamic) */}
+                {isAdmin && (
+                    <ServiceCard
+                        title="Command Center"
+                        description="Acceso exclusivo a finanzas, MRR, organizaciones y control global de la plataforma."
+                        icon={<Shield className="w-6 h-6" />}
+                        className="md:col-span-1 bg-primary/10 border-primary/20"
+                        colorClass="hover:bg-primary/20 hover:border-primary/40"
+                        onClick={() => onNavigate('admin')}
+                    />
+                )}
+
                 {/* Legal Card */}
                 <ServiceCard
                     title={t('bento.legal_title')}
                     description={t('bento.legal_desc')}
                     icon={<FileText className="w-6 h-6" />}
-                    className="md:col-span-2 bg-white/5"
+                    className={cn(isAdmin ? "md:col-span-1" : "md:col-span-2", "bg-white/5")}
                     colorClass="hover:bg-primary/5 hover:border-primary/30"
                     onClick={() => onNavigate('legal-procedures')}
                 />

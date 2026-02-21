@@ -18,6 +18,7 @@ import { TenantDashboard } from './components/TenantDashboard';
 import { TenantPublicPage } from './components/TenantPublicPage';
 import { AffiliateTerms } from './components/AffiliateTerms';
 import { RegisterAffiliate } from './components/RegisterAffiliate';
+import { AffiliateKit } from './components/AffiliateKit';
 import { SplashScreen } from './components/SplashScreen';
 import { DynamicFooter } from './components/DynamicFooter';
 import { LegalModal } from './components/Landing/LegalModal';
@@ -32,7 +33,7 @@ const supabase = createClient(
 function App() {
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate'>('home');
+    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate' | 'affiliate-kit'>('home');
     const [currentSlug, setCurrentSlug] = useState<string | null>(null);
     const [showSplash, setShowSplash] = useState(false);
     const [legalModal, setLegalModal] = useState<'privacy' | 'cookies' | 'legal' | null>(null);
@@ -58,7 +59,7 @@ function App() {
             const params = new URLSearchParams(window.location.search);
             let ref = params.get('ref');
             let path = window.location.pathname.replace(/^\/|\/$/g, '');
-            const reservedPublic = ['login', 'create-org', 'privacy', 'cookies', 'home', 'afiliados-terminos', 'register-affiliate', ''];
+            const reservedPublic = ['login', 'create-org', 'privacy', 'cookies', 'home', 'afiliados-terminos', 'register-affiliate', 'affiliate-kit', ''];
 
             // Dashboard views mapping
             const dashboardMap: Record<string, string> = {
@@ -234,6 +235,8 @@ function App() {
                             <AffiliateTerms onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
                         ) : view === 'register-affiliate' ? (
                             <RegisterAffiliate onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                        ) : view === 'affiliate-kit' ? (
+                            <AffiliateKit onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
                         ) : view === 'legal-procedures' ? (
                             <LegalProcedures onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} user={user} />
                         ) : view === 'halal-culture' ? (
@@ -246,9 +249,10 @@ function App() {
                                 <BentoGrid onNavigate={(v) => {
                                     setView(v);
                                     const path = v === 'documents' ? '/dashboard/documents' :
-                                        v === 'affiliates' ? '/dashboard/affiliates' : `/${v}`;
+                                        v === 'affiliates' ? '/dashboard/affiliates' :
+                                            v === 'admin' ? '/dashboard/admin' : `/${v}`;
                                     window.history.pushState({}, '', path);
-                                }} />
+                                }} isAdmin={isAdmin} />
                                 <DynamicFooter
                                     onOpenLegal={(type) => setLegalModal(type)}
                                     onOpenService={(type) => setServiceModal(type)}

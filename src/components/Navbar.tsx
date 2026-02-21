@@ -17,7 +17,7 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
     const { t } = useTranslation();
     const { tenant } = useTenant();
 
-    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
+    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
 
     const username = user?.user_metadata?.username || user?.email?.split('@')[0] || t('nav.user_fallback');
 

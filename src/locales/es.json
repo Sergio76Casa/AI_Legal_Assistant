@@ -1143,5 +1143,47 @@
             "submit": "Solicitar acceso al programa",
             "footer": "Procesaremos tu solicitud en 24-48h. Sin compromiso."
         }
+    },
+    "affiliate_kit": {
+        "title": "Centro de Recursos para Partners",
+        "subtitle": "Todo lo que necesitas para <1>empezar a recomendar</1>",
+        "desc": "Utiliza estos materiales validados para compartir LegalFlow con tu red y maximizar tus conversiones.",
+        "tabs": {
+            "copy": "Copys & Mensajes",
+            "email": "Plantillas de Email",
+            "design": "Creatividades (Banners)"
+        },
+        "whatsapp": {
+            "title": "Mensajes para WhatsApp / Telegram",
+            "desc": "Perfectos para enviar a colegas o grupos profesionales.",
+            "copy_btn": "Copiar Mensaje",
+            "copied": "¡Copiado!",
+            "templates": [
+                {
+                    "label": "Directo y Tecnológico",
+                    "text": "Hola! He empezado a usar LegalFlow para mis expedientes de extranjería y la IA de STARK es una locura, ahorra muchísimo tiempo de picar datos. Échale un ojo aquí: {{link}}"
+                },
+                {
+                    "label": "Enfoque Productividad",
+                    "text": "¿Cómo vas de tiempo con los expedientes? Me he pasado a LegalFlow y me está salvando la vida con la gestión de documentos. Te paso mi enlace por si quieres probarlo: {{link}}"
+                }
+            ]
+        },
+        "email": {
+            "title": "Plantillas de Correo Electrónico",
+            "desc": "Ideales para prospección o boletines informativos.",
+            "templates": [
+                {
+                    "subject": "Cómo estoy gestionando mis expedientes de extranjería en 2026",
+                    "body": "Hola,\n\nTe escribo porque sé que al igual que yo, pasas demasiadas horas gestionando documentos y picando datos para trámites de extranjería.\n\nHe descubierto LegalFlow, una plataforma con IA (Motor STARK) que automatiza gran parte del proceso. Yo ya la estoy usando y la diferencia en productividad es brutal.\n\nPuedes probarla aquí: {{link}}\n\nSi tienes cualquier duda dímelo.\n\nUn saludo."
+                }
+            ]
+        },
+        "designs": {
+            "title": "Banners para LinkedIn y Redes",
+            "desc": "Imágenes optimizadas para captar atención en tu feed.",
+            "download": "Descargar Kit de Diseño (ZIP)",
+            "preview_label": "Vista previa del banner corporativo"
+        }
     }
 }

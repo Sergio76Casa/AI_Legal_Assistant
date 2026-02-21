@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Upload, CheckCircle2, AlertCircle, Loader2, Globe, Trash2, RefreshCw, Eye, X, Building, Users, Shield, ExternalLink, FileText, Calendar, Sparkles, File as FileIcon } from 'lucide-react';
+import { Upload, CheckCircle2, AlertCircle, Loader2, Globe, Trash2, RefreshCw, Eye, X, Building, Users, Shield, ExternalLink, FileText, Calendar, Sparkles, File as FileIcon, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '../lib/utils';
 
 import { OrganizationPanel } from './OrganizationPanel';
+import { AdminEarnings } from './AdminEarnings';
 
 export const AdminDashboard: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'content' | 'tenants' | 'organization'>('content');
+    const [activeTab, setActiveTab] = useState<'content' | 'tenants' | 'organization' | 'earnings'>('earnings');
     const [file, setFile] = useState<File | null>(null);
     const [country, setCountry] = useState<string>('ES');
     const [isUploading, setIsUploading] = useState(false);
@@ -233,7 +234,7 @@ export const AdminDashboard: React.FC = () => {
                             <Shield size={32} />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-white">Superadmin Console</h1>
+                            <h1 className="text-2xl font-bold text-white">Superadmin Console (V2)</h1>
                             <p className="text-slate-400">Gestión global de leyes, organizaciones y sistema.</p>
                         </div>
                     </div>
@@ -250,8 +251,9 @@ export const AdminDashboard: React.FC = () => {
 
                 <div className="flex items-center gap-1 p-1 bg-white/5 rounded-xl w-fit">
                     {[
+                        { id: 'earnings', icon: <TrendingUp size={18} />, label: 'Mis Ganancias' },
                         { id: 'content', icon: <Globe size={18} />, label: 'Leyes Globales' },
-                        { id: 'tenants', icon: <Building size={18} />, label: 'Organizaciones' },
+                        { id: 'tenants', icon: <Building size={18} />, label: 'Organizaciones (Control)' },
                         { id: 'organization', icon: <Users size={18} />, label: 'Configuración Propia' }
                     ].map(tab => (
                         <button
@@ -497,6 +499,10 @@ export const AdminDashboard: React.FC = () => {
             {/* TAB: Own Organization (Standard OrganizationPanel) */}
             {activeTab === 'organization' && userProfile?.tenant_id && (
                 <OrganizationPanel tenantId={userProfile.tenant_id} />
+            )}
+
+            {activeTab === 'earnings' && (
+                <AdminEarnings />
             )}
             {activeTab === 'organization' && !userProfile?.tenant_id && (
                 <div className="p-12 text-center bg-white/5 rounded-2xl border border-white/10 italic text-slate-500">

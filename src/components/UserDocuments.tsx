@@ -217,7 +217,7 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId }) => {
                                     ) : (
                                         <div className="flex items-center gap-2">
                                             <h3
-                                                className="font-semibold text-lg text-white truncate pr-4 cursor-pointer hover:text-primary transition-colors"
+                                                className="font-bold text-xl text-white truncate pr-4 cursor-pointer hover:text-primary transition-colors"
                                                 onClick={() => startRename(doc)}
                                                 title={t('docs.rename_tooltip')}
                                             >

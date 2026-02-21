@@ -21,7 +21,7 @@ export function Layout({ children, onNavigate, user, profile, hideNavFooter = fa
             </main>
             {!hideNavFooter && !hideFooter && (
                 <footer className="py-12 border-t border-white/5 bg-[#0a0f1d]">
-                    <div className="max-w-7xl mx-auto px-6 text-center">
+                    <div className="max-w-6xl mx-auto px-6 text-center">
                         <p className="text-sm text-slate-500">
                             © {new Date().getFullYear()} LegalFlow. {t('nav.contact')}.
                         </p>

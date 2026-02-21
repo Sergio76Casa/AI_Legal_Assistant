@@ -5,16 +5,17 @@ interface GeneratePDFParams {
     templateId: string;
     clientId: string; // ID del "Customer" (User)
     clientProfile: any; // Datos completos del perfil del cliente
+    tenantProfile?: any; // Datos de la organización (White Label)
     customMappings?: any[]; // Opcional: Para preview
     preloadedTemplateBuffer?: ArrayBuffer; // Opcional: Para evitar redescargar
 }
 
-export const generateFilledPDF = async ({ templateId, clientProfile, customMappings, preloadedTemplateBuffer }: GeneratePDFParams): Promise<Uint8Array | null> => {
+export const generateFilledPDF = async ({ templateId, clientProfile, tenantProfile, customMappings, preloadedTemplateBuffer }: GeneratePDFParams): Promise<Uint8Array | null> => {
     try {
         let mappings = customMappings;
         let arrayBuffer = preloadedTemplateBuffer;
 
-        // 1. Obtener datos de la plantilla y mapeos SI NO VEINEN DADOS
+        // 1. Obtener datos de la plantilla y mapeos SI NO VIENEN DADOS
         if (!mappings || !arrayBuffer) {
             const { data: template, error: tplError } = await supabase
                 .from('pdf_templates')
@@ -44,7 +45,7 @@ export const generateFilledPDF = async ({ templateId, clientProfile, customMappi
             }
         }
 
-        // 3. Cargar PDF con pdf-lib
+        // 2. Cargar PDF con pdf-lib
         if (!arrayBuffer || !mappings) throw new Error("Faltan datos para generar PDF");
 
         let pdfDoc: PDFDocument;
@@ -52,23 +53,37 @@ export const generateFilledPDF = async ({ templateId, clientProfile, customMappi
             pdfDoc = await PDFDocument.load(arrayBuffer);
         } catch (loadErr) {
             console.error('Error loading PDF:', loadErr);
-            throw new Error('PDF_LOAD_ERROR'); // Código para i18n
+            throw new Error('PDF_LOAD_ERROR');
         }
 
         const pages = pdfDoc.getPages();
         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-        // 4. Rellenar campos
+        // 3. Rellenar campos
         for (const map of mappings) {
-            // Obtener valor del perfil del cliente
-            let value = clientProfile[map.field_key] || '';
+            let value: any = '';
 
-            // Lógica especial: Fecha Actual
-            if (map.field_key === 'today_date') {
+            // LOGICA DE BINDING (Client vs Organization)
+            if (map.field_key.startsWith('org_')) {
+                // Organization fields
+                if (tenantProfile) {
+                    const orgKey = map.field_key.replace('org_', '');
+                    switch (orgKey) {
+                        case 'name': value = tenantProfile.name; break;
+                        case 'address': value = tenantProfile.config?.offices?.[0]?.address || ''; break;
+                        case 'phone': value = tenantProfile.config?.contact_phone || ''; break;
+                        case 'email': value = tenantProfile.config?.contact_email || ''; break;
+                        case 'logo': value = tenantProfile.config?.logo_url || ''; break;
+                        default: value = '';
+                    }
+                }
+            } else if (map.field_key === 'today_date') {
                 value = new Date().toLocaleDateString('es-ES');
+            } else {
+                // Client profile fields
+                value = clientProfile[map.field_key] || '';
             }
 
-            // Ignorar si no hay valor (o dejar vacío)
             if (value === undefined || value === null) continue;
 
             const pageIndex = map.page_number - 1;
@@ -76,61 +91,71 @@ export const generateFilledPDF = async ({ templateId, clientProfile, customMappi
 
             const page = pages[pageIndex];
             const { height } = page.getSize();
-
-            // COORDENADAS:
-            // pdf-lib usa coordenadas Cartesianas (0,0 en esquina INFERIOR izquierda).
-            // Nuestro editor visual (probablemente) guardó coordenadas desde la esquina SUPERIOR izquierda (web standard).
-            // Convertimos Y: pdfY = height - visualY - fontSize (ajuste aprox)
-            // Ojo: Si guardamos "Puntos PDF" directos en el editor asumiendo origen arriba, hacemos:
             const pdfX = map.x_coordinate;
-            const pdfY = height - map.y_coordinate; // Invertir Y
+            const pdfY = height - map.y_coordinate; // Invertir Y (Web -> PDF Lib)
 
-            // LOGICA ESPECIAL: SEXO (Checkboxes Condicionales)
-            if (map.field_key === 'sex_male' || map.field_key === 'sex_female') {
-                const sex = clientProfile.sex?.toLowerCase();
-                const isMale = sex === 'male' || sex === 'hombre' || sex === 'h';
-                const isFemale = sex === 'female' || sex === 'mujer' || sex === 'm';
+            // 4. LOGICA DE DIBUJO (Texto vs Checkbox)
+            if (map.field_type === 'checkbox') {
+                // Checkbox Logic: Compare value with trigger_value
+                const trigger = String(map.trigger_value || 'true').toLowerCase();
+                const currentVal = String(value).toLowerCase();
 
-                // Solo dibujar si coincide
-                const shouldDraw = (map.field_key === 'sex_male' && isMale) || (map.field_key === 'sex_female' && isFemale);
+                const isMarked = currentVal === trigger ||
+                    (trigger === 'true' && (value === true || currentVal === 'si' || currentVal === 'yes'));
 
-                if (shouldDraw) {
+                if (isMarked) {
                     page.drawText('X', {
-                        x: pdfX,
+                        x: pdfX + 2, // Slight offset for visual centering
                         y: pdfY - (map.font_size || 12),
                         size: map.font_size || 12,
                         font: font,
                         color: rgb(0.1, 0.1, 0.4),
                     });
                 }
-                continue; // Ya hemos dibujado (o no), pasamos al siguiente campo
-            }
+            } else if (map.field_type === 'signature') {
+                // Digital Signature Branding
+                const signatureText = clientProfile.signature_date
+                    ? `Firmado Digitalmente: ${new Date(clientProfile.signature_date).toLocaleDateString()}`
+                    : `Pendiente de Firma`;
 
-            // LOGICA CHECKBOX / BOOLEANO
-            const isCheckbox = typeof value === 'boolean' || (typeof value === 'string' && ['si', 'no', 'true', 'false', 'x'].includes(value.toLowerCase()));
+                page.drawRectangle({
+                    x: pdfX,
+                    y: pdfY - 30,
+                    width: map.width || 120,
+                    height: 30,
+                    borderWidth: 0.5,
+                    borderColor: rgb(0.1, 0.1, 0.4),
+                    borderDashArray: [2, 2],
+                    color: rgb(0.95, 0.95, 1),
+                    opacity: 0.5,
+                });
 
-            if (isCheckbox) {
-                // Si es booleano true, dibujamos X.
-                if (value === true || value === 'true' || value === 'si' || value === 'X') {
-                    page.drawText('X', {
-                        x: pdfX,
-                        y: pdfY - (map.font_size || 12), // Ajuste de baseline
-                        size: map.font_size || 12,
+                page.drawText(signatureText, {
+                    x: pdfX + 5,
+                    y: pdfY - 20,
+                    size: 7,
+                    font: font,
+                    color: rgb(0.2, 0.2, 0.6),
+                });
+
+                if (clientProfile.full_name) {
+                    page.drawText(clientProfile.full_name, {
+                        x: pdfX + 5,
+                        y: pdfY - 10,
+                        size: 8,
                         font: font,
-                        color: rgb(0.1, 0.1, 0.4), // Azul oscuro "Tinta de Bolígrafo"
                     });
                 }
             } else {
-                // TEXTO NORMAL
+                // Text Logic (Default)
                 const text = String(value);
-                let fontSize = map.font_size || 11; // Default a 11 (un poco más pequeño que 12 para standard)
-                const maxWidth = map.width || 0; // Si es 0 o undefined, no limitamos (o limitamos página)
+                if (!text || map.field_key === 'org_logo') continue;
 
-                // AUTO-SCALE LOGIC
+                let fontSize = map.font_size || 11;
+                const maxWidth = map.width || 0;
+
                 if (maxWidth > 0) {
                     let textWidth = font.widthOfTextAtSize(text, fontSize);
-
-                    // Si el texto es más ancho que el espacio disponible, reducimos la fuente
                     while (textWidth > maxWidth && fontSize > 6) {
                         fontSize -= 0.5;
                         textWidth = font.widthOfTextAtSize(text, fontSize);
@@ -139,16 +164,15 @@ export const generateFilledPDF = async ({ templateId, clientProfile, customMappi
 
                 page.drawText(text, {
                     x: pdfX,
-                    y: pdfY - fontSize, // Ajuste para que la coordenada sea "Top-Left" visualmente
+                    y: pdfY - fontSize,
                     size: fontSize,
                     font: font,
-                    color: rgb(0.1, 0.1, 0.4), // Azul oscuro profesional
-                    maxWidth: maxWidth > 0 ? maxWidth : undefined, // pdf-lib hace wrap si se pasa, pero nosotros ya reducimos
+                    color: rgb(0.1, 0.1, 0.4),
+                    maxWidth: maxWidth > 0 ? maxWidth : undefined,
                 });
             }
         }
 
-        // 5. Guardar y Retornar
         const pdfBytes = await pdfDoc.save();
         return pdfBytes;
 

@@ -227,11 +227,11 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                     <table className="w-full text-left text-base">
                         <thead className="bg-white/5 text-slate-400">
                             <tr>
-                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.user')}</th>
-                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.role')}</th>
-                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.join_date')}</th>
-                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px]">{t('org_panel.headers.status')}</th>
-                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-[11px] text-right">{t('org_panel.headers.actions')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs">{t('org_panel.headers.user')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs">{t('org_panel.headers.role')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs">{t('org_panel.headers.join_date')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs">{t('org_panel.headers.status')}</th>
+                                <th className="px-6 py-4 font-bold uppercase tracking-wider text-xs text-right">{t('org_panel.headers.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -243,7 +243,7 @@ export const OrganizationPanel: React.FC<OrganizationPanelProps> = ({ tenantId }
                                                 {user.email?.charAt(0).toUpperCase() || 'U'}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-white text-base">{user.email}</div>
+                                                <div className="font-bold text-white text-lg">{user.email}</div>
                                                 <div className="text-[11px] text-slate-500 font-medium tracking-tight mt-0.5">{user.id}</div>
 
                                                 {/* Sección de Packs */}

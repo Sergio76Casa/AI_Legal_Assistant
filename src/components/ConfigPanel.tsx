@@ -4,7 +4,7 @@ import { useTenant } from '../lib/TenantContext';
 import {
     Globe, Phone, Mail, Facebook, Instagram, Twitter, Linkedin,
     Plus, Trash2, Upload, Building, ImageIcon,
-    MapPin, Save, Loader2, Settings, ShieldCheck, CheckCircle2
+    Save, Loader2, Settings, ShieldCheck, CheckCircle2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -413,7 +413,7 @@ export const ConfigPanel: React.FC = () => {
                                         <div className="md:col-span-2 space-y-2">
                                             <label className="text-[9px] font-bold text-slate-600 uppercase tracking-wider">Ubicación Física</label>
                                             <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
-                                                <MapPin size={14} className="text-slate-500" />
+                                                <Globe size={14} className="text-slate-500" />
                                                 <input
                                                     type="text"
                                                     value={office.address}

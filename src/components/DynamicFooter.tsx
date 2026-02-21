@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useTenant } from '../lib/TenantContext';
 import {
     Phone, Mail, Facebook, Instagram, Twitter, Linkedin,
-    MapPin, Globe, FileText, LayoutGrid, Building2, TrendingUp, ShieldCheck
+    Globe, FileText, LayoutGrid, Building2, TrendingUp, ShieldCheck
 } from 'lucide-react';
 
 interface DynamicFooterProps {
@@ -49,40 +49,17 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                 </a>
                             )}
                             {config.iso_logo_url && (
-                                <div className="opacity-40 hover:opacity-100 transition-opacity">
+                                <a href={config.extra_url || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
                                     <img src={config.iso_logo_url} className="h-12 object-contain" alt="ISO" />
-                                </div>
+                                </a>
                             )}
                             {config.extra_logo_url && (
-                                <a href={config.extra_url || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                <div className="opacity-40 hover:opacity-100 transition-opacity">
                                     <img src={config.extra_logo_url} className="h-8 object-contain" alt="Logo Extra" />
-                                </a>
+                                </div>
                             )}
                         </div>
 
-                        {/* Social Media */}
-                        <div className="flex items-center gap-3 pt-4">
-                            {social.facebook && (
-                                <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
-                                    <Facebook size={16} />
-                                </a>
-                            )}
-                            {social.instagram && (
-                                <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
-                                    <Instagram size={16} />
-                                </a>
-                            )}
-                            {social.twitter && (
-                                <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
-                                    <Twitter size={16} />
-                                </a>
-                            )}
-                            {social.linkedin && (
-                                <a href={social.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
-                                    <Linkedin size={16} />
-                                </a>
-                            )}
-                        </div>
                     </div>
 
                     <div className="space-y-6">
@@ -170,7 +147,7 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                 office.label && office.address && (
                                     <div key={idx} className="flex gap-4 group">
                                         <div className="w-10 h-10 shrink-0 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary/70 group-hover:text-primary group-hover:bg-primary/10 transition-all">
-                                            <MapPin size={18} />
+                                            <Globe size={18} />
                                         </div>
                                         <div>
                                             <div className="text-[11px] font-black uppercase text-white tracking-widest leading-none mb-1.5">{office.label}</div>
@@ -196,6 +173,30 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                             <Mail size={18} />
                                         </div>
                                         <span className="text-sm font-bold tracking-tight">{config.contact_email}</span>
+                                    </a>
+                                )}
+                            </div>
+
+                            {/* Social Media */}
+                            <div className="flex items-center gap-3 pt-6 border-t border-white/5">
+                                {social.facebook && (
+                                    <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
+                                        <Facebook size={16} />
+                                    </a>
+                                )}
+                                {social.instagram && (
+                                    <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
+                                        <Instagram size={16} />
+                                    </a>
+                                )}
+                                {social.twitter && (
+                                    <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
+                                        <Twitter size={16} />
+                                    </a>
+                                )}
+                                {social.linkedin && (
+                                    <a href={social.linkedin} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary/30 transition-all">
+                                        <Linkedin size={16} />
                                     </a>
                                 )}
                             </div>
