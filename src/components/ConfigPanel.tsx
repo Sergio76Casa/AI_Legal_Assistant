@@ -137,10 +137,21 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
     }, [tenant]);
 
     const [translationProgress, setTranslationProgress] = React.useState<{ current: number, total: number } | null>(null);
+    const lastTranslatedRef = React.useRef<string>('');
 
     const handleTranslate = async (links: any[]) => {
-        setTranslating(true);
         const linksToTranslate = links.filter(l => typeof l.title === 'string' && l.title.trim().length > 0);
+
+        // Optimization: Check if content has changed since last translate
+        const currentLinksState = JSON.stringify(linksToTranslate.map(l => ({ title: l.title, content: l.content })));
+
+        // If content is same and they ALL have translations, skip
+        if (currentLinksState === lastTranslatedRef.current && links.every(l => l.translations && Object.keys(l.translations).length > 0)) {
+            console.log('Skipping translation: content has not changed.');
+            return links;
+        }
+
+        setTranslating(true);
         setTranslationProgress({ current: 0, total: linksToTranslate.length });
 
         // Deep copy links to avoid mutating state directly during the loop
@@ -187,6 +198,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                     }
                 }
             }
+
+            // Save state of successful translation
+            lastTranslatedRef.current = currentLinksState;
+
             setTranslationSuccess(true);
             setTimeout(() => setTranslationSuccess(false), 5000);
             return newLinks;
