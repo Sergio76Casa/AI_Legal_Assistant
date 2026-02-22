@@ -83,6 +83,8 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
     const [footerLinks, setFooterLinks] = useState<any[]>([]);
     const [translating, setTranslating] = useState(false);
     const [translationSuccess, setTranslationSuccess] = useState(false);
+    const [translationProgress, setTranslationProgress] = React.useState<{ current: number, total: number } | null>(null);
+    const lastTranslatedRef = React.useRef<string>('');
 
     useEffect(() => {
         if (tenant) {
@@ -125,19 +127,21 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
 
                 if (data?.footer_custom_links && data.footer_custom_links.length > 0) {
                     setFooterLinks(data.footer_custom_links);
+                    // Inicializar el hash para evitar traducciones redundantes al cargar
+                    const linksToTranslate = data.footer_custom_links.filter((l: any) => typeof l.title === 'string' && l.title.trim().length > 0);
+                    lastTranslatedRef.current = JSON.stringify(linksToTranslate.map((l: any) => ({ title: l.title, content: l.content })));
                 } else {
                     const defaults = [
                         { id: 'docs', title: 'Información Legal', content: 'Contenido legal de la plataforma...', section: 'legal' }
                     ];
                     setFooterLinks(defaults);
+                    const linksToTranslate = defaults.filter((l: any) => typeof l.title === 'string' && l.title.trim().length > 0);
+                    lastTranslatedRef.current = JSON.stringify(linksToTranslate.map((l: any) => ({ title: l.title, content: l.content })));
                 }
             };
             fetchFooterSettings();
         }
     }, [tenant]);
-
-    const [translationProgress, setTranslationProgress] = React.useState<{ current: number, total: number } | null>(null);
-    const lastTranslatedRef = React.useRef<string>('');
 
     const handleTranslate = async (links: any[]) => {
         const linksToTranslate = links.filter(l => typeof l.title === 'string' && l.title.trim().length > 0);
