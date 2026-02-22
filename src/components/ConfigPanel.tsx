@@ -130,13 +130,27 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
         }
     }, [tenant]);
 
+    const [translationProgress, setTranslationProgress] = React.useState<{ current: number, total: number } | null>(null);
+
     const handleTranslate = async (links: any[]) => {
         setTranslating(true);
+        const linksToTranslate = links.filter(l => typeof l.title === 'string' && l.title.trim().length > 0);
+        setTranslationProgress({ current: 0, total: linksToTranslate.length });
+
+        // Deep copy links to avoid mutating state directly during the loop
+        const newLinks = links.map(l => ({
+            ...l,
+            translations: { ...(l.translations || {}) }
+        }));
+
         try {
-            const newLinks = [...links];
+            let processed = 0;
             for (let i = 0; i < newLinks.length; i++) {
                 const link = newLinks[i];
                 if (typeof link.title === 'string' && link.title.trim().length > 0) {
+                    processed++;
+                    setTranslationProgress({ current: processed, total: linksToTranslate.length });
+
                     const { data, error } = await supabase.functions.invoke('translate-footer', {
                         body: {
                             title: link.title,
@@ -144,22 +158,38 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                             sourceLang: 'auto'
                         }
                     });
-                    if (error) throw error;
 
-                    if (data && data.translations) {
-                        link.translations = data.translations;
-                        link.icon = data.icon || link.icon;
+                    if (error) {
+                        const errorMsg = error.message || (typeof error === 'string' ? error : 'Error en la Edge Function');
+                        alert(`❌ Bloque ${i + 1}: Falló la traducción (${errorMsg}). Se mantendrán los datos anteriores.`);
+                        continue;
+                    }
+
+                    if (data && data.translations && Object.keys(data.translations).length > 0) {
+                        // MERGE: New AI keys overwrite old ones, but non-returned keys are preserved.
+                        link.translations = {
+                            ...link.translations,
+                            ...data.translations
+                        };
+
+                        // Update icon
+                        if (data.icon) {
+                            link.icon = data.icon;
+                        }
+                    } else {
+                        console.warn(`IA Bloque ${i + 1}: No devolvió traducciones válidas.`);
                     }
                 }
             }
             setTranslationSuccess(true);
             setTimeout(() => setTranslationSuccess(false), 5000);
             return newLinks;
-        } catch (err) {
-            console.error('Translation error:', err);
+        } catch (err: any) {
+            alert(`🛑 Error crítico en el proceso de traducción: ${err.message}`);
             return links;
         } finally {
             setTranslating(false);
+            setTranslationProgress(null);
         }
     };
 
@@ -277,6 +307,9 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                 }, { onConflict: 'tenant_id' });
 
             if (settingsError) throw settingsError;
+
+            // Update local state immediately so user sees the change
+            setFooterLinks(translatedLinks);
 
             await refreshTenant();
             if (!silent) {
@@ -655,10 +688,18 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                                                 <div className="p-1 rounded-full bg-primary/20 animate-pulse">
                                                     <CheckCircle2 size={14} className="animate-bounce" />
                                                 </div>
-                                                <p className="text-[10px] font-bold uppercase tracking-widest text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">Traducciones e iconos optimizados por la IA de STARK 2.0</p>
+                                                <p className="text-sm font-bold uppercase tracking-widest text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">Traducciones e iconos optimizados por la IA de STARK 2.0</p>
+                                            </motion.div>
+                                        ) : translating && translationProgress ? (
+                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-blue-400">
+                                                <Loader2 size={12} className="animate-spin" />
+                                                <p className="text-sm font-bold uppercase tracking-widest">IA Stark 2.0: Procesando bloque {translationProgress.current} de {translationProgress.total}...</p>
                                             </motion.div>
                                         ) : (
-                                            <p className="text-[10px] text-slate-500 font-medium">Escribe un título y un texto. Ocurre la magia: la IA STARK 2.0 lo traducirá a 10 idiomas y asignará un icono acorde al contexto.</p>
+                                            <p className="text-sm text-slate-400 font-semibold leading-relaxed flex items-center gap-2">
+                                                <Sparkles size={16} className="text-primary animate-pulse" />
+                                                Escribe un título y un texto. Ocurre la magia: la IA STARK 2.0 lo traducirá a 10 idiomas y asignará un icono acorde al contexto.
+                                            </p>
                                         )}
                                     </div>
                                     <button

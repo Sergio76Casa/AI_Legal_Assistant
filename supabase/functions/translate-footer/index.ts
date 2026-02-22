@@ -27,31 +27,49 @@ serve(async (req: Request) => {
         const prompt = `
             You are a professional translator and UX designer for a legal assistance platform.
             
+            STRICT RULES:
             1. AUTO-DETECT the source language of the provided TITLE and CONTENT.
-            2. Translate them into these languages: ${SUPPORTED_LANGUAGES.join(', ')}.
-            3. Based on the meaning, select the most relevant icon from this list: ${ALLOWED_ICONS.join(', ')}.
+            2. You MUST translate them into ALL these 10 languages without exception: ${SUPPORTED_LANGUAGES.join(', ')}.
+            3. Do NOT omit any language. If you fail to include even one, the system will break.
+            4. Based on the meaning, select the most relevant icon from this list: ${ALLOWED_ICONS.join(', ')}.
 
             Title: "${title}"
             Content: "${content}"
 
             REQUIREMENTS:
             - Maintain a professional, legal, and helpful tone.
-            - Return ONLY a valid JSON object with this exact structure:
+            - Return ONLY a valid JSON object. Do not include any explanation or additional text.
+            - Format:
             {
                 "icon": "IconName",
                 "translations": {
                     "es": { "title": "...", "content": "..." },
                     "en": { "title": "...", "content": "..." },
-                    ...
+                    "ru": { "title": "...", "content": "..." },
+                    "fr": { "title": "...", "content": "..." },
+                    "pt": { "title": "...", "content": "..." },
+                    "ar": { "title": "...", "content": "..." },
+                    "zh": { "title": "...", "content": "..." },
+                    "bm": { "title": "...", "content": "..." },
+                    "wo": { "title": "...", "content": "..." },
+                    "ur": { "title": "..." , "content": "..." }
                 }
             }
         `;
 
         const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
+        let responseText = result.response.text();
+
+        // Clean any Markdown code blocks if present
+        responseText = responseText.replace(/```json\n?|```/g, '').trim();
 
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
         const data = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(responseText);
+
+        // Final validation: Ensure translations object is not empty
+        if (!data.translations || Object.keys(data.translations).length === 0) {
+            throw new Error("AI returned empty translations");
+        }
 
         return new Response(JSON.stringify(data), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }

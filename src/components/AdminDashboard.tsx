@@ -467,16 +467,14 @@ export const AdminDashboard: React.FC = () => {
                                                 disabled={updatingPlan === tenant.id}
                                                 className={cn(
                                                     "px-2 py-1 rounded text-[10px] font-bold uppercase border-none focus:ring-1 focus:ring-primary cursor-pointer transition-all",
-                                                    tenant.plan === 'enterprise' ? "bg-primary/15 text-primary" :
-                                                        tenant.plan === 'business' ? "bg-purple-500/15 text-purple-400" :
-                                                            tenant.plan === 'pro' ? "bg-blue-500/15 text-blue-400" :
-                                                                "bg-white/10 text-slate-400"
+                                                    tenant.plan === 'business' ? "bg-primary/15 text-primary" : // Enterprise
+                                                        tenant.plan === 'pro' ? "bg-purple-500/15 text-purple-400" : // Business
+                                                            "bg-white/10 text-slate-400" // Starter (free)
                                                 )}
                                             >
-                                                <option value="free">Free</option>
-                                                <option value="pro">Pro</option>
-                                                <option value="business">Business</option>
-                                                <option value="enterprise">Enterprise</option>
+                                                <option value="free">Starter</option>
+                                                <option value="pro">Business</option>
+                                                <option value="business">Enterprise</option>
                                             </select>
                                         </td>
                                         <td className="px-6 py-4 text-right">

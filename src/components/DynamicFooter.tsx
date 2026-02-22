@@ -49,14 +49,20 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
 
     const getLocalized = (link: any, field: 'title' | 'content') => {
         const lang = i18n.language.split('-')[0];
-        // 1. Check AI Translations object
+
+        // 1. Try Requested Language (Current)
         if (link.translations?.[lang]?.[field]) return link.translations[lang][field];
-        // 2. Check localized fields if they exist as objects
         if (typeof link[field] === 'object' && link[field]?.[lang]) return link[field][lang];
-        // 3. Fallback to Spanish translations
+
+        // 2. Try English (Global Fallback)
+        if (link.translations?.en?.[field]) return link.translations.en[field];
+
+        // 3. Try Spanish (Origin Fallback)
         if (link.translations?.es?.[field]) return link.translations.es[field];
-        // 4. Fallback to raw field (if it's a string)
-        return typeof link[field] === 'string' ? link[field] : (link[field]?.es || '');
+
+        // 4. Ultimate Fallback to Raw Field or Placeholder
+        const rawValue = typeof link[field] === 'string' ? link[field] : (link[field]?.es || '');
+        return rawValue || (field === 'title' ? link.title || 'Untitled' : '');
     };
 
     const servicesLinks = footerLinks.filter(l => l.section === 'services');
