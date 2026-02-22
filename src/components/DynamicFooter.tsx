@@ -81,8 +81,8 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
 
                     {/* Columna 1: Identidad */}
-                    <div className="flex flex-col items-center lg:items-start space-y-6">
-                        <div className="flex items-center justify-center lg:justify-start gap-3 w-full">
+                    <div className="flex flex-col items-center space-y-6">
+                        <div className="flex items-center justify-center gap-3 w-full">
                             {config.show_logo && config.logo_url ? (
                                 <img src={config.logo_url} alt={tenant.name} className="h-10 w-auto object-contain" />
                             ) : (
@@ -90,11 +90,11 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                             )}
                         </div>
 
-                        <p className="text-slate-500 text-sm leading-relaxed max-w-xs italic text-center lg:text-left">
+                        <p className="text-slate-500 text-sm leading-relaxed max-w-xs italic text-center">
                             {config.description || t('tenant_page.hero_desc')}
                         </p>
 
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4 w-full">
+                        <div className="flex flex-wrap items-center justify-center gap-4 pt-4 w-full">
                             {config.partner_logo_url && (
                                 <a href={config.partner_url || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
                                     <img src={config.partner_logo_url} className="h-8 object-contain" alt="Partner" />
