@@ -439,19 +439,126 @@
         "features": {
             "title": "为什么选择 LegalFlow？",
             "subtitle": "专为人力资源部门和代办处设计。",
+            "tech_details": "技术细节",
+            "response_time": "响应时间",
+            "speed_advantage": "比传统管理快 50%",
+            "tech_features": "技术特征",
+            "request_whitepaper": "索取技术白皮书",
             "security_title": "Iron Silo™ 安全",
             "security_desc": "数据加密隔离。您的组织是不可攻破的堡垒。",
             "ai_title": "STARK 2.0 引擎",
             "ai_desc": "我们的 AI 不仅阅读法律，更*理解*您的内部合同。",
             "global_title": "全球覆盖",
             "global_desc": "适配在西班牙、摩洛哥和拉美的员工。",
+            "security_expanded": "我们对所有文档和个人数据使用 AES-256 军用级加密。此外，我们的 Iron Silo™ 架构保证了每个办公室的数据完全隔离，确保只有授权人员才能访问机密信息。",
+            "ai_expanded": "STARK 2.0 引擎能够在几秒钟内分析复杂的官方文件。它允许智能提取数据以便直接导出到移民表格（EX-01、EX-11 等），将人工管理时间减少 80%。",
+            "global_expanded": "我们为广泛的程序提供全面支持，包括社会扎根 (Arraigo Social)、数字游民签证、投资居留（黄金签证）和家庭团聚。我们的覆盖范围延伸至前往西班牙的主要移民通道。",
             "mobile_title": "类应用体验",
             "mobile_desc": "员工可随处访问。"
+        },
+        "partners": {
+            "title": "合作伙伴计划",
+            "subtitle": "认识其他<1>专业人士</1>吗？",
+            "desc": "推荐移民领先技术，赚取持续佣金。您带来的每位客户都意味着您月复一月的被动收入。",
+            "commissions": "20% 持续佣金",
+            "commissions_desc": "每家通过您的链接订阅的事务所或机构",
+            "dashboard": "实时跟踪面板",
+            "dashboard_desc": "查看推荐、转化和付款情况",
+            "marketing": "独家营销资料",
+            "marketing_desc": "横幅、演示和可分享内容",
+            "join_btn": "加入计划",
+            "golden_close": "黄金收官",
+            "use_free_title": "<1>免费</1>使用 LegalFlow",
+            "use_free_desc": "如果您带来 <1>3 位专业人士</1>订阅，您的 <2>Business 计划将免费</2>。就这么简单。",
+            "step1": "注册为合作伙伴",
+            "step2": "与 3 位专业人士分享您的链接",
+            "step3": "您的 Business 计划永久免费！",
+            "savings": "每年节省 1,788€",
+            "savings_desc": "完整的年度 Business 计划价值"
+        },
+        "pricing": {
+            "title": "计划与定价",
+            "subtitle": "用<1>法律 AI</1>扩展您的业务",
+            "desc": "选择最适合您的事务所或机构业务量的计划。无长期合约限制。",
+            "monthly": "按月",
+            "yearly": "按年",
+            "two_months_free": "免 2 个月费用",
+            "popular_badge": "最受欢迎",
+            "from": "起价",
+            "price_suffix": "/月",
+            "yearly_suffix": "/年",
+            "savings_calc": "每年节省 {{amount}}€（免 2 个月费用）",
+            "custom_quote": "定制报价",
+            "cta_start": "现在开始",
+            "cta_choose": "选择 Business",
+            "cta_contact": "联系销售",
+            "footer_trust": "通过 Stripe 安全支付 • 无锁定期 • 数据受 Iron Silo™ 保护",
+            "footer_volume": "需要处理超过 50 个案件？",
+            "footer_contact": "咨询我们的商务团队 →",
+            "plans": {
+                "starter": {
+                    "name": "Starter",
+                    "target": "独立专业人士",
+                    "desc": "适合每月处理少量案件的经理、顾问和流动专家。",
+                    "features": [
+                        "每月最多 10 个案件",
+                        "智能文档扫描 (OCR)",
+                        "访问基础版 STARK 2.0 引擎",
+                        "案件管理面板",
+                        "邮件支持"
+                    ]
+                },
+                "business": {
+                    "name": "Business",
+                    "target": "事务所与机构",
+                    "desc": "专为需要速度和协作的事务所、搬迁机构和咨询公司设计。",
+                    "features": [
+                        "每月最多 50 个案件",
+                        "Iron Silo™ 安全保护",
+                        "最多 3 个用户账户（管理员）",
+                        "文档自动翻译",
+                        "完整版 STARK 2.0 引擎",
+                        "24/7 优先支持"
+                    ]
+                },
+                "enterprise": {
+                    "name": "Enterprise",
+                    "target": "大型律所与企业",
+                    "desc": "适用于高业务量、人力资源部门及有定制需求的组织。",
+                    "features": [
+                        "无限案件数量",
+                        "通过 API 与自有系统集成",
+                        "专用多租户架构",
+                        "团队定制培训",
+                        "专属客户经理",
+                        "SLA 保证"
+                    ]
+                }
+            }
+        },
+        "trust_bar": {
+            "gdpr": "符合 GDPR",
+            "ministry": "司法部",
+            "secured": "AI 加密保护",
+            "privacy": "欧盟数据隐私"
         },
         "cta": {
             "title": "准备好现代化您的合规管理了吗？",
             "desc": "加入已经在使用人工智能管理手续的企业。",
             "btn": "创建企业账户"
+        },
+        "create_org": {
+            "back": "返回",
+            "title": "创建新组织",
+            "subtitle": "建立您的安全工作空间",
+            "company_name": "公司名称",
+            "company_placeholder": "例如：Legal Corp SL",
+            "admin_label": "管理员",
+            "name_placeholder": "您的全名",
+            "email_placeholder": "you@company.com",
+            "password_placeholder": "安全密码",
+            "btn_submit": "创建账户",
+            "terms": "创建账户即表示您同意我们的使用条款。"
         },
         "footer": "版权所有。"
     },

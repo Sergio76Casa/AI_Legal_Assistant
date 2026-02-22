@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Building, User, Mail, Lock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -13,6 +14,7 @@ interface CreateOrgFormProps {
 }
 
 export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack }) => {
+    const { t } = useTranslation();
     const [step, setStep] = useState(1);
     const [orgName, setOrgName] = useState('');
     const [email, setEmail] = useState('');
@@ -64,8 +66,8 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
 
         } catch (err: any) {
             console.error(err);
-            let msg = err.message || "Ocurrió un error inesperado.";
-            if (msg.includes('already registered')) msg = "Este email ya está registrado.";
+            let msg = err.message || t('landing.create_org.error_generic');
+            if (msg.includes('already registered')) msg = t('landing.create_org.error_registered');
 
             setError(msg);
             setLoading(false);
@@ -78,11 +80,11 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                 <div className="w-20 h-20 bg-primary/15 rounded-full flex items-center justify-center mb-6 text-primary border border-primary/20">
                     <CheckCircle2 size={48} />
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-2">¡Todo listo!</h2>
+                <h2 className="text-3xl font-bold text-white mb-2">{t('landing.create_org.success_title')}</h2>
                 <p className="text-slate-300 text-lg">
-                    Se ha creado la organización <span className="font-bold text-white">{orgName}</span>.
+                    {t('landing.create_org.success_desc_1')} <span className="font-bold text-white">{orgName}</span>.
                 </p>
-                <p className="text-sm text-slate-500 mt-8">Redirigiendo a tu panel...</p>
+                <p className="text-sm text-slate-500 mt-8">{t('landing.create_org.redirecting')}</p>
             </div>
         );
     }
@@ -93,21 +95,21 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                 onClick={onBack}
                 className="absolute top-4 left-4 text-slate-400 hover:text-white transition-colors"
             >
-                ← Volver
+                ← {t('landing.create_org.back')}
             </button>
 
             <div className="text-center mb-8 mt-4">
                 <div className="w-12 h-12 bg-primary/15 text-primary rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-primary/20">
                     <Building size={24} />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Nueva Organización</h2>
-                <p className="text-primary text-sm">Crea tu espacio de trabajo seguro</p>
+                <h2 className="text-2xl font-bold text-white">{t('landing.create_org.title')}</h2>
+                <p className="text-primary text-sm">{t('landing.create_org.subtitle')}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Organization Name */}
                 <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nombre de la Empresa</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('landing.create_org.company_name')}</label>
                     <div className="relative">
                         <Building className="absolute left-3 top-3 text-slate-500" size={18} />
                         <input
@@ -116,7 +118,7 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                             value={orgName}
                             onChange={(e) => setOrgName(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary/40 outline-none transition-all text-white placeholder:text-slate-500"
-                            placeholder="Ej. Legal Corp SL"
+                            placeholder={t('landing.create_org.company_placeholder')}
                         />
                     </div>
                 </div>
@@ -125,7 +127,7 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
 
                 {/* Admin User Info */}
                 <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Administrador</label>
+                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('landing.create_org.admin_label')}</label>
                     <div className="space-y-3">
                         <div className="relative">
                             <User className="absolute left-3 top-3 text-slate-500" size={18} />
@@ -135,7 +137,7 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary/40 outline-none transition-all text-white placeholder:text-slate-500"
-                                placeholder="Tu nombre completo"
+                                placeholder={t('landing.create_org.name_placeholder')}
                             />
                         </div>
                         <div className="relative">
@@ -146,7 +148,7 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary/40 outline-none transition-all text-white placeholder:text-slate-500"
-                                placeholder="tu@empresa.com"
+                                placeholder={t('landing.create_org.email_placeholder')}
                             />
                         </div>
                         <div className="relative">
@@ -158,7 +160,7 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:ring-2 focus:ring-primary/30 focus:border-primary/40 outline-none transition-all text-white placeholder:text-slate-500"
-                                placeholder="Contraseña segura"
+                                placeholder={t('landing.create_org.password_placeholder')}
                             />
                         </div>
                     </div>
@@ -179,18 +181,18 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                     {loading ? (
                         <>
                             <Loader2 className="animate-spin" size={20} />
-                            Configurando entorno...
+                            {t('landing.create_org.btn_loading')}
                         </>
                     ) : (
                         <>
-                            Crear Cuenta <ArrowRight size={20} />
+                            {t('landing.create_org.btn_submit')} <ArrowRight size={20} />
                         </>
                     )}
                 </button>
             </form>
 
             <p className="text-center text-xs text-slate-500 mt-6">
-                Al crear una cuenta, aceptas nuestros Términos de Servicio B2B.
+                {t('landing.create_org.terms_notice')}
             </p>
         </div>
     );

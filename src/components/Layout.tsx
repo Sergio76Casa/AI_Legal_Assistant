@@ -2,9 +2,10 @@ import React from 'react';
 import { Navbar } from './Navbar';
 import { useTranslation } from 'react-i18next';
 
-export function Layout({ children, onNavigate, user, profile, hideNavFooter = false, hideFooter = false, currentView }: {
+export function Layout({ children, onNavigate, onOpenLegal, user, profile, hideNavFooter = false, hideFooter = false, currentView }: {
     children: React.ReactNode,
     onNavigate?: (v: any) => void,
+    onOpenLegal?: (type: 'privacy' | 'cookies' | 'legal') => void,
     user?: any,
     profile?: any,
     hideNavFooter?: boolean,
@@ -27,13 +28,13 @@ export function Layout({ children, onNavigate, user, profile, hideNavFooter = fa
                         </p>
                         <div className="flex justify-center gap-6 mt-4">
                             <button
-                                onClick={() => onNavigate?.('privacy')}
+                                onClick={() => onOpenLegal ? onOpenLegal('privacy') : onNavigate?.('privacy')}
                                 className="text-xs text-slate-500 hover:text-primary transition-colors"
                             >
                                 {t('legal.footer_privacy')}
                             </button>
                             <button
-                                onClick={() => onNavigate?.('cookies')}
+                                onClick={() => onOpenLegal ? onOpenLegal('cookies') : onNavigate?.('cookies')}
                                 className="text-xs text-slate-500 hover:text-primary transition-colors"
                             >
                                 {t('legal.footer_cookies')}

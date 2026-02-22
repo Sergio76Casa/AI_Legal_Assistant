@@ -38,7 +38,15 @@ function App() {
     const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'signatures' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate' | 'affiliate-kit' | 'sign' | 'join'>(
         new URLSearchParams(window.location.search).get('token') ? 'join' : 'home'
     );
+    const [previousView, setPreviousView] = useState<typeof view | 'home'>('home');
     const [signDocumentId, setSignDocumentId] = useState<string | null>(null);
+
+    // Track last non-legal view for "back" navigation
+    useEffect(() => {
+        if (view !== 'privacy' && view !== 'cookies' && view !== 'afiliados-terminos') {
+            setPreviousView(view);
+        }
+    }, [view]);
     const [currentSlug, setCurrentSlug] = useState<string | null>(null);
     const [showSplash, setShowSplash] = useState(false);
     const [legalModal, setLegalModal] = useState<'privacy' | 'cookies' | 'legal' | null>(null);
@@ -233,7 +241,9 @@ function App() {
                                                 v === 'organization' ? '/dashboard/organization' :
                                                     v === 'settings' ? '/dashboard/settings' : `/${v}`);
                         window.history.pushState({}, '', path);
-                    }} user={user} profile={profile} hideNavFooter={view === 'home'} hideFooter={!!user || view === 'join'} currentView={view}>
+                    }}
+                        onOpenLegal={(type) => setLegalModal(type)}
+                        user={user} profile={profile} hideNavFooter={view === 'home'} hideFooter={!!user || view === 'join'} currentView={view}>
                         {view === 'login' && !user ? (
                             <AuthForm
                                 onAuthSuccess={() => {
@@ -275,15 +285,15 @@ function App() {
                                 onNavigate={(v) => { setView(v as any); window.history.pushState({}, '', `/dashboard/${v}`); }}
                             />
                         ) : view === 'privacy' ? (
-                            <LegalPage type="privacy" onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                            <LegalPage type="privacy" onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
                         ) : view === 'cookies' ? (
-                            <LegalPage type="cookies" onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                            <LegalPage type="cookies" onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
                         ) : view === 'afiliados-terminos' ? (
-                            <AffiliateTerms onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                            <AffiliateTerms onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
                         ) : view === 'register-affiliate' ? (
-                            <RegisterAffiliate onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                            <RegisterAffiliate onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
                         ) : view === 'affiliate-kit' ? (
-                            <AffiliateKit onBack={() => { setView('home'); window.history.pushState({}, '', '/'); }} />
+                            <AffiliateKit onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
                         ) : view === 'legal-procedures' ? (
                             <LegalProcedures onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} user={user} />
                         ) : view === 'halal-culture' ? (

@@ -96,7 +96,14 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                             <span className="text-primary font-black uppercase">{isAdmin ? t('org_panel.role_admin') : t('org_panel.role_user')}</span>
                         </div>
                         <span className="hidden xs:inline opacity-20">|</span>
-                        <span className="lowercase tracking-[0.1em] opacity-80">{user?.email}</span>
+                        <div className="flex items-center gap-2">
+                            <span>{t('tenant_dashboard.plan') || 'Plan'}:</span>
+                            <span className="text-white font-black uppercase">
+                                {t(`landing.pricing.plans.${(tenant.plan || 'free').toLowerCase()}.name`, { defaultValue: tenant.plan || 'Free' })}
+                            </span>
+                        </div>
+                        <span className="hidden xs:inline opacity-20">|</span>
+                        <span className="lowercase tracking-[0.11em] opacity-60 font-medium">{user?.email}</span>
                     </div>
                 </div>
 

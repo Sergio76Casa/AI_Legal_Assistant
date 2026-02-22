@@ -694,40 +694,37 @@
             "footer_volume": "¿Necesitas más de 50 expedientes?",
             "footer_contact": "Habla con nuestro equipo comercial →",
             "plans": {
-                "starter": {
+                "free": {
                     "name": "Starter",
                     "target": "Profesionales Independientes",
                     "desc": "Ideal para gestores, consultores y expertos en movilidad que gestionan pocos expedientes al mes.",
                     "features": [
                         "Hasta 10 expedientes/mes",
-                        "Escaneo inteligente de documentos (OCR)",
-                        "Acceso al Motor STARK 2.0 básico",
-                        "Panel de gestión de casos",
+                        "Escaneo inteligente (OCR)",
+                        "Acceso básico Motor STARK 2.0",
                         "Soporte vía email"
                     ]
                 },
-                "business": {
+                "pro": {
                     "name": "Business",
                     "target": "Despachos y Agencias",
                     "desc": "Diseñado para despachos, agencias de relocation y consultorías que necesitan velocidad y colaboración.",
                     "features": [
                         "Hasta 50 expedientes/mes",
-                        "Seguridad protegida con Iron Silo™",
-                        "Hasta 3 cuentas de usuario (gestores)",
-                        "Traducción automática de documentos",
-                        "Motor STARK 2.0 completo",
+                        "Seguridad Iron Silo™ avanzada",
+                        "Hasta 3 gestores",
+                        "Traducción automática",
                         "Soporte prioritario 24/7"
                     ]
                 },
-                "enterprise": {
+                "business": {
                     "name": "Enterprise",
                     "target": "Grandes Firmas y Corporaciones",
                     "desc": "Para organizaciones con alto volumen de expedientes, departamentos de RRHH y necesidad de personalización.",
                     "features": [
                         "Expedientes ilimitados",
-                        "Integración vía API con sistemas propios",
-                        "Arquitectura Multi-Tenant dedicada",
-                        "Formación personalizada para el equipo",
+                        "Integración vía API",
+                        "Multi-Tenant dedicado",
                         "Gestor de cuenta exclusivo",
                         "SLA garantizado"
                     ]
@@ -746,6 +743,25 @@
             "btn": "Empezar prueba gratuita",
             "btn_demo": "Solicitar una demo",
             "footer": "Sin tarjeta de crédito. Sin permanencia. Configuración en 2 minutos."
+        },
+        "create_org": {
+            "back": "Volver",
+            "title": "Nueva Organización",
+            "subtitle": "Crea tu espacio de trabajo seguro",
+            "company_name": "Nombre de la Empresa",
+            "company_placeholder": "Ej. Legal Corp SL",
+            "admin_label": "Administrador",
+            "name_placeholder": "Tu nombre completo",
+            "email_placeholder": "tu@empresa.com",
+            "password_placeholder": "Contraseña segura",
+            "btn_submit": "Crear Cuenta",
+            "btn_loading": "Configurando entorno...",
+            "terms_notice": "Al crear una cuenta, aceptas nuestros Términos de Servicio B2B.",
+            "success_title": "¡Todo listo!",
+            "success_desc_1": "Se ha creado la organización",
+            "redirecting": "Redirigiendo a tu panel...",
+            "error_generic": "Ocurrió un error inesperado.",
+            "error_registered": "Este email ya está registrado."
         },
         "footer_rights": "Todos los derechos reservados.",
         "footer": "Todos los derechos reservados."

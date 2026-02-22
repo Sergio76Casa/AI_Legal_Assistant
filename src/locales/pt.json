@@ -4,139 +4,336 @@
         "logout": "Sair",
         "admin": "ADMIN",
         "contact": "Contactar",
-        "users": "Acesso de Usuários",
-        "documents": "Meus Documentos",
-        "brand_assistant": "Assistente",
+        "users": "Acesso Utilizadores",
+        "documents": "Os Meus Documentos",
+        "brand_assistant": "Assistant",
         "pdf_templates": "Modelos PDF",
-        "user_fallback": "Usuário",
+        "user_fallback": "Utilizador",
         "admin_badge": "Admin",
         "superadmin_dashboard": "Painel SUPERADMIN",
-        "manage_templates": "Gerenciar Modelos PDF",
-        "manage_org": "Gerenciar Organização"
+        "manage_templates": "Gerir Modelos PDF",
+        "manage_org": "Gerir Organização",
+        "my_dashboard": "O Meu Dashboard"
+    },
+    "footer": {
+        "sections": {
+            "services": "Serviços",
+            "legal": "Legal",
+            "contact": "Contacto"
+        },
+        "links": {
+            "my_documents": "Os Meus Documentos",
+            "pdf_templates": "Modelos PDF",
+            "my_organization": "Minha Organização",
+            "affiliate_program": "Programa de Afiliados",
+            "privacy_policy": "Política de Privacidade",
+            "cookie_policy": "Política de Cookies",
+            "legal_notice": "Aviso Legal"
+        },
+        "rights": "Todos os direitos reservados"
+    },
+    "modals": {
+        "common": {
+            "close": "Fechar",
+            "understand": "Entendido",
+            "update_date": "Última atualização: Fevereiro 2026",
+            "query_contact": "Para qualquer dúvida sobre este documento, contacte {{email}}"
+        },
+        "legal": {
+            "privacy_intro": "Na LegalFlow levamos muito a sério a proteção dos seus dados. Esta política explica como recolhemos, usamos e protegemos a sua informação pessoal.",
+            "cookies_intro": "Esta política explica como utilizamos as cookies e tecnologias semelhantes em legalflow.digital.",
+            "legal_intro": "Este aviso regula as condições gerais de uso do portal legalflow.digital.",
+            "privacy_content": [
+                {
+                    "title": "1. Responsável pelo Tratamento",
+                    "body": "LegalFlow Technologies, S.L. (doravante, \"LegalFlow\") com sede social em Madrid, Espanha. E-mail de contacto: privacidad@legalflow.digital."
+                },
+                {
+                    "title": "2. Dados que Recolhemos",
+                    "body": "Recolhemos os dados que nos fornece ao registar-se (nome, e-mail, organização), os documentos que carrega para análise por IA, dados de uso e navegação, e informações de faturação processadas de forma segura pela Stripe."
+                },
+                {
+                    "title": "3. Finalidade do Tratamento",
+                    "body": "Os seus dados são utilizados para: prestação do serviço de assistência jurídica com IA, gestão da sua conta e subscrição, melhoria do serviço através de análises agregadas e anónimas, comunicações relacionadas com o serviço e cumprimento de obrigações legais."
+                },
+                {
+                    "title": "4. Base Legal",
+                    "body": "O tratamento baseia-se em: execução do contrato de serviço (Art. 6.1.b RGPD), o seu consentimento explícito para o processamento de documentos (Art. 6.1.a RGPD), o interesse legítimo para melhoria do serviço (Art. 6.1.f RGPD) e o cumprimento de obrigações legais (Art. 6.1.c RGPD)."
+                },
+                {
+                    "title": "5. Tecnologia Iron Silo™",
+                    "body": "Todos os documentos são processados com a nossa tecnologia Iron Silo™ de encriptação de ponta a ponta. Os dados são armazenados em servidores localizados na UE, cumprindo o RGPD. Não partilhamos documentos com terceiros e a IA processa os dados em tempo real sem armazenamento persistente do conteúdo analisado."
+                },
+                {
+                    "title": "6. Conservação de Dados",
+                    "body": "Os seus dados pessoais são conservados enquanto mantiver a sua conta ativa. Os documentos carregados podem ser eliminados por si a qualquer momento. Após o cancelamento da conta, os dados são eliminados num prazo máximo de 30 dias, salvo obrigação legal de conservação."
+                },
+                {
+                    "title": "7. Direitos do Utilizador",
+                    "body": "Pode exercer os seus direitos de acesso, retificação, eliminação, portabilidade, limitação e oposição contactando privacidad@legalflow.digital. Também tem o direito de apresentar uma reclamação junto da autoridade de proteção de dados competente."
+                },
+                {
+                    "title": "8. Transferências Internacionais",
+                    "body": "Não realizamos transferências de dados para fora do Espaço Económico Europeu. Todos os servidores e serviços de processamento encontram-se na UE."
+                }
+            ],
+            "cookies_content": [
+                {
+                    "title": "1. O que são as Cookies?",
+                    "body": "As cookies são pequenos ficheiros de texto que são armazenados no seu dispositivo quando visita a nossa web. Ajudam-nos a melhorar a sua experiência e a entender como usa o serviço."
+                },
+                {
+                    "title": "2. Cookies Técnicas (Necessárias)",
+                    "body": "Estas cookies são essenciais para o funcionamento da plataforma: sessão de autenticação (mantém a sua sessão iniciada), preferências de idioma (recorda o idioma selecionado) e token CSRF (proteção de segurança). Não podem ser desativadas."
+                },
+                {
+                    "title": "3. Cookies de Afiliação",
+                    "body": "Se chegar à LegalFlow através de um link de afiliado, armazenamos uma cookie de referência (referral_code) durante 30 dias para atribuir corretamente a recomendação."
+                },
+                {
+                    "title": "4. Cookies Analíticas",
+                    "body": "Utilizamos cookies analíticas próprias para entender padrões de uso agregados. Não utilizamos Google Analytics nem serviços de terceiros que rastreiem a sua atividade."
+                },
+                {
+                    "title": "5. Cookies de Terceiros",
+                    "body": "Stripe (processador de pagamentos): utiliza cookies estritamente necessárias para processar pagamentos de forma segura. Estas cookies estão sujeitas à política da Stripe."
+                },
+                {
+                    "title": "6. Gestão de Cookies",
+                    "body": "Pode configurar o seu navegador para bloquear ou eliminar cookies a qualquer momento. Tenha em conta que desativar cookies técnicas pode afetar o funcionamento da plataforma."
+                },
+                {
+                    "title": "7. Atualizações",
+                    "body": "Esta política pode ser atualizada periodicamente. A data da última atualização é mostrada no final do documento."
+                }
+            ],
+            "legal_content": [
+                {
+                    "title": "1. Informação Geral",
+                    "body": "Em cumprimento do dever de informação, detalham-se os dados do titular do sítio web em conformidade com a legislação de Serviços da Sociedade da Informação."
+                },
+                {
+                    "title": "2. Titular do Sítio Web",
+                    "body": "O sítio web legalflow.digital é propriedade da LegalFlow Technologies, S.L., com NIF B12345678 e sede em Madrid, Espanha."
+                },
+                {
+                    "title": "3. Propriedade Intelectual",
+                    "body": "Todos os conteúdos, incluindo textos, gráficos e logótipos, são propriedade da LegalFlow Technologies, S.L. ou dos seus licenciadores."
+                },
+                {
+                    "title": "4. Condições de Uso",
+                    "body": "O utilizador compromete-se a fazer um uso adequado dos conteúdos, evitando atividades ilícitas ou contrárias à boa fé."
+                },
+                {
+                    "title": "5. Exclusão de Responsabilidade",
+                    "body": "A LegalFlow não se responsabiliza por danos derivados do uso da informação, interrupção do serviço ou presença de vírus."
+                },
+                {
+                    "title": "6. Legislação Aplicável",
+                    "body": "As presentes condições regem-se pela legislação espanhola. As partes submetem-se aos tribunais de Madrid."
+                }
+            ]
+        },
+        "services": {
+            "tagline": "Ferramentas LegalFlow Platform",
+            "certified": "Tecnologia Certificada",
+            "documents": {
+                "title": "Gestão Inteligente de Documentos",
+                "desc": "A nossa plataforma utiliza IA de última geração para analisar e organizar os seus documentos legais de forma automática.",
+                "features": [
+                    {
+                        "title": "Análise IA Experimental",
+                        "desc": "Extraia dados-chave, datas e obrigações de qualquer PDF ou imagem legal."
+                    },
+                    {
+                        "title": "Tecnologia Iron Silo™",
+                        "desc": "Os seus documentos são encriptados com padrões militares e armazenados em servidores seguros na UE."
+                    },
+                    {
+                        "title": "Busca Semântica",
+                        "desc": "Encontre informação dentro dos seus documentos fazendo perguntas em linguagem natural."
+                    }
+                ]
+            },
+            "templates": {
+                "title": "Modelos PDF Dinâmicos",
+                "desc": "Reduza o trabalho administrativo criando documentos complexos em segundos utilizando os nossos modelos inteligentes.",
+                "features": [
+                    {
+                        "title": "Geração Automática",
+                        "desc": "Preencha dados de clientes e processos automaticamente nos seus modelos de contratos."
+                    },
+                    {
+                        "title": "Personalização Total",
+                        "desc": "Adapte logótipos, fontes e estilos de cada documento à sua identidade corporativa."
+                    },
+                    {
+                        "title": "Exportação Instantânea",
+                        "desc": "Gere ficheiros PDF prontos a assinar com um único clique."
+                    }
+                ]
+            },
+            "organization": {
+                "title": "Minha Organização Digital",
+                "desc": "Tome o controlo total da sua marca e de como os seus clientes interagem com o seu escritório ou empresa.",
+                "features": [
+                    {
+                        "title": "Marca Branca",
+                        "desc": "Personalize o seu portal com as suas próprias cores, logótipos e domínio personalizado."
+                    },
+                    {
+                        "title": "Gestão de Sedes",
+                        "desc": "Configure múltiplas sucursais físicas e pontos de contacto para os seus clientes."
+                    },
+                    {
+                        "title": "Controlo de Acesso",
+                        "desc": "Atribua funções e permissões específicas para cada membro da sua equipa."
+                    }
+                ]
+            },
+            "affiliates": {
+                "title": "Programa de Afiliados Pro",
+                "desc": "Converta as suas recomendações em rendimentos recorrentes juntando-se à nossa rede de parceiros.",
+                "features": [
+                    {
+                        "title": "Comissões Recorrentes",
+                        "desc": "Ganhe uma percentagem de cada subscrição mensal dos clientes que recomendar."
+                    },
+                    {
+                        "title": "Painel de Controlo",
+                        "desc": "Monitorize cliques, registos e ganhos em tempo real com estatísticas detalhadas."
+                    },
+                    {
+                        "title": "Material de Marketing",
+                        "desc": "Acesso a banners, links e materiais desenhados para maximizar as suas conversões."
+                    }
+                ]
+            }
+        }
     },
     "hero": {
-        "title": "Seu Consultor Jurídico & Halal na Espanha",
+        "title": "O Seu Consultor LegalFlow em Espanha",
         "subtitle": "Guia especializado para expatriados e imigrantes. IA treinada em leis e regulamentos de imigração espanhóis.",
-        "search_placeholder": "Digite sua consulta aqui (ex: Requisitos NIE)...",
-        "social_proof": "Confiado por mais de 1.200 famílias",
-        "verification_badge": "Assistência Jurídica e Cultural Verificada",
+        "search_placeholder": "Escreva a sua consulta aqui (ex: Requisitos NIE)...",
+        "social_proof": "Com a confiança de +1.200 famílias",
+        "verification_badge": "Assistência Legal & Cultural Verificada",
         "stats": {
             "documents": "50+ Documentos",
             "processed": "Processados",
-            "availability": "Disponível 24/7",
+            "availability": "24/7 Disponível",
             "assistance": "Assistência",
             "response": "Resposta <30s",
             "speed": "Velocidade"
         }
     },
     "auth": {
-        "sign_in": "Entrar",
-        "sign_up": "Cadastrar-se",
+        "sign_in": "Iniciar Sessão",
+        "sign_up": "Registar-se",
         "create_account": "Criar Conta",
-        "subtitle_in": "Bem-vindo de volta. Insira suas credenciais para acessar.",
-        "subtitle_up": "Junte-se a nós para começar a gerenciar seus trâmites.",
+        "subtitle_in": "Bem-vindo de volta. Introduza as suas credenciais para aceder.",
+        "subtitle_up": "Junte-se a nós para começar a gerir os seus trâmites.",
         "welcome": "Bem-vindo de volta ao STARK",
         "join": "Junte-se à nossa comunidade",
         "google": "Continuar com Google",
         "with_email": "OU COM E-MAIL",
-        "username": "Nome de usuário",
-        "username_placeholder": "Nome de usuário",
+        "username": "Nome de utilizador",
+        "username_placeholder": "Nome de utilizador",
         "email": "E-mail",
-        "email_placeholder": "voce@email.com",
-        "password": "Senha",
+        "email_placeholder": "seu@email.com",
+        "password": "Palavra-passe",
         "password_placeholder": "••••••••",
         "country": "País/Região",
-        "country_placeholder": "Selecione seu país",
+        "country_placeholder": "Selecione o seu país",
         "submit_login": "Entrar",
         "submit_signup": "Criar conta",
         "login_btn": "Entrar",
         "create_account_btn": "Criar conta",
-        "go_to_signup": "Criar uma nova conta",
+        "go_to_signup": "Criar uma conta nova",
         "go_to_login": "Já tenho conta",
-        "logout": "Sair",
-        "register_tenant": "Cadastre-se em {{tenant}}",
-        "access_tenant": "Acesse {{tenant}}",
-        "create_account_context": "Crie sua conta {{plan}} para acessar.",
+        "logout": "Terminar sessão",
+        "register_tenant": "Registe-se em {{tenant}}",
+        "access_tenant": "Aceda a {{tenant}}",
+        "create_account_context": "Crie a sua conta {{plan}} para aceder.",
         "plan_premium": "Premium",
-        "plan_free": "Grátis"
+        "plan_free": "Gratuita"
     },
     "bento": {
         "explore": "Explorar",
-        "legal_title": "Trâmites Jurídicos",
-        "legal_desc": "Guia passo a passo para residência, nacionalidade e permissões de trabalho. Sem jargões técnicos confusos.",
+        "legal_title": "Trâmites Legais",
+        "legal_desc": "Guia passo a passo para residência, nacionalidade e autorizações de trabalho. Sem tecnicismos confusos.",
         "halal_title": "Vida Halal & Cultura",
-        "halal_desc": "Encontre serviços certificados, alimentação e espaços comunitários que respeitem seus valores.",
-        "rent_title": "Habitação e Aluguel",
-        "rent_desc": "Verificação de contratos e assistência para evitar cláusulas abusivas no aluguel.",
+        "halal_desc": "Encontre serviços certificados, alimentação e espaços comunitários que respeitam os seus valores.",
+        "rent_title": "Habitação e Arrendamento",
+        "rent_desc": "Verificação de contratos e assistência para evitar cláusulas abusivas no arrendamento.",
         "community_title": "Junte-se à nossa comunidade",
-        "community_desc": "Conecte-se com pessoas que já percorreram o seu caminho. Compartilhe experiências e dicas reais.",
+        "community_desc": "Ligue-se a pessoas que já percorreram o seu caminho. Partilhe experiências e conselhos reais.",
         "community_btn": "Entrar no Fórum"
     },
     "docs": {
-        "title": "Meus Documentos",
-        "subtitle": "Gerencie seus arquivos privados para o assistente de IA.",
-        "upload_btn": "Enviar Documento",
-        "upload_title": "Envie seus documentos",
-        "upload_subtitle": "Arraste seu PDF aqui ou clique para buscar",
-        "select_file": "Selecionar Arquivo",
-        "confirm_upload": "Confirmar envio e processar",
-        "status_uploading": "Enviando arquivo...",
-        "status_processing": "A IA está analisando seu documento...",
+        "title": "Os Meus Documentos",
+        "subtitle": "Gira os seus ficheiros privados para o assistente de IA.",
+        "upload_btn": "Carregar Documento",
+        "upload_title": "Carregue os seus documentos",
+        "upload_subtitle": "Arraste o seu PDF aqui ou clique para procurar",
+        "select_file": "Selecionar Ficheiro",
+        "confirm_upload": "Confirmar carregamento e processar",
+        "status_uploading": "A carregar ficheiro...",
+        "status_processing": "A IA está a analisar o seu documento...",
         "status_success": "Documento pronto!",
         "status_error": "Erro ao processar",
         "try_again": "Tentar novamente",
-        "privacy_notice": "Seus documentos são processados com segurança e só são acessíveis por você e pelo assistente de IA.",
-        "empty": "Você ainda não tem documentos",
-        "empty_hint": "Envie PDFs para que a IA possa ajudá-lo com seus trâmites específicos.",
-        "loading": "Carregando seus documentos...",
-        "confirm_delete": "Tem certeza de que deseja excluir este documento?",
+        "privacy_notice": "Os seus documentos são processados de forma segura e só estão acessíveis por si e pelo assistente de IA.",
+        "empty": "Ainda não tem documentos",
+        "empty_hint": "Carregue PDFs para que a IA possa ajudá-lo com os seus processos específicos.",
+        "loading": "A carregar os seus documentos...",
+        "confirm_delete": "Tem a certeza que deseja eliminar este documento?",
         "cancel": "Cancelar",
         "view": "Ver documento",
-        "delete": "Excluir",
+        "delete": "Eliminar",
         "go_home": "Início",
         "open_chat": "Chat",
-        "processing_badge": "PROCESSANDO",
+        "processing_badge": "A PROCESSAR",
         "rename_tooltip": "Clique para renomear"
     },
     "legal": {
         "privacy_title": "Política de Privacidade",
-        "privacy_content": "No LegalFlow, protegemos seus dados pessoais. Seus documentos são processados de forma criptografada e usados apenas para fornecer assistência de IA durante sua sessão ativa. Não vendemos nem compartilhamos seus dados com terceiros. Cumprimos o RGPD espanhol.",
+        "privacy_content": "Na LegalFlow, protegemos os seus dados pessoais. Ao carregar documentos, estes são processados de forma encriptada e usados apenas durante a sua sessão ativa. Não vendemos nem partilhamos dados com terceiros. Cumprimos o RGPD.",
         "cookies_title": "Política de Cookies",
-        "cookies_content": "Usamos cookies essenciais para manter sua sessão ativa e lembrar seu idioma preferido. Não usamos cookies de rastreamento publicitário de terceiros.",
+        "cookies_content": "Utilizamos cookies essenciais para manter a sessão ativa e recordar o seu idioma. Não utilizamos cookies de rastreio publicitário de terceiros.",
         "footer_privacy": "Privacidade",
         "footer_cookies": "Cookies"
     },
     "chat": {
-        "greeting": "Olá, sou seu assistente especialista em trâmites e cultura. Como posso ajudá-lo hoje?",
+        "greeting": "Olá, sou o seu assistente especialista em trâmites e cultura. Como posso ajudar hoje?",
         "online_status": "Online • Especialista Verificado",
-        "ai_disclaimer": "A IA pode cometer erros. Verifique informações jurídicas importantes.",
-        "error_fallback": "Sinto muito, ocorreu um erro. Tente novamente.",
-        "welcome_msg": "Olá, sou seu assistente especialista em trâmites e cultura. Como posso ajudá-lo hoje?",
-        "error_contacting": "Erro ao contatar o assistente:",
+        "ai_disclaimer": "A IA pode cometer erros. Verifique as informações legais importantes.",
+        "error_fallback": "Desculpe, ocorreu um erro. Tente novamente.",
+        "welcome_msg": "Olá, sou o seu assistente especialista em trâmites e cultura. Como posso ajudar hoje?",
+        "error_contacting": "Erro ao contactar o assistente:",
         "error_prefix": "Erro: {{message}}",
         "status_verified": "Online • Especialista Verificado",
-        "disclaimer": "A IA pode cometer erros. Verifique informações jurídicas importantes."
+        "disclaimer": "A IA pode cometer erros. Verifique as informações legais importantes."
     },
     "pricing": {
-        "title": "Escolha o plano perfeito para você",
-        "subtitle": "Acessoria jurídica inteligente adaptada às suas necessidades",
+        "title": "Escolha o plano perfeito para si",
+        "subtitle": "Aconselhamento jurídico inteligente adaptado às suas necessidades",
         "monthly": "Mensal",
         "yearly": "Anual",
-        "save_percent": "Economize 17%",
+        "save_percent": "Poupe 17%",
         "per_month": "mês",
         "per_year": "ano",
-        "save_yearly": "Economize €{{amount}} por ano",
-        "current_plan": "Seu Plano Atual",
+        "save_yearly": "Poupe €{{amount}} por ano",
+        "current_plan": "O Seu Plano Atual",
         "most_popular": "⭐ Mais Popular",
         "faq_question": "Tem dúvidas?",
-        "faq_contact": "Entre em contato conosco",
+        "faq_contact": "Contacte-nos",
         "free": {
             "name": "Free",
             "description": "Perfeito para testar o serviço",
             "cta": "Mudar para Free",
             "cta_current": "Plano Atual",
             "features": [
-                "5 consultas ao chat de IA por mês",
+                "5 consultas ao chat IA por mês",
                 "1 documento PDF (máx 5 MB)",
                 "Busca básica em documentos",
                 "Acesso a guias públicos"
@@ -149,11 +346,11 @@
         },
         "pro": {
             "name": "Pro",
-            "description": "Para usuários individuais e famílias",
+            "description": "Para utilizadores individuais e famílias",
             "cta": "Atualizar para Pro",
             "cta_current": "Plano Atual",
             "features": [
-                "100 consultas ao chat de IA por mês",
+                "100 consultas ao chat IA por mês",
                 "20 documentos PDF (máx 20 MB cada)",
                 "Busca avançada com filtros",
                 "Análise automática de documentos",
@@ -171,63 +368,63 @@
             "features": [
                 "Consultas ilimitadas",
                 "Documentos ilimitados (máx 50 MB cada)",
-                "Acesso à API para integrações",
+                "Acesso API para integrações",
                 "Análise massiva de documentos",
-                "Modelos jurídicos personalizados",
+                "Modelos legais personalizados",
                 "Suporte prioritário (24h)",
-                "Múltiplos usuários (até 5)",
-                "Painel de analytics",
+                "Múltiplos utilizadores (até 5)",
+                "Dashboard de analytics",
                 "Consultas com advogados (2h/mês)"
             ]
         }
     },
     "upgrade": {
         "chat_query": {
-            "title": "Você atingiu seu limite de consultas!",
-            "description": "Você usou todas as suas consultas ao chat de IA deste mês.",
+            "title": "Atingiu o seu limite de consultas!",
+            "description": "Usou todas as suas consultas ao chat IA este mês.",
             "free": "5 consultas mensais",
             "pro": "100 consultas mensais",
             "business": "Consultas ilimitadas"
         },
         "upload_document": {
-            "title": "Você atingiu seu limite de documentos!",
-            "description": "Você enviou o máximo de documentos permitidos no seu plano.",
+            "title": "Atingiu o seu limite de documentos!",
+            "description": "Carregou o máximo de documentos permitidos no seu plano.",
             "free": "1 documento",
             "pro": "20 documentos",
             "business": "Documentos ilimitados"
         },
-        "upgrade_cta": "Atualize seu plano para continuar desfrutando de nossos serviços sem interrupções.",
+        "upgrade_cta": "Atualize o seu plano para continuar a desfrutar dos nossos serviços sem interrupções.",
         "recommended": "Recomendado",
         "plan_pro": "Plano Pro",
         "plan_business": "Plano Business",
         "advanced_analysis": "Análise avançada de documentos",
-        "export_pdf": "Exportação em PDF/Word",
+        "export_pdf": "Exportação para PDF/Word",
         "priority_support_48": "Suporte prioritário (48h)",
         "unlimited_history": "Histórico ilimitado",
         "upgrade_to_pro": "Atualizar para Pro",
         "upgrade_to_business": "Atualizar para Business",
-        "api_access": "Acesso à API",
-        "multiple_users": "Múltiplos usuários (até 5)",
+        "api_access": "Acesso API",
+        "multiple_users": "Múltiplos utilizadores (até 5)",
         "priority_support_24": "Suporte prioritário (24h)",
         "lawyer_consult": "Consultas com advogados (2h/mês)",
         "payment_footer": "💳 Pagamento seguro com Stripe • ✅ Cancele quando quiser • 🔒 Dados protegidos"
     },
     "usage": {
-        "title": "Seu Uso Atual",
+        "title": "O Seu Uso Atual",
         "period_until": "Período atual até",
         "plan": "Plano",
-        "at_limit": "Você atingiu seu limite!",
+        "at_limit": "Atingiu o seu limite!",
         "near_limit": "Perto do limite!",
-        "at_limit_desc": "Atualize para o Pro para continuar usando o serviço sem limites.",
-        "near_limit_desc": "Considere atualizar para o Pro para obter mais consultas e documentos.",
+        "at_limit_desc": "Atualize para Pro para continuar a usar o serviço sem limites.",
+        "near_limit_desc": "Considere atualizar para Pro para obter mais consultas e documentos.",
         "view_plans": "Ver Planos",
         "chat_queries": "Consultas ao Chat IA",
         "queries": "consultas",
         "unlimited": "Ilimitado",
         "of": "de",
-        "documents_uploaded": "Documentos Enviados",
+        "documents_uploaded": "Documentos Carregados",
         "documents_word": "documentos",
-        "unlock_pro": "Desbloqueie todo o potencial com o Pro",
+        "unlock_pro": "Desbloqueie todo o potencial com Pro",
         "unlock_features": [
             "100 consultas por mês (vs 5 atuais)",
             "20 documentos (vs 1 atual)",
@@ -236,7 +433,7 @@
             "Suporte prioritário"
         ],
         "upgrade_pro_price": "Atualizar para Pro por €9.99/mês",
-        "tier_free": "Grátis",
+        "tier_free": "Gratuito",
         "tier_pro": "Pro",
         "tier_business": "Business"
     },
@@ -244,105 +441,105 @@
         "current_plan": "Plano Atual",
         "personal": "Pessoal",
         "includes": "Inclui:",
-        "manage": "Gerenciar Assinatura",
+        "manage": "Gerir Subscrição",
         "free_features": [
-            "1 Usuário",
+            "1 Utilizador",
             "5 Documentos/mês",
             "Suporte Básico"
         ],
         "pro_features": [
-            "5 Usuários",
+            "5 Utilizadores",
             "Documentos Ilimitados",
             "Suporte Prioritário",
             "Análise Avançada"
         ],
         "business_features": [
-            "Usuários Ilimitados",
-            "Acesso à API",
+            "Utilizadores Ilimitados",
+            "Acesso API",
             "Suporte 24/7",
-            "Auditoria Jurídica",
+            "Auditoria Legal",
             "Marca Branca"
         ]
     },
     "procedures": {
-        "back": "Voltar ao início",
-        "title": "Guia Completo de",
-        "title_highlight": "Trâmites Jurídicos",
-        "subtitle": "Simplificamos a burocracia espanhola para que você possa se concentrar em sua nova vida. Informações atualizadas sobre imigração, nacionalidade e direitos.",
+        "back": "Volver ao início",
+        "title": "Guia Integral de",
+        "title_highlight": "Trâmites Legais",
+        "subtitle": "Simplificamos a burocracia espanhola para que se possa focar na sua nova vida. Informação atualizada sobre imigração, nacionalidade e direitos.",
         "common_questions": "Perguntas comuns",
         "residency_title": "Residência e Estadia",
-        "residency_desc": "Tudo sobre NIE, TIE, Arraigo Social, Laboral e Familiar. Acompanhamos você em cada etapa.",
+        "residency_desc": "Tudo sobre NIE, TIE, Arraigo Social, Laboral e Familiar. Guiamo-lo em cada passo.",
         "residency_q1": "Como obtenho o arraigo social?",
         "residency_q2": "Diferença entre NIE e TIE",
         "residency_q3": "Requisitos para reagrupamento familiar",
         "nationality_title": "Nacionalidade Espanhola",
-        "nationality_desc": "Exames CCSE/DELE, prazos de residência e apresentação telemática.",
+        "nationality_desc": "Exames CCSE/DELE, prazos de residência e submissão eletrónica.",
         "nationality_q1": "Quantos anos preciso para a nacionalidade?",
         "nationality_q2": "Como é o exame CCSE?",
         "nationality_q3": "Documentos para nacionalidade por residência",
-        "work_title": "Permissões de Trabalho",
-        "work_desc": "Trabalhador por conta própria, conta alheia, profissionais altamente qualificados e nômades digitais.",
-        "work_q1": "Requisitos para Visto de Nômade Digital",
-        "work_q2": "Posso trabalhar com minha residência de estudante?",
-        "work_q3": "Mudança de estadia para trabalho",
+        "work_title": "Autorizações de Trabalho",
+        "work_desc": "Conta própria, conta outrem, profissionais altamente qualificados e nómadas digitais.",
+        "work_q1": "Requisitos para Visa de Nómada Digital",
+        "work_q2": "Posso trabalhar com a minha residência de estudante?",
+        "work_q3": "Modificação de estadia para trabalho",
         "asylum_title": "Proteção Internacional",
         "asylum_desc": "Asilo, proteção subsidiária e razões humanitárias.",
-        "asylum_q1": "Como peço agendamento para asilo?",
+        "asylum_q1": "Como peço marcação para asilo?",
         "asylum_q2": "Direitos durante a espera de asilo",
         "asylum_q3": "O que é o cartão vermelho?",
         "ai_analysis": "Análise Inteligente por IA",
-        "doc_banner_title": "Recebeu uma carta da Oficina de Extranjería?",
-        "doc_banner_subtitle": "Não se preocupe com a linguagem técnica. Envie-a agora e o <1>STARK analisará para você</1> em segundos.",
-        "processing": "Processando...",
+        "doc_banner_title": "Recebeu uma carta do Serviço de Estrangeiros?",
+        "doc_banner_subtitle": "Não se preocupe com o jargão técnico. Carregue-a agora e o <1>STARK analisará para si</1> em segundos.",
+        "processing": "A processar...",
         "analyzed": "Analisado!",
-        "upload_doc": "Enviar foto ou documento",
+        "upload_doc": "Carregar foto ou documento",
         "formats": "Formatos: PDF, JPG, PNG.",
-        "privacy_guaranteed": "Privacidade garantida com criptografia.",
-        "only_pdf_jpg_png": "Apenas arquivos PDF, JPG ou PNG são permitidos",
-        "login_required": "Por favor, faça login para analisar seus documentos."
+        "privacy_guaranteed": "Privacidade garantida sob encriptação.",
+        "only_pdf_jpg_png": "Apenas são permitidos ficheiros PDF, JPG ou PNG",
+        "login_required": "Por favor, inicie sessão para analisar os seus documentos."
     },
     "halal": {
-        "back": "Volver al inicio",
+        "back": "Voltar ao início",
         "badge": "Vida & Cultura",
-        "title": "Sua Guia de",
+        "title": "O Seu Guia de",
         "title_highlight": "Vida Halal",
-        "title_suffix": "e Cultura na Espanha",
-        "subtitle": "Ajudamos você a manter seus valores e a se sentir em casa. Informações práticas sobre estilo de vida, alimentação e convivência cultural.",
-        "ask_stark": "Consultar STARK",
+        "title_suffix": "e Cultura em Espanha",
+        "subtitle": "Ajudamo-lo a manter os seus valores e a sentir-se em casa. Informação prática sobre estilo de vida, alimentação e convivência cultural.",
+        "ask_stark": "Consultar o STARK",
         "food_title": "Alimentação Halal",
-        "food_desc": "Guia de aditivos, selos de certificação e dicas para o supermercado na Europa.",
-        "food_q1": "Quais aditivos E são Haram?",
+        "food_desc": "Guia de aditivos, selos de certificação e conselhos para o supermercado na Europa.",
+        "food_q1": "Que aditivos E são Haram?",
         "food_q2": "Como reconhecer o selo do Instituto Halal?",
         "food_q3": "O E120 é permitido na dieta Halal?",
-        "food_q4": "Dicas para comprar carne Halal na Espanha",
+        "food_q4": "Conselhos para comprar carne Halal em Espanha",
         "culture_title": "Protocolo e Cultura",
-        "culture_desc": "Entenda os costumes locais, saudações e festas para uma melhor integração.",
-        "culture_q1": "Como saudar respeitosamente na Espanha?",
-        "culture_q2": "Quais são os horários típicos de refeição?",
-        "culture_q3": "Direitos trabalhistas em feriados islâmicos",
-        "culture_q4": "Calendário de feriados na Espanha",
-        "community_title": "Espaços Comunitários",
-        "community_desc": "Informações sobre centros culturais, mesquitas e associações de apoio.",
+        "culture_desc": "Entenda os costumes locais, saudações e festividades para uma melhor integração.",
+        "culture_q1": "Como saudar respeitosamente em Espanha?",
+        "culture_q2": "Quais são os horários de refeição típicos?",
+        "culture_q3": "Direitos laborais em festividades islâmicas",
+        "culture_q4": "Calendário de feriados em Espanha",
+        "community_title": "Espaços de Comunidade",
+        "community_desc": "Informação sobre centros culturais, mesquitas e associações de apoio.",
         "community_q1": "Onde há mesquitas na minha cidade?",
         "community_q2": "Associações de apoio ao imigrante",
-        "community_q3": "Centros culturais árabes em Madri/Barcelona",
+        "community_q3": "Centros culturais árabes em Madrid/Barcelona",
         "experts_badge": "Especialistas em Estilo de Vida",
         "experts_title": "Dúvidas sobre um produto ou costume?",
-        "experts_desc": "STARK é treinado para responder qualquer dúvida sobre compatibilidade Halal ou protocolo social na Espanha.",
-        "talk_stark": "Falar com STARK agora",
-        "testimonial": "\"STARK me ajudou a entender por que meus vizinhos se saudavam de certa forma e como pedir permissão no trabalho para o Eid.\"",
-        "testimonial_author": "Amina, residente em Madri"
+        "experts_desc": "O STARK está treinado para responder a qualquer dúvida sobre compatibilidade Halal ou protocolo social em Espanha. Não fique com a dúvida.",
+        "talk_stark": "Falar com o STARK agora",
+        "testimonial": "\"O STARK ajudou-me a entender por que os meus vizinhos se saudavam de certa forma e como pedir autorização no trabalho para o Eid. Agora sinto-me muito mais integrada.\"",
+        "testimonial_author": "Amina, residente em Madrid"
     },
     "housing": {
         "back": "Voltar ao início",
-        "badge": "Habitação & Aluguel",
-        "title": "Proteção e Guia para seu",
-        "title_highlight": "Lar na Espanha",
-        "subtitle": "Não se deixe enganar por contratos abusivos. Ajudamos você a entender a lei de habitação, verificar seus direitos e garantir sua caução.",
-        "ask_stark": "Consultar STARK",
+        "badge": "Habitação & Arrendamento",
+        "title": "Proteção e Guia para o seu",
+        "title_highlight": "Lar em Espanha",
+        "subtitle": "Não se deixe enganar por contratos abusivos. Ajudamo-lo a entender a lei da habitação, verificar os seus direitos e assegurar a sua caução.",
+        "ask_stark": "Consultar o STARK",
         "contracts_title": "Tipos de Contrato",
-        "contracts_desc": "Habitação habitual vs. temporada. Conheça seus direitos segundo a Lei de Arrendamentos Urbanos (LAU).",
-        "contracts_q1": "Qual é a duração mínima de um contrato de aluguel?",
+        "contracts_desc": "Habitação habitual vs. temporada. Conheça os seus direitos segundo a Lei de Arrendamentos Urbanos (LAU).",
+        "contracts_q1": "Qual a duração mínima de um contrato de arrendamento?",
         "contracts_q2": "Diferença entre contrato de temporada e habitação habitual",
         "contracts_q3": "Posso deixar o apartamento antes dos 6 meses?",
         "contracts_q4": "O que é a prorrogação automática do contrato?",
@@ -350,28 +547,28 @@
         "deposits_desc": "Tudo sobre a caução legal, garantias adicionais e quem deve pagar os honorários da agência.",
         "deposits_q1": "Quantos meses de caução são obrigatórios?",
         "deposits_q2": "Quem paga a imobiliária segundo a nova lei?",
-        "deposits_q3": "Como recuperar minha caução se não me devolverem?",
-        "deposits_q4": "O proprietário pode me pedir 6 meses de depósito?",
+        "deposits_q3": "Como recuperar a caução se não ma devolverem?",
+        "deposits_q4": "O senhorio pode pedir-me 6 meses de depósito?",
         "rights_title": "Direitos do Inquilino",
-        "rights_desc": "Reparos, suprimentos e proteção contra despejos ou outros abusos.",
-        "rights_q1": "Quem paga os reparos da caldeira ou eletrodomésticos?",
-        "rights_q2": "O proprietário pode entrar na minha casa sem permissão?",
-        "rights_q3": "O que fazer se quiserem aumentar meu aluguel de repente?",
-        "rights_q4": "Direitos diante de um aviso de fim de contrato",
+        "rights_desc": "Reparações, fornecimentos e proteção contra despejos ou outros abusos.",
+        "rights_q1": "Quem paga as avarias da caldeira ou eletrodomésticos?",
+        "rights_q2": "O senhorio pode entrar na minha casa sem autorização?",
+        "rights_q3": "O que fazer se quiserem subir o arrendamento de repente?",
+        "rights_q4": "Direitos perante um aviso de fim de contrato",
         "verify_badge": "Verificação de Contratos",
         "verify_title": "Vai assinar um novo contrato?",
-        "verify_desc": "Envie o rascunho do seu contrato agora. STARK analisará se há cláusulas abusivas e se cumpre com a nova Lei de Habitação 2023.",
-        "verify_cta": "Enviar Contrato para Análise",
-        "verify_feat1": "Detecção de honorários ilegais",
+        "verify_desc": "Carregue a minuta do seu contrato agora. O STARK analisará se tem cláusulas abusivas e se cumpre com a Lei da Habitação 2023.",
+        "verify_cta": "Carregar Contrato para Análise",
+        "verify_feat1": "Deteção de honorários ilegais",
         "verify_feat2": "Verificação de prorrogações legais",
-        "verify_feat3": "Cálculo de suprimentos e gastos"
+        "verify_feat3": "Cálculo de consumos e despesas"
     },
     "stats": {
         "title": "Estatísticas por Região",
-        "total_documents": "Total de Documentos",
+        "total_documents": "Total Documentos",
         "active_countries": "Países Ativos",
         "distribution": "Distribuição por País",
-        "no_data": "Nenhum dado disponível",
+        "no_data": "Sem dados disponíveis",
         "documents": "Documentos"
     },
     "join": {
@@ -379,80 +576,194 @@
         "expired": "Este convite não existe ou já expirou.",
         "invalid_invitation": "Convite Inválido",
         "back_home": "Voltar ao Início",
-        "join_team": "Junte-se à Equipe",
-        "invited_to": "Você foi convidado a colaborar em",
+        "join_team": "Junte-se à Equipa",
+        "invited_to": "Foi convidado para colaborar em",
         "organization": "Organização",
         "verified_for": "Convite verificado para:",
-        "create_password": "Crie sua Senha",
-        "creating_account": "Criando conta...",
+        "create_password": "Crie a sua Palavra-passe",
+        "creating_account": "A criar conta...",
         "accept_invitation": "Aceitar Convite",
-        "terms_notice": "Ao se unir, você aceita os termos do LegalFlow e do {{orgName}}.",
-        "error_processing": "Erro ao processar o cadastro."
+        "terms_notice": "Ao juntar-se, aceita os termos da LegalFlow e de {{orgName}}.",
+        "error_processing": "Erro ao processar o registo."
     },
     "tenant_page": {
         "org_not_found": "Organização não encontrada",
         "org_not_found_desc": "Não conseguimos encontrar a organização \"{{slug}}\".",
         "go_main": "Ir para a página principal",
-        "client_access": "Acesso de Clientes",
+        "client_access": "Acesso Clientes",
         "official_portal": "Portal Oficial do Cliente",
         "welcome_to": "Bem-vindo a",
-        "hero_desc": "Acesse seus serviços jurídicos, consulte documentos e gerencie seus trâmites de imigração de forma segura e eficiente.",
-        "sign_in": "Entrar",
+        "hero_desc": "Aceda aos seus serviços legais, consulte documentos e gira os seus processos de imigração de forma segura e eficiente.",
+        "sign_in": "Iniciar Sessão",
         "view_plans": "Ver Planos",
         "doc_management": "Gestão Documental",
-        "doc_management_desc": "Acesso seguro a todos os seus documentos 24/7.",
-        "ai_advice": "Consultoria IA",
-        "ai_advice_desc": "Consultas jurídicas imediatas com nossa tecnologia.",
+        "doc_management_desc": "Acesso seguro a todos os seus processos 24/7.",
+        "ai_advice": "Assessoria IA",
+        "ai_advice_desc": "Consultas legais imediatas com a nossa tecnologia.",
         "total_privacy": "Privacidade Total",
-        "total_privacy_desc": "Seus dados protegidos com os mais altos padrões.",
-        "choose_access": "Escolha sua modalidade de acesso",
-        "choose_access_desc": "Você pode começar grátis ou atualizar sua conta para gestão documental avançada.",
+        "total_privacy_desc": "Os seus dados protegidos com os máximos padrões.",
+        "choose_access": "Escolha a sua modalidade de acesso",
+        "choose_access_desc": "Pode começar grátis para consultas básicas ou melhorar a conta para gestão avançada.",
         "basic_access": "Acesso Básico",
         "basic_desc": "Ideal para consultas pontuais e acesso a guias básicos.",
-        "basic_feat1": "Acesso ao Chat de IA básico",
+        "basic_feat1": "Acesso ao Chat IA básico",
         "basic_feat2": "Visualização de documentos públicos",
         "basic_feat3": "Suporte por e-mail",
-        "register_free": "Cadastrar-se Grátis",
+        "register_free": "Registar-se Grátis",
         "premium_access": "Acesso Premium",
         "recommended": "RECOMENDADO",
         "premium_desc": "Gestão completa de processos e assistência prioritária.",
         "premium_feat1": "Tudo do plano Básico",
-        "premium_feat2": "Envio ilimitado de documentos",
-        "premium_feat3": "Análise IA avançada de seus arquivos",
+        "premium_feat2": "Carregamento ilimitado de documentos",
+        "premium_feat3": "Análise IA avançada dos seus ficheiros",
         "premium_feat4": "Suporte Prioritário 24/7",
         "start_premium": "Começar com Premium",
-        "powered_by": "Tecnologia de LegalFlow."
+        "powered_by": "Powered by LegalFlow."
     },
     "landing": {
         "nav": {
-            "login": "Entrar",
+            "login": "Iniciar Sessão",
             "create_org": "Criar Organização"
         },
         "hero": {
             "new_tag": "Novo: Arquitetura Multi-Tenant Certificada",
-            "title": "Conformidade Jurídica e Halal",
-            "subtitle": "para Equipes Globais",
-            "desc": "A plataforma de IA que centraliza vistos, habitação e regulamentos para seus funcionários expatriados.",
-            "start_free": "Começar Grátis",
-            "book_demo": "Agendar Demo"
+            "title": "A sua nova vida em Espanha, <1>sem complicações</1> legais",
+            "subtitle": "Gestão Legal & Cultural",
+            "active_ai_tag": "A processar Visto em Tempo Real • IA Ativa",
+            "desc": "O primeiro parceiro legal impulsionado por IA desenhado especificamente para expatriados. Assegure o seu visto e residência com confiança absoluta.",
+            "start_free": "Começar agora",
+            "book_demo": "Ver demonstração"
         },
         "features": {
-            "title": "Por que LegalFlow?",
-            "subtitle": "Projetado para departamentos de RH e agências.",
+            "title": "Porquê a LegalFlow?",
+            "subtitle": "Desenhado para departamentos de RH e agências de serviços administrativos.",
+            "tech_details": "Detalhes técnicos",
+            "response_time": "Tempo de Resposta",
+            "speed_advantage": "50% mais rápido que a gestão tradicional",
+            "tech_features": "Características Tech",
+            "request_whitepaper": "Solicitar Whitepaper",
             "security_title": "Segurança Iron Silo™",
-            "security_desc": "Dados isolados criptograficamente. Sua organização é uma fortaleza impenetrável.",
+            "security_desc": "Dados isolados criptograficamente. A sua organização é uma fortaleza impenetrável.",
             "ai_title": "Motor STARK 2.0",
-            "ai_desc": "Nossa IA não apenas lê leis, ela compreende seus contratos internos.",
+            "ai_desc": "A nossa IA não apenas lê leis, *entende* os seus contratos internos. Carregue PDFs e guias.",
             "global_title": "Cobertura Global",
-            "global_desc": "Adaptado para funcionários na Espanha, Marrocos e América Latina.",
+            "global_desc": "Adaptado para colaboradores em Espanha, Marrocos e LATAM.",
+            "security_expanded": "Utilizamos encriptação AES-256 de grau militar. A arquitetura Iron Silo™ garante o isolamento total de dados por escritório.",
+            "ai_expanded": "O Motor STARK 2.0 analisa documentos oficiais em segundos, permitindo a extração inteligente para formulários oficiais.",
+            "global_expanded": "Suporte completo para Arraigo, Visto de Nómada Digital, Golden Visa e reagrupamento familiar.",
             "mobile_title": "Experiência App-Like",
-            "mobile_desc": "Seus funcionários acessam de qualquer lugar."
+            "mobile_desc": "Os seus colaboradores acedem a partir de qualquer lugar."
+        },
+        "partners": {
+            "title": "Programa de Parceiros",
+            "subtitle": "Conhece outros <1>profissionais</1>?",
+            "desc": "Ganhe comissões recorrentes recomendando a tecnologia líder em imigração. Rendimento passivo para si, mês a mês.",
+            "commissions": "Comissões de 20% recorrente",
+            "commissions_desc": "Por cada escritório ou agência que subscreva com o seu link",
+            "dashboard": "Painel de acompanhamento em tempo real",
+            "dashboard_desc": "Visualize referidos, conversões e pagamentos",
+            "marketing": "Material de marketing exclusivo",
+            "marketing_desc": "Banners, demos e conteúdo para partilhar",
+            "join_btn": "Juntar-me ao programa",
+            "golden_close": "Fecho Dourado",
+            "use_free_title": "Use a LegalFlow <1>grátis</1>",
+            "use_free_desc": "Se trouxer <1>3 profissionais</1> que subscrevam, o seu plano <2>Business sai a custo zero</2>.",
+            "step1": "Registe-se como Partner",
+            "step2": "Partilhe o seu link com 3 profissionais",
+            "step3": "O seu Business é grátis para sempre!",
+            "savings": "Poupe 1.788€ por ano",
+            "savings_desc": "Valor do plano Business anual completo"
+        },
+        "pricing": {
+            "title": "Planos & Preços",
+            "subtitle": "Escale o seu negócio com <1>IA legal</1>",
+            "desc": "Escolha o plano que melhor se adapte ao volume do seu escritório. Sem fidelização.",
+            "monthly": "Mensal",
+            "yearly": "Anual",
+            "two_months_free": "2 meses grátis",
+            "popular_badge": "O mais popular",
+            "from": "Desde",
+            "price_suffix": "/mês",
+            "yearly_suffix": "/ano",
+            "savings_calc": "Poupe {{amount}}€ por ano (2 meses grátis)",
+            "custom_quote": "Orçamento por medida",
+            "cta_start": "Começar Agora",
+            "cta_choose": "Escolher Business",
+            "cta_contact": "Contactar Vendas",
+            "footer_trust": "Pagamento seguro com Stripe • Sem fidelização • Dados protegidos com Iron Silo™",
+            "footer_volume": "Precisa de mais de 50 processos?",
+            "footer_contact": "Fale com a nossa equipa comercial →",
+            "plans": {
+                "free": {
+                    "name": "Starter",
+                    "target": "Profissionais Independentes",
+                    "desc": "Ideal para gestores e consultores que gerem poucos processos por mês.",
+                    "features": [
+                        "Até 10 processos/mês",
+                        "Digitalização inteligente (OCR)",
+                        "Acesso básico Motor STARK 2.0",
+                        "Suporte via e-mail"
+                    ]
+                },
+                "pro": {
+                    "name": "Business",
+                    "target": "Escritórios e Agências",
+                    "desc": "Desenhado para escritórios e consultorias que precisam de velocidade e colaboração.",
+                    "features": [
+                        "Até 50 processos/mês",
+                        "Segurança Iron Silo™ avançada",
+                        "Até 3 gestores",
+                        "Tradução automática",
+                        "Suporte prioritário 24/7"
+                    ]
+                },
+                "business": {
+                    "name": "Enterprise",
+                    "target": "Grandes Firmas e Corporações",
+                    "desc": "Para organizações com alto volume de processos e necessidade de personalização.",
+                    "features": [
+                        "Processos ilimitados",
+                        "Integração via API",
+                        "Multi-Tenant dedicado",
+                        "Gestor de conta exclusivo",
+                        "SLA garantido"
+                    ]
+                }
+            }
+        },
+        "trust_bar": {
+            "gdpr": "GDPR Compliant",
+            "ministry": "Ministério da Justiça",
+            "secured": "Secured by AI",
+            "privacy": "EU Data Privacy"
         },
         "cta": {
-            "title": "Pronto para modernizar seu compliance?",
-            "desc": "Junte-se às empresas que já gerenciam seus trâmites com Inteligência Artificial.",
-            "btn": "Criar Conta de Empresa"
+            "title": "Digitalize o seu escritório com <1>IA de imigração</1>",
+            "desc": "Junte-se aos profissionais que já gerem processos e consultas em metade do tempo.",
+            "btn": "Começar teste gratuito",
+            "btn_demo": "Solicitar uma demo",
+            "footer": "Sem cartão de crédito. Sem fidelização. Configuração em 2 minutos."
         },
+        "create_org": {
+            "back": "Voltar",
+            "title": "Nova Organização",
+            "subtitle": "Crie o seu espaço de trabalho seguro",
+            "company_name": "Nome da Empresa",
+            "company_placeholder": "Ex. Legal Corp SL",
+            "admin_label": "Administrador",
+            "name_placeholder": "O seu nome completo",
+            "email_placeholder": "seu@empresa.com",
+            "password_placeholder": "Palavra-passe segura",
+            "btn_submit": "Criar Conta",
+            "btn_loading": "A configurar ambiente...",
+            "terms_notice": "Ao criar conta, aceita os nossos Termos de Serviço B2B.",
+            "success_title": "Tudo pronto!",
+            "success_desc_1": "A organização foi criada",
+            "redirecting": "A redirecionar para o seu painel...",
+            "error_generic": "Ocorreu um erro inesperado.",
+            "error_registered": "Este e-mail já está registado."
+        },
+        "footer_rights": "Todos os direitos reservados.",
         "footer": "Todos os direitos reservados."
     },
     "org_panel": {
@@ -460,125 +771,132 @@
         "id": "ID: {{id}}",
         "invite_title": "Convidar Novo Membro",
         "invite_btn": "Enviar Convite",
-        "invite_placeholder": "email@empresa.com",
+        "invite_placeholder": "correio@empresa.com",
         "invite_success": "Convite criado. Token: {{token}}",
         "invite_error": "Erro ao enviar convite",
-        "quick_bundles": "Pacotes de Trâmites Rápidos",
-        "generating": "Gerando...",
-        "generate_error": "Erro ao gerar o pacote.",
+        "quick_bundles": "Packs de Trâmites Rápidos",
+        "generating": "A gerar...",
+        "generate_error": "Erro ao gerar o pack.",
         "users_list": "Membros da Organização",
         "role_admin": "Administrador",
         "role_user": "Membro",
         "actions": "Ações",
         "edit": "Editar",
-        "delete": "Excluir",
+        "delete": "Eliminar",
         "generate_docs": "Gerar Documentos",
-        "loading_users": "Carregando usuários...",
+        "loading_users": "A carregar utilizadores...",
         "headers": {
-            "user": "Usuário",
-            "role": "Papel",
-            "join_date": "Data de Entrada",
-            "status": "Status",
+            "user": "Utilizador",
+            "role": "Função",
+            "plan": "Plano",
+            "access": "Acesso",
+            "join_date": "Data Adesão",
+            "status": "Estado",
             "actions": "Ações"
         },
         "status_active": "Ativo",
         "tooltips": {
-            "edit_client": "Editar Ficha do Cliente",
+            "edit_client": "Editar Ficha Cliente",
             "generate_doc": "Gerar Documento Oficial"
         }
     },
     "profile": {
-        "edit_title": "Editar Ficha do Cliente",
-        "save_error": "Erro ao salvar o perfil",
+        "edit_title": "Editar Ficha de Cliente",
+        "save_error": "Erro ao guardar o perfil",
         "tabs": {
             "personal": "Dados Pessoais",
-            "address": "Endereço (Espanha)",
+            "address": "Morada (Espanha)",
             "filiation": "Filiação",
             "representation": "Gestor/Rep"
         },
         "sex": "Sexo",
         "civil_status": "Estado Civil",
-        "civil_status_s": "Solteiro(a) (S)",
-        "civil_status_c": "Casado(a) (C)",
-        "civil_status_v": "Viúvo(a) (V)",
-        "civil_status_d": "Divorciado(a) (D)",
-        "civil_status_sp": "Separado(a) (Sp)",
+        "civil_status_s": "Solteiro/a (S)",
+        "civil_status_c": "Casado/a (C)",
+        "civil_status_v": "Viúvo/a (V)",
+        "civil_status_d": "Divorciado/a (D)",
+        "civil_status_sp": "Separado/a (Sp)",
         "select": "Selecionar...",
         "placeholders": {
-            "address": "Ex: C/ Mayor 1, 2A, Madri",
-            "street": "Ex: Calle Gran Vía"
+            "address": "Ex: C/ Mayor 1, 2A, Madrid",
+            "street": "Ex: Rua Augusta"
         },
-        "address_breakdown": "Detalhes (Para Modelos EX)",
-        "filiation_note": "Necessário para pedidos de Nacionalidade e alguns trâmites de imigração.",
-        "rep_note": "Preencha se apresentar o pedido em nome do cliente (como gestor ou advogado).",
-        "save_btn": "Salvar Ficha",
+        "address_breakdown": "Desagregado (Para Modelos EX)",
+        "filiation_note": "Necessário para pedidos de Nacionalidade e alguns trâmites de Imigração.",
+        "rep_note": "Preencha isto se apresentar o pedido em nome do cliente (como gestor ou advogado).",
+        "save_btn": "Guardar Ficha",
         "cancel": "Cancelar"
     },
     "templates": {
         "generate_title": "Gerar Documento Oficial",
         "for_client": "Para:",
-        "search_placeholder": "Buscar modelo (ex: Modelo 790, Residência...)",
-        "loading": "Carregando modelos...",
-        "not_found": "Nenhum modelo encontrado.",
+        "search_placeholder": "Procurar modelo (ex: Modelo 790, Residência...)",
+        "loading": "A carregar modelos...",
+        "not_found": "Não foram encontrados modelos.",
         "status": {
-            "filling": "Preenchendo formulário oficialmente...",
+            "filling": "A preencher formulário oficialmente...",
             "success": "Documento gerado corretamente!",
             "error": "Erro: {{error}}",
+            "PDF_LOAD_ERROR": "Este PDF está protegido ou não é compatível. Por favor, carregue uma versão desbloqueada.",
+            "ERROR_UNAUTHORIZED": "Não autorizado. Por favor, inicie sessão novamente.",
+            "ERROR_FORBIDDEN": "Não tem permissões para realizar esta ação.",
             "ready": "Pronto!",
-            "cross_referencing": "Cruzando dados do processo..."
+            "cross_referencing": "A cruzar dados do processo..."
         },
         "category_default": "Geral"
     },
     "success_bundle": {
         "title": "Processo Pronto!",
         "subtitle": "Geração concluída com sucesso",
-        "generated_msg": "O pacote \"{{bundle}}\" foi gerado para o cliente \"{{client}}\".",
+        "generated_msg": "Foi gerado o pack \"{{bundle}}\" para o cliente \"{{client}}\".",
         "docs_generated": "{{count}} documentos gerados",
-        "file_downloaded": "Arquivo baixado:",
-        "download_note": "O arquivo ZIP foi baixado automaticamente no seu equipamento.",
+        "file_downloaded": "Ficheiro descarregado:",
+        "download_note": "O ficheiro ZIP foi descarregado automaticamente no seu computador.",
         "close_btn": "Entendido, fechar"
     },
     "pdf_editor": {
         "title": "Editor de Mapeamento PDF",
-        "tips": "Truques: Arraste caixas, use Setas para mover, Del para excluir",
-        "auto_detect": "Auto-Detectar",
+        "tips": "Dicas: Arraste caixas, use Setas para mover, Del para apagar",
+        "auto_detect": "Auto-Detetar",
         "preview": "Vista Prévia",
         "instructions_title": "Instruções",
         "instructions_step1": "1. Clique no documento para inserir.",
-        "instructions_step2": "2. <strong>Arraste</strong> as caixas para movê-las.",
+        "instructions_step2": "2. <strong>Arraste</strong> as caixas para as mover.",
         "instructions_step3": "3. Use as <strong>Setas do Teclado</strong> para ajustar.",
-        "instructions_step4": "4. Arraste o canto direito para alargar.",
+        "instructions_step4": "4. Arraste o canto direito para tornar mais larga.",
         "mapped_fields": "Campos Mapeados",
         "assign_data": "Atribuir dado:",
-        "detected": "Detectado",
+        "detected": "Detetado",
         "insert_field": "Inserir Campo",
-        "confirm_analyze": "Isso analisará o PDF em busca de campos de formulário (AcroFields) e criará mapeamentos automaticamente. Continuar?",
-        "no_fields_found": "Nenhum campo interativo (AcroFields) foi detectado neste PDF.",
-        "success_detected": "Sucesso! Foram detectados e criados {{count}} campos.",
+        "confirm_analyze": "Isto analisará o PDF à procura de campos de formulário (AcroFields). Continuar?",
+        "no_fields_found": "Não foram detetados campos interativos (AcroFields) neste PDF.",
+        "success_detected": "Sucesso! Foram detetados e criados {{count}} campos.",
         "error_analyzing": "Erro ao analisar campos do PDF.",
-        "error_preview": "Erro ao gerar vista previa",
+        "error_preview": "Erro ao gerar vista prévia",
         "page_x_of_y": "Página {{current}} de {{total}}",
         "zoom": "Zoom:",
-        "save": "Salvar",
+        "save": "Guardar",
         "close": "Fechar",
         "cancel": "Cancelar",
         "previous": "Anterior",
-        "next": "Próximo"
+        "next": "Seguinte"
     },
     "fields": {
         "first_name": "Nome",
-        "last_name": "Primeiro Sobrenome",
-        "second_last_name": "Segundo Sobrenome",
+        "last_name": "Primeiro Apelido",
+        "second_last_name": "Segundo Apelido",
         "nie": "NIE / DNI",
         "passport_num": "Passaporte",
+        "sex": "Sexo",
         "sex_male": "Sexo: Homem (X)",
         "sex_female": "Sexo: Mulher (X)",
+        "sex_x": "Sexo: Não Binário / X",
         "civil_status": "Estado Civil (S/C/V/D/Sp)",
         "email": "E-mail",
         "phone": "Telemóvel",
-        "father_name": "Nome do Pai",
-        "mother_name": "Nome da Mãe",
-        "address": "Endereço Completo (Genérico)",
+        "father_name": "Nome Pai",
+        "mother_name": "Nome Mãe",
+        "address": "Morada Completa (Genérico)",
         "address_street": "Rua",
         "address_number": "Número",
         "address_floor": "Andar",
@@ -586,43 +904,288 @@
         "postal_code": "Código Postal",
         "address_province": "Província",
         "nationality": "Nacionalidade",
+        "user_id": "ID Técnico (UUID)",
         "birth_date": "Data de Nascimento",
-        "representative_name": "Nome do Representante",
-        "representative_nie": "NIE do Representante",
-        "today_date": "Data de Hoje (Auto)"
+        "birth_day": "Dia de Nascimento (DD)",
+        "birth_month": "Mês de Nascimento (MM)",
+        "birth_year": "Ano de Nascimento (AAAA)",
+        "birth_place": "Lugar de Nascimento",
+        "birth_country": "País de Nascimento",
+        "representative_name": "Nome Representante",
+        "representative_nie": "NIE Representante",
+        "today_date": "Data de Hoje (Auto)",
+        "today_day": "Dia de Hoje (DD)",
+        "today_month": "Mês de Hoje (MM)",
+        "today_year": "Ano de Hoje (AAAA)"
     },
     "tenant_dashboard": {
-        "loading": "Carregando organização...",
-        "not_found": "Organização não encontrada",
-        "no_permission": "Você não tem permissão para ver este painel.",
+        "loading": "A carregar organização...",
+        "not_found": "Não foi encontrada a organização",
+        "no_permission": "Não tem permissões para ver este painel ou não pertence a nenhuma organização.",
         "back_home": "Voltar ao início",
         "back": "Voltar",
         "admin_panel": "Painel de Administração",
         "plan": "Plano",
-        "documents": "Documentos",
-        "settings": "Configuração"
+        "documents": "Os Meus Documentos",
+        "templates": "Modelos PDF",
+        "signatures": "Assinaturas Digitais",
+        "organization": "Minha Organização",
+        "affiliates": "Programa de Afiliados",
+        "settings": "Configuração",
+        "subtabs": {
+            "members": "Membros",
+            "invite": "Invitar Membro",
+            "signatures": "Assinaturas Digitais"
+        }
     },
     "demo": {
-        "title": "Agendar uma Demonstração",
-        "subtitle": "Descubra como podemos automatizar a conformidade legal e cultural para sua equipe global.",
+        "title": "Solicite uma Demo",
+        "subtitle": "Descubra como podemos automatizar o compliance legal e cultural da sua equipa global.",
         "submit": "Enviar Solicitação",
         "close": "Fechar",
         "success_title": "Solicitação Recebida!",
-        "success_message": "Nossa equipe entrará em contato em até 24 horas para agendar uma sessão personalizada.",
+        "success_message": "A nossa equipa entrará em contacto consigo nas próximas 24 horas para agendar uma sessão personalizada.",
         "fields": {
             "name": "Nome completo",
             "email": "E-mail corporativo",
             "org": "Nome da empresa",
             "size": "Tamanho da empresa",
-            "employees": "funcionários",
+            "employees": "colaboradores",
             "message": "Como podemos ajudar?"
         },
         "placeholders": {
-            "name": "Digite seu nome",
+            "name": "Escreva o seu nome",
             "email": "ex@empresa.com",
             "org": "Sua organização",
             "select_size": "Selecione uma opção",
-            "message": "Conte-nos brevemente sobre suas necessidades..."
+            "message": "Conte-nos brevemente as suas necessidades..."
+        }
+    },
+    "affiliate": {
+        "title": "Programa de Afiliados",
+        "description": "Ganhe um 30% recorrente recomendando a nossa plataforma a profissionais e empresas.",
+        "join_btn": "Solicitar ser Afiliado",
+        "pending_approval": "A sua solicitação está a ser revista.",
+        "dashboard_title": "Painel de Afiliado",
+        "your_link": "O Seu Link Único",
+        "copy_btn": "Copiar",
+        "copied": "Copiado!",
+        "stats": {
+            "clicks": "Cliques no seu link",
+            "registrations": "Registos totais",
+            "paid_customers": "Clientes de pagamento"
+        },
+        "balance": {
+            "title": "Os Seus Ganhos",
+            "earned": "Comissões acumuladas",
+            "pending": "Saldo pendente"
+        },
+        "customize_code": "Personalizar Código",
+        "customize_hint": "Pode personalizar o seu código apenas uma vez.",
+        "save": "Guardar"
+    },
+    "procedures_page": {
+        "back": "Voltar ao início",
+        "title": "Guia Integral de <1>Trâmites Legais</1>",
+        "desc": "Simplificamos a burocracia espanhola para que se possa focar na sua nova vida. Informação atualizada sobre imigração, nacionalidade e direitos.",
+        "common_questions": "Perguntas comuns",
+        "analysis_banner": {
+            "tag": "Análisis Inteligente por IA",
+            "title": "Recebeu uma carta do Serviço de Estrangeiros?",
+            "desc": "Não se preocupe com o jargão técnico. Carregue-a agora e o <1>STARK analisará para si</1> em segundos.",
+            "upload_btn": "Carregar foto ou documento",
+            "processing": "A processar...",
+            "success": "Analisado!",
+            "formats": "Formatos: PDF, JPG, PNG.",
+            "privacy": "Privacidade garantida sob encriptação.",
+            "login_required": "Por favor, inicie sessão para analisar os seus documentos.",
+            "error_types": "Apenas são permitidos ficheiros PDF, JPG ou PNG",
+            "chat_msg": "Carreguei um documento: {{name}}. Por favor, analisa e diz-me se há prazos ou requisitos importantes."
+        },
+        "items": {
+            "residencia": {
+                "title": "Residência e Estadia",
+                "desc": "Tudo sobre NIE, TIE, Arraigo Social, Laboral e Familiar.",
+                "q1": "Como obtenho o arraigo social?",
+                "q2": "Diferença entre NIE e TIE",
+                "q3": "Requisitos para reagrupamento familiar"
+            },
+            "nacionalidad": {
+                "title": "Nacionalidade Espanhola",
+                "desc": "Exames CCSE/DELE, prazos de residência e submissão eletrónica.",
+                "q1": "Quantos anos preciso para a nacionalidade?",
+                "q2": "Como é o exame CCSE?",
+                "q3": "Documentos para nacionalidade por residência"
+            },
+            "trabajo": {
+                "title": "Autorizações de Trabalho",
+                "desc": "Conta própria, conta outrem, profissionais qualificados e nómadas digitais.",
+                "q1": "Requisitos para Visa de Nómada Digital",
+                "q2": "Posso trabalhar com a minha residência de estudante?",
+                "q3": "Modificação de estadia para trabalho"
+            },
+            "asilo": {
+                "title": "Proteção Internacional",
+                "desc": "Asilo, proteção subsidiária e razões humanitarias.",
+                "q1": "Como peço marcação para asilo?",
+                "q2": "Direitos durante a espera de asilo",
+                "q3": "O que é o cartão vermelho?"
+            }
+        }
+    },
+    "halal_page": {
+        "back": "Voltar ao dashboard",
+        "title": "Vida <1>Halal & Cultural</1>",
+        "desc": "Guia prático para a integração cultural e o estilo de vida muçulmano em Espanha. Encontre serviços certificados e conselhos.",
+        "common_topics": "Temas de interesse",
+        "btn_ask": "Perguntar sobre isto",
+        "items": {
+            "alimentacion": {
+                "title": "Alimentação Halal",
+                "desc": "Como identificar talhos, restaurantes e produtos certificados pelo Instituto Halal de Espanha.",
+                "q1": "Onde comprar carne halal na minha cidade?",
+                "q2": "Lista de aditivos não halal comuns",
+                "q3": "Restaurantes com certificação oficial"
+            },
+            "mezquitas": {
+                "title": "Centros e Mesquitas",
+                "desc": "Localização dos principais centros culturais islâmicos e horários de oração.",
+                "q1": "Mesquita mais próxima da minha localização",
+                "q2": "Horários de reza em Madrid/Barcelona",
+                "q3": "Atividades para crianças em centros culturais"
+            },
+            "derechos": {
+                "title": "Direitos Laborais",
+                "desc": "Informação sobre festividades religiosas e o Acordo de Cooperação de 1992.",
+                "q1": "Posso pedir o dia livre pelo Eid?",
+                "q2": "Direito à reza no trabalho",
+                "q3": "Como gerir o jejum do Ramadão no escritório"
+            },
+            "educacion": {
+                "title": "Educação e Família",
+                "desc": "Ensino religioso em escolas públicas e atividades para jovens.",
+                "q1": "Como solicitar aulas de religião islâmica?",
+                "q2": "Campos de férias para jovens",
+                "q3": "Conselhos para a integração escolar"
+            }
+        }
+    },
+    "housing_page": {
+        "back": "Voltar ao dashboard",
+        "title": "Guia de <1>Habitação & Arrendamento</1>",
+        "desc": "Assegure o seu lar em Espanha. Ajudamo-lo a entender os contratos e a conhecer os seus direitos como inquilino.",
+        "common_steps": "Passos essenciais",
+        "btn_ask": "Consultar dúvida",
+        "items": {
+            "contratos": {
+                "title": "Contratos de Arrendamento",
+                "desc": "Análise da Lei de Arrendamentos Urbanos (LAU). Duração, cauções e cláusulas abusivas.",
+                "q1": "Qual a duração mínima do contrato?",
+                "q2": "Quanto me podem pedir de caução?",
+                "q3": "Que reparações deve pagar o senhorio?"
+            },
+            "requisitos": {
+                "title": "Documentação Necessária",
+                "desc": "Recibos de vencimento, fiadores e o seguro de incumprimento de arrendamento.",
+                "q1": "Posso arrendar apenas com o meu passaporte?",
+                "q2": "O que é um seguro de incumprimento?",
+                "q3": "Como demonstrar solvência sem recibo de vencimento espanhol"
+            },
+            "zonas": {
+                "title": "Melhores Zonas",
+                "desc": "Análise de preços por bairros, transportes públicos e serviços próximos.",
+                "q1": "Bairros mais económicos e seguros",
+                "q2": "Zonas com melhor ligação por transporte",
+                "q3": "Vilas próximas com boa qualidade de vida"
+            },
+            "suministros": {
+                "title": "Consumos e Recenseamento",
+                "desc": "Como ligar luz, água, internet e a importância do recenseamento municipal (padrón).",
+                "q1": "Como me recenseio se ainda não tenho contrato?",
+                "q2": "Documentos para ligar a luz",
+                "q3": "Diferença entre recenseamento e residência"
+            }
+        }
+    },
+    "affiliate_terms": {
+        "back": "Voltar",
+        "title": "Termos do Programa de Afiliados",
+        "last_update": "Última atualização: Fevereiro 2026 • LegalFlow Pro",
+        "sections": {
+            "eligibility": {
+                "title": "Elegibilidade",
+                "content": "O Programa de Afiliados da LegalFlow está aberto a profissionais do setor legal, gestores, agências de relocation e consultorias."
+            },
+            "commissions": {
+                "title": "Estrutura de Comissões",
+                "content": "Será atribuída uma comissão de <1>20% recorrente</1> por cada novo subscritor que contrate um plano de pago.",
+                "example": "<1>Exemplo:</1> Se referir um subscritor ao Plano Business (149€/mês), receberá <1>29,80€/mês</1> recorrente."
+            },
+            "cookies": {
+                "title": "Atribuição e Cookies",
+                "content": "Utilizamos uma janela de atribuição de <1>30 dias</1>.",
+                "sub": "A cookie de seguimento permanece no navegador do visitante por 30 dias naturais."
+            },
+            "payments": {
+                "title": "Pagos e Liquidação",
+                "content": "As comissões serão liquidadas <1>mensalmente</1> via Stripe, atingindo o mínimo de <1>50€</1>."
+            }
+        },
+        "footer": "© 2026 LegalFlow Pro. Todos os direitos reservados."
+    },
+    "register_affiliate": {
+        "back": "Voltar",
+        "title": "Junte-se ao Programa de Partners",
+        "desc": "Ganhe uma <1>comissão recorrente de 20%</1> por cada escritório ou agência que subscreva com o seu link.",
+        "success_title": "Solicitação recebida!",
+        "success_desc": "Reveremos a sua solicitação nas próximas <1>24-48 horas</1>.",
+        "form": {
+            "name": "Nome completo *",
+            "email": "E-mail profissional *",
+            "company": "Empresa / Escritório",
+            "role": "Função profissional",
+            "roles": {
+                "abogado": "Advogado/a de Imigração",
+                "gestor": "Gestor/a Administrativo/a",
+                "consultor": "Consultor/a de Imigração",
+                "relocation": "Agente de Relocation",
+                "rrhh": "Departamento de RH",
+                "creador": "Criador/a de Conteúdo",
+                "otro": "Outro"
+            },
+            "terms": "Li e aceito os Termos do Programa de Afiliados.",
+            "submit": "Solicitar acesso ao programa"
+        }
+    },
+    "affiliate_kit": {
+        "title": "Centro de Recursos para Partners",
+        "subtitle": "Tudo o que precisa para <1>começar a recomendar</1>",
+        "tabs": {
+            "copy": "Copys & Mensagens",
+            "email": "Modelos de E-mail",
+            "design": "Criatividades (Banners)"
+        },
+        "whatsapp": {
+            "title": "Mensagens para WhatsApp / Telegram",
+            "templates": [
+                {
+                    "label": "Direto e Tecnológico",
+                    "text": "Olá! Comecei a usar a LegalFlow para os meus processos de imigração e a IA do STARK é incrível, poupa imenso tempo. Vê aqui: {{link}}"
+                },
+                {
+                    "label": "Foco Produtividade",
+                    "text": "Como vais de tempo com os processos? Passei para a LegalFlow e está a salvar-me a vida com a gestão de documentos. Passo o meu link se quiseres provar: {{link}}"
+                }
+            ]
+        },
+        "email": {
+            "title": "Modelos de Correio Eletrónico",
+            "templates": [
+                {
+                    "subject": "Como estou a gerir os meus processos de imigração em 2026",
+                    "body": "Olá,\n\nEscrevo porque sei que, tal como eu, passas muitas horas a gerir documentos e a introduzir dados para trâmites de imigração.\n\nDescobri a LegalFlow, uma plataforma com IA que automatiza grande parte do processo. Eu já a estou a usar e a diferença é brutal.\n\nPodes testar aqui: {{link}}\n\nUm abraço."
+                }
+            ]
         }
     }
 }

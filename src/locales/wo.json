@@ -12,21 +12,126 @@
         "admin_badge": "Admin",
         "superadmin_dashboard": "Tabilo de boor SUPERADMIN",
         "manage_templates": "Saytu Royuwaayu PDF",
-        "manage_org": "Saytu Mbooloo mi"
+        "manage_org": "Saytu Mbooloo mi",
+        "my_dashboard": "Mi Dashboard"
     },
-    "hero": {
-        "title": "Sa Ndëjëkuléer ci wàllu Yoon ak Halal ci Ispañ",
-        "subtitle": "Ndimbal gu jagleel ñi dëkk ci bitim réew. IA bu ñu tàggat ci yoonu dëkk u bitim réew ci Ispañ.",
-        "search_placeholder": "Bindal sa laaj fii (mbumb: Li ñu laaj ngir NIE)...",
-        "social_proof": "Lu ëpp 1.200 njaboot gëm nañu ko",
-        "verification_badge": "Ndimbal ci wàllu Yoon ak Aada gu ñu wóoral",
-        "stats": {
-            "documents": "50+ Kayit",
-            "processed": "Ñu saytu",
-            "availability": "Am na saa su ne",
-            "assistance": "Ndimbal",
-            "response": "Tontu <30s",
-            "speed": "Gaawaay"
+    "landing": {
+        "nav": {
+            "login": "Duggu",
+            "create_org": "Sos Mbooloo"
+        },
+        "hero": {
+            "new_tag": "Bees: Architecture Multi-Tenant bu ñu wóoral",
+            "title": "Sa dund gu bees ci Ispañ, <1>te du metti</1> ci wàllu yoon",
+            "subtitle": "Saytu wàllu yoon ak aada",
+            "active_ai_tag": "IA bi ngi liggéey ci sa mbir • Active",
+            "desc": "Ndimbalu IA fise bi ñu jagleel ñi dëkk ci bitim réew. Wóoralal sa visa, sa dëkk-waay ak say mbir ak kóllëre gu rëy.",
+            "start_free": "Duggu tey",
+            "book_demo": "Xoolal nuy liggéeyé"
+        },
+        "features": {
+            "title": "Lu tax LegalFlow?",
+            "subtitle": "Ngir këru liggéey ak saytukat yi.",
+            "tech_details": "Xibaaru teknig",
+            "response_time": "Tontu gu gaaw",
+            "speed_advantage": "50% gën a gaaw ci saytu gu yàgg bi",
+            "tech_features": "Mbiru teknig",
+            "request_whitepaper": "Laaj teknig fise bi",
+            "security_title": "Wóoralu Iron Silo™",
+            "security_desc": "Say xibaar dañoleen a kàmb. Sa mbooloo du bérëbu bo xam ne mën nañu fay duggu.",
+            "ai_title": "Motor STARK 2.0",
+            "ai_desc": "Suñu IA bi du jàng rekk sariya yi, dafay *firi* say kontaraa jagle.",
+            "global_title": "Lépp la saytu",
+            "global_desc": "Dëppoo na ak liggéeykat yi ci Ispañ, Marok ak Amérique Latine.",
+            "security_expanded": "Dañuy jëfandikoo AES-256 ngir wóoral lépp say kayit ak xibaar. Iron Silo™ dafay kàmb xibaar yi ci biir këru liggéey bi, ngir ne ñi ñu may rekk ñoy mën a xool.",
+            "ai_expanded": "Motor STARK 2.0 mën na saytu kayit yi ci sigoŋ yu néew. Dafay génne xibaar yi ngir mën leen a bindi ci fiseer yi (EX-01, EX-11, etc.), di wàññi 80% ci waxtu bi ngay niit.",
+            "global_expanded": "Dañu la jàpale ci lépp mbiru dëkk-waay, visa mbed-mi (Digital Nomad), Golden Visa, ak bokk ak njaboot. Suñu liggéey eksi na ba Ispañ.",
+            "mobile_title": "Baarawukaay bu yomb",
+            "mobile_desc": "Say liggéeykat mën nañu duggu saa su ne."
+        },
+        "pricing": {
+            "title": "Porogaraam ak Njeg yi",
+            "subtitle": "Yokkal sa liggéey ak <1>IA bu Yoon</1>",
+            "desc": "Tannal porogaraam bi gën a dëppoo ak sa liggéey. Amul kontaraa bu la tënk.",
+            "monthly": "Weer",
+            "yearly": "At",
+            "two_months_free": "2 weer yu fu",
+            "popular_badge": "Li ñu gën a tann",
+            "from": "Tàmbali",
+            "price_suffix": "/weer",
+            "yearly_suffix": "/at",
+            "savings_calc": "Wàññil {{amount}}€ ci at mi (2 weer yu fu)",
+            "custom_quote": "Njeg bu ñu jagleel la",
+            "cta_start": "Tàmbali tey",
+            "cta_choose": "Tann Business",
+            "cta_contact": "Jokkoo ak Commercial yi",
+            "footer_trust": "Fay gu wóor ak Stripe • Amul tënk • IA Iron Silo™ la koy aar",
+            "footer_volume": "Ndax danga soxla lu ëpp 50 mbir?",
+            "footer_contact": "Waxal ak suñu commercial yi →",
+            "plans": {
+                "starter": {
+                    "name": "Starter",
+                    "target": "Liggéeykat yi seen bopp",
+                    "desc": "Bax na ngir ñi nekk seen bopp wala ñiy jàpale mɔgɔ yi ci mbir yu néew weer wu ne.",
+                    "features": [
+                        "Ba 10 mbir weer wu ne",
+                        "Saytu kayit (OCR)",
+                        "Motor STARK 2.0 bu yomb",
+                        "Tabilo de boor ngir saytu mbir yi",
+                        "Ndimbal ci email"
+                    ]
+                },
+                "business": {
+                    "name": "Business",
+                    "target": "Këru Liggéey ak Ajans yi",
+                    "desc": "Ngir këru liggéey ak ajans yi soxla gaawaay ak liggéeyandoo.",
+                    "features": [
+                        "Ba 50 mbir weer wu ne",
+                        "Wóoralu Iron Silo™",
+                        "Ba 3 sàq u jëfandikookat",
+                        "Firi kayit yi",
+                        "Motor STARK 2.0 bu mat",
+                        "Ndimbal saa su ne 24/7"
+                    ]
+                },
+                "enterprise": {
+                    "name": "Enterprise",
+                    "target": "Këru Liggéey yu mag",
+                    "desc": "Ngir mbooloo yi am liggéey bu rëy, këru HR ak soxla yu jagle.",
+                    "features": [
+                        "Mbir yu amul tënk",
+                        "Jokkoo API ak say masini",
+                        "Architecture Multi-Tenant jagle",
+                        "Tàggat mbooloo mi",
+                        "Saytukat bu la jagleel",
+                        "SLA bu ñu wóoral"
+                    ]
+                }
+            }
+        },
+        "trust_bar": {
+            "gdpr": "Dëppoo na ak GDPR",
+            "ministry": "Ministère de la Justice",
+            "secured": "IA la koy aar",
+            "privacy": "Sutura UE"
+        },
+        "cta": {
+            "title": "Pare nga ngir moderniser sa compliance?",
+            "desc": "Bokk ci këru liggéey yi tàmbali di saytu seen mbir ak IA.",
+            "btn": "Sos sàq u Business"
+        },
+        "create_org": {
+            "back": "Delloo",
+            "title": "Mbooloo mu Bees",
+            "subtitle": "Sosal sa bérëbu liggéey bu wóor",
+            "company_name": "Turu këru liggéey",
+            "company_placeholder": "Mb: Legal Corp SL",
+            "admin_label": "Saytukat",
+            "name_placeholder": "Sa tur ak sa sant",
+            "email_placeholder": "yow@entreprise.com",
+            "password_placeholder": "Baat u fajo bu dëgër",
+            "btn_submit": "Sos Sàq bi",
+            "terms": "Bu ngay sos sàq, danga sɔnn ci suñu sariyaw jëfandikoo."
         }
     },
     "auth": {
@@ -422,38 +527,6 @@
         "premium_feat4": "Ndimbal gu gaaw 24/7",
         "start_premium": "Tàmbali ak Premium",
         "powered_by": "Tecnologia bu LegalFlow."
-    },
-    "landing": {
-        "nav": {
-            "login": "Duggu",
-            "create_org": "Sos Mbooloo"
-        },
-        "hero": {
-            "new_tag": "Bees: Arquitectura Multi-Tenant Certificada",
-            "title": "Mbiru Yoon ak Halal",
-            "subtitle": "ngir Equipe yu Mag",
-            "desc": "Bérëbu IA bi dëppoo visados, dëkk-waay ak yoon ngir say liggéeykat bitim réew.",
-            "start_free": "Tàmbali Àtte",
-            "book_demo": "Laaj am Demo"
-        },
-        "features": {
-            "title": "Lu tax LegalFlow ?",
-            "subtitle": "Sos ko ngir RRHH ak Gestorías.",
-            "security_title": "Sutura Iron Silo™",
-            "security_desc": "Xibaar yu ñu kàmb. Sa mbooloo kër la gu ñu mënul duggu.",
-            "ai_title": "Motor STARK 2.0",
-            "ai_desc": "Suñu IA du jàng yoon rekk, dégg na sa kontaraa biir yi.",
-            "global_title": "Dëkk yu Bare",
-            "global_desc": "Dëppoo na ak Ispañ, Maric ak LATAM.",
-            "mobile_title": "App-Like Experience",
-            "mobile_desc": "Say liggéeykat mën nañu duggu saa su ne."
-        },
-        "cta": {
-            "title": "Ndax pare nga ngir beesal sa yoon ?",
-            "desc": "Bokk ci këru liggéey yi dëñu saytu seen mbir ak IA.",
-            "btn": "Sos sàq u Këru Liggéey"
-        },
-        "footer": "Lépp yoon yi ñun la."
     },
     "org_panel": {
         "title": "Sama Mbooloo",

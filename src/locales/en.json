@@ -695,40 +695,37 @@
             "footer_volume": "Need more than 50 files?",
             "footer_contact": "Talk to our sales team →",
             "plans": {
-                "starter": {
+                "free": {
                     "name": "Starter",
                     "target": "Independent Professionals",
                     "desc": "Ideal for managers, consultants and mobility experts managing a few files per month.",
                     "features": [
-                        "Up to 10 new files/month",
-                        "Intelligent document scanning (OCR)",
-                        "Access to basic STARK 2.0 Engine",
-                        "Case management panel",
+                        "Up to 10 files/month",
+                        "Intelligent scanning (OCR)",
+                        "Basic STARK 2.0 Engine access",
                         "Email support"
                     ]
                 },
-                "business": {
+                "pro": {
                     "name": "Business",
-                    "target": "Despachos y Agencias",
+                    "target": "Firms and Agencies",
                     "desc": "Designed for firms, relocation agencies and consultancies needing speed and collaboration.",
                     "features": [
-                        "Up to 50 new files/month",
+                        "Up to 50 files/month",
                         "Advanced Iron Silo™ security",
-                        "Up to 3 user accounts (managers)",
-                        "Automatic document translation",
-                        "Full STARK 2.0 Engine",
-                        "24/7 priority support"
+                        "Up to 3 managers",
+                        "Automatic translation",
+                        "24/7 Priority support"
                     ]
                 },
-                "enterprise": {
+                "business": {
                     "name": "Enterprise",
                     "target": "Large Firms and Corporations",
                     "desc": "For organizations with a high volume of files, HR departments and need for customization.",
                     "features": [
                         "Unlimited files",
-                        "API integration with own systems",
-                        "Dedicated Multi-Tenant architecture",
-                        "Personalized training for the team",
+                        "API integration",
+                        "Dedicated Multi-Tenant",
                         "Exclusive account manager",
                         "Guaranteed SLA"
                     ]
@@ -747,6 +744,25 @@
             "btn": "Start free trial",
             "btn_demo": "Request a demo",
             "footer": "No credit card required. No commitment. Setup in 2 minutes."
+        },
+        "create_org": {
+            "back": "Go Back",
+            "title": "New Organization",
+            "subtitle": "Create your secure workspace",
+            "company_name": "Company Name",
+            "company_placeholder": "Ex. Legal Corp Ltd",
+            "admin_label": "Administrator",
+            "name_placeholder": "Your full name",
+            "email_placeholder": "you@company.com",
+            "password_placeholder": "Secure password",
+            "btn_submit": "Create Account",
+            "btn_loading": "Setting up environment...",
+            "terms_notice": "By creating an account, you agree to our B2B Terms of Service.",
+            "success_title": "All set!",
+            "success_desc_1": "Organization created:",
+            "redirecting": "Redirecting to your dashboard...",
+            "error_generic": "An unexpected error occurred.",
+            "error_registered": "This email is already registered."
         },
         "footer_rights": "All rights reserved.",
         "footer": "All rights reserved."

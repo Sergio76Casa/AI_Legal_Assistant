@@ -13,37 +13,57 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
 
     const plans = [
         {
-            id: 'starter',
-            name: t('landing.pricing.plans.starter.name'),
-            target: t('landing.pricing.plans.starter.target'),
-            description: t('landing.pricing.plans.starter.desc'),
+            id: 'free',
+            name: t('landing.pricing.plans.free.name'),
+            target: t('landing.pricing.plans.free.target'),
+            description: t('landing.pricing.plans.free.desc'),
             price: { monthly: 49, yearly: 470 },
             icon: 'person',
             popular: false,
             cta: t('landing.pricing.cta_start'),
-            features: t('landing.pricing.plans.starter.features', { returnObjects: true }) as string[]
+            features: [
+                t('landing.pricing.plans.starter.features.0'),
+                t('landing.pricing.plans.starter.features.1'),
+                t('landing.pricing.plans.starter.features.2'),
+                t('landing.pricing.plans.starter.features.3'),
+                t('landing.pricing.plans.starter.features.4')
+            ]
+        },
+        {
+            id: 'pro',
+            name: t('landing.pricing.plans.pro.name'),
+            target: t('landing.pricing.plans.pro.target'),
+            description: t('landing.pricing.plans.pro.desc'),
+            price: { monthly: 149, yearly: 1430 },
+            icon: 'groups',
+            popular: true,
+            cta: t('landing.pricing.cta_choose'),
+            features: [
+                t('landing.pricing.plans.business.features.0'),
+                t('landing.pricing.plans.business.features.1'),
+                t('landing.pricing.plans.business.features.2'),
+                t('landing.pricing.plans.business.features.3'),
+                t('landing.pricing.plans.business.features.4'),
+                t('landing.pricing.plans.business.features.5')
+            ]
         },
         {
             id: 'business',
             name: t('landing.pricing.plans.business.name'),
             target: t('landing.pricing.plans.business.target'),
             description: t('landing.pricing.plans.business.desc'),
-            price: { monthly: 149, yearly: 1430 },
-            icon: 'groups',
-            popular: true,
-            cta: t('landing.pricing.cta_choose'),
-            features: t('landing.pricing.plans.business.features', { returnObjects: true }) as string[]
-        },
-        {
-            id: 'enterprise',
-            name: t('landing.pricing.plans.enterprise.name'),
-            target: t('landing.pricing.plans.enterprise.target'),
-            description: t('landing.pricing.plans.enterprise.desc'),
             price: { monthly: 399, yearly: null },
             icon: 'domain',
             popular: false,
             cta: t('landing.pricing.cta_contact'),
-            features: t('landing.pricing.plans.enterprise.features', { returnObjects: true }) as string[]
+            features: [
+                t('landing.pricing.plans.enterprise.features.0'),
+                t('landing.pricing.plans.enterprise.features.1'),
+                t('landing.pricing.plans.enterprise.features.2'),
+                t('landing.pricing.plans.enterprise.features.3'),
+                t('landing.pricing.plans.enterprise.features.4'),
+                t('landing.pricing.plans.enterprise.features.5')
+            ]
         }
     ];
 
@@ -96,77 +116,86 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.15, duration: 0.5 }}
                         viewport={{ once: true }}
-                        className={`relative glass-card rounded-3xl p-8 flex flex-col group transition-all duration-300
+                        className={`relative glass-card rounded-3xl p-8 flex flex-col group transition-all duration-300 overflow-hidden
                             ${plan.popular
                                 ? 'border-primary/40 ring-1 ring-primary/20 md:scale-105 z-10 bg-gradient-to-b from-primary/5 to-transparent'
                                 : 'border-white/5 hover:border-primary/20'}`}
                     >
-                        {/* Popular Badge */}
-                        {plan.popular && (
-                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-xs font-black px-5 py-1.5 rounded-full shadow-lg shadow-primary/30 uppercase tracking-wider whitespace-nowrap">
-                                ⭐ {t('landing.pricing.popular_badge')}
+                        {/* Dynamic Backgrounds */}
+                        {plan.id === 'enterprise' && (
+                            <div className="absolute inset-0 z-0">
+                                <img src="/bg-enterprise.png" className="w-full h-full object-cover opacity-60 mix-blend-overlay" alt="" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/90 to-transparent"></div>
                             </div>
                         )}
-                        {/* Icon + Name */}
-                        <div className="mb-6">
-                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${plan.popular ? 'bg-primary/20 text-primary' : 'bg-white/5 text-slate-400'}`}>
-                                <span className="material-symbols-outlined text-2xl">{plan.icon}</span>
-                            </div>
-                            <h4 className="text-2xl font-bold text-white">{plan.name}</h4>
-                            <p className="text-primary/80 text-xs font-bold tracking-widest uppercase mt-1">{plan.target}</p>
-                            <p className="text-slate-500 text-sm mt-2 leading-relaxed">{plan.description}</p>
-                        </div>
 
-                        {/* Price */}
-                        <div className="mb-8 pb-8 border-b border-white/5">
-                            <div className="flex items-baseline gap-1">
-                                {plan.price.yearly === null ? (
-                                    <>
-                                        <span className="text-lg text-slate-400 font-medium">{t('landing.pricing.from')}</span>
-                                        <span className="text-5xl font-black text-white tracking-tight ml-2">
-                                            {plan.price.monthly}€
+                        <div className="relative z-10 flex-1 flex flex-col">
+                            {/* Popular Badge */}
+                            {plan.popular && (
+                                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-xs font-black px-5 py-1.5 rounded-full shadow-lg shadow-primary/30 uppercase tracking-wider whitespace-nowrap">
+                                    ⭐ {t('landing.pricing.popular_badge')}
+                                </div>
+                            )}
+                            {/* Icon + Name */}
+                            <div className="mb-6">
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${plan.popular ? 'bg-primary/20 text-primary' : 'bg-white/5 text-slate-400'}`}>
+                                    <span className="material-symbols-outlined text-2xl">{plan.icon}</span>
+                                </div>
+                                <h4 className="text-2xl font-bold text-white">{plan.name}</h4>
+                                <p className="text-primary/80 text-xs font-bold tracking-widest uppercase mt-1">{plan.target}</p>
+                                <p className="text-slate-500 text-sm mt-2 leading-relaxed">{plan.description}</p>
+                            </div>
+
+                            {/* Price */}
+                            <div className="mb-8 pb-8 border-b border-white/5">
+                                <div className="flex items-baseline gap-1">
+                                    {plan.price.yearly === null ? (
+                                        <>
+                                            <span className="text-lg text-slate-400 font-medium">{t('landing.pricing.from')}</span>
+                                            <span className="text-5xl font-black text-white tracking-tight ml-2">
+                                                {plan.price.monthly}€
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="text-5xl font-black text-white tracking-tight">
+                                            {isYearly ? `${plan.price.yearly}€` : `${plan.price.monthly}€`}
                                         </span>
-                                    </>
-                                ) : (
-                                    <span className="text-5xl font-black text-white tracking-tight">
-                                        {isYearly ? `${plan.price.yearly}€` : `${plan.price.monthly}€`}
+                                    )}
+                                    <span className="text-slate-500 text-sm font-medium">
+                                        {isYearly && plan.price.yearly ? t('landing.pricing.yearly_suffix') : t('landing.pricing.price_suffix')}
                                     </span>
+                                </div>
+                                {isYearly && plan.price.yearly && (
+                                    <p className="text-emerald-400 text-xs mt-2 font-medium flex items-center gap-1">
+                                        <span className="material-symbols-outlined text-xs">savings</span>
+                                        {t('landing.pricing.savings_calc', { amount: plan.price.monthly * 12 - plan.price.yearly })}
+                                    </p>
                                 )}
-                                <span className="text-slate-500 text-sm font-medium">
-                                    {isYearly && plan.price.yearly ? t('landing.pricing.yearly_suffix') : t('landing.pricing.price_suffix')}
-                                </span>
+                                {plan.price.yearly === null && (
+                                    <p className="text-slate-500 text-xs mt-2">{t('landing.pricing.custom_quote')}</p>
+                                )}
                             </div>
-                            {isYearly && plan.price.yearly && (
-                                <p className="text-emerald-400 text-xs mt-2 font-medium flex items-center gap-1">
-                                    <span className="material-symbols-outlined text-xs">savings</span>
-                                    {t('landing.pricing.savings_calc', { amount: plan.price.monthly * 12 - plan.price.yearly })}
-                                </p>
-                            )}
-                            {plan.price.yearly === null && (
-                                <p className="text-slate-500 text-xs mt-2">{t('landing.pricing.custom_quote')}</p>
-                            )}
+
+                            {/* Features */}
+                            <ul className="space-y-3 flex-1 mb-8">
+                                {plan.features.map((feat, i) => (
+                                    <li key={i} className="flex items-start gap-3 text-sm">
+                                        <span className={`material-symbols-outlined text-base mt-0.5 ${plan.popular ? 'text-primary' : 'text-emerald-500'}`}>check_circle</span>
+                                        <span className="text-slate-300">{feat}</span>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <button
+                                onClick={onCreateOrg}
+                                className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer shadow-lg mt-auto
+                                    ${plan.popular
+                                        ? 'bg-primary text-slate-900 hover:brightness-110 shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.05]'
+                                        : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-primary/30'}`}
+                            >
+                                {plan.cta}
+                            </button>
                         </div>
-
-                        {/* Features */}
-                        <ul className="space-y-3 flex-1 mb-8">
-                            {plan.features.map((feat, i) => (
-                                <li key={i} className="flex items-start gap-3 text-sm">
-                                    <span className={`material-symbols-outlined text-base mt-0.5 ${plan.popular ? 'text-primary' : 'text-emerald-500'}`}>check_circle</span>
-                                    <span className="text-slate-300">{feat}</span>
-                                </li>
-                            ))}
-                        </ul>
-
-                        {/* CTA Button */}
-                        <button
-                            onClick={onCreateOrg}
-                            className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer shadow-lg
-                                ${plan.popular
-                                    ? 'bg-primary text-slate-900 hover:brightness-110 shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.05]'
-                                    : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-primary/30'}`}
-                        >
-                            {plan.cta}
-                        </button>
                     </motion.div>
                 ))}
             </div>

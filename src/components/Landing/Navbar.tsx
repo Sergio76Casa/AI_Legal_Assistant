@@ -34,7 +34,7 @@ export function Navbar({ onLogin, onCreateOrg }: NavbarProps) {
             </div>
 
             <div className="flex items-center gap-2 md:gap-4">
-                <div className="hidden xs:block">
+                <div className="hidden md:block">
                     <LanguageSelector />
                 </div>
 
@@ -93,7 +93,7 @@ export function Navbar({ onLogin, onCreateOrg }: NavbarProps) {
 
                         <div className="h-px bg-white/10 w-full" />
 
-                        <div className="xs:hidden">
+                        <div className="md:hidden">
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">{t('nav.language') || 'Idioma'}</p>
                             <LanguageSelector />
                         </div>

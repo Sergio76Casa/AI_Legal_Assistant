@@ -19,8 +19,8 @@ export function CTASection({ onCreateOrg, onBookDemo }: CTASectionProps) {
             >
                 {/* Background Image */}
                 <div className="absolute inset-0">
-                    <img src="/images/cta-signing.jpg" alt="" className="w-full h-full object-cover opacity-35" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background-dark/90 via-background-dark/50 to-background-dark/40"></div>
+                    <img src="/bg-cta.png" alt="" className="w-full h-full object-cover opacity-40 mix-blend-overlay" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-dark/95 via-background-dark/60 to-background-dark/40"></div>
                 </div>
 
                 {/* Glow Effects */}
