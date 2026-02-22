@@ -1,7 +1,7 @@
 import { useTranslation, Trans } from 'react-i18next';
 
 interface HeroProps {
-    onCreateOrg: () => void;
+    onCreateOrg: (planId?: string) => void;
     onBookDemo: () => void;
 }
 
@@ -29,7 +29,7 @@ export function Hero({ onCreateOrg, onBookDemo }: HeroProps) {
 
                     <div className="flex flex-col sm:flex-row flex-wrap justify-center lg:justify-start gap-4 mt-4 w-full sm:w-auto">
                         <button
-                            onClick={onCreateOrg}
+                            onClick={() => onCreateOrg('free')}
                             className="bg-primary text-background-dark px-8 py-4 rounded-lg text-base font-bold flex items-center justify-center gap-2 hover:scale-105 transition-transform"
                         >
                             {t('landing.hero.start_free')}

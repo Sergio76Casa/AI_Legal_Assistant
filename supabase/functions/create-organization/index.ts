@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { email, password, orgName, username, country_code, referral_code } = await req.json()
+    const { email, password, orgName, username, country_code, referral_code, plan } = await req.json()
 
     // Create Supabase client with Service Role Key (Admin privileges)
     const supabaseAdmin = createClient(
@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
       .insert({
         name: orgName,
         slug: slug,
-        plan: 'free',
+        plan: plan || 'free',
         status: 'active',
         referred_by: referredById // Link to affiliate
       })

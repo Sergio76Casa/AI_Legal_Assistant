@@ -11,9 +11,10 @@ const supabase = createClient(
 interface CreateOrgFormProps {
     onSuccess: () => void;
     onBack: () => void;
+    selectedPlan?: string;
 }
 
-export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack }) => {
+export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack, selectedPlan }) => {
     const { t } = useTranslation();
     const [step, setStep] = useState(1);
     const [orgName, setOrgName] = useState('');
@@ -40,7 +41,8 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack 
                     password,
                     orgName,
                     username,
-                    referral_code: referralCode
+                    referral_code: referralCode,
+                    plan: selectedPlan || 'free'
                 }
             });
 

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useTranslation, Trans } from 'react-i18next';
 
 interface CTASectionProps {
-    onCreateOrg: () => void;
+    onCreateOrg: (planId?: string) => void;
     onBookDemo?: () => void;
 }
 
@@ -40,7 +40,7 @@ export function CTASection({ onCreateOrg, onBookDemo }: CTASectionProps) {
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <button
-                            onClick={onCreateOrg}
+                            onClick={() => onCreateOrg('pro')}
                             className="w-full sm:w-auto bg-primary text-background-dark px-10 py-5 rounded-full text-lg font-bold hover:scale-105 transition-all shadow-2xl shadow-primary/20 hover:shadow-primary/40"
                         >
                             {t('landing.cta.btn')}

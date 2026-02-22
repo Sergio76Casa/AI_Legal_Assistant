@@ -40,6 +40,7 @@ function App() {
     );
     const [previousView, setPreviousView] = useState<typeof view | 'home'>('home');
     const [signDocumentId, setSignDocumentId] = useState<string | null>(null);
+    const [selectedPlan, setSelectedPlan] = useState<string>('free');
 
     // Track last non-legal view for "back" navigation
     useEffect(() => {
@@ -263,6 +264,7 @@ function App() {
                             />
                         ) : view === 'create-org' && !user ? (
                             <CreateOrgForm
+                                selectedPlan={selectedPlan}
                                 onSuccess={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
                                 onBack={() => {
                                     if (currentSlug) {
@@ -335,7 +337,11 @@ function App() {
                         ) : (
                             <LandingPage
                                 onLogin={() => { setView('login'); window.history.pushState({}, '', '/login'); }}
-                                onCreateOrg={() => { setView('create-org'); window.history.pushState({}, '', '/create-org'); }}
+                                onCreateOrg={(planId) => {
+                                    if (planId) setSelectedPlan(planId);
+                                    setView('create-org');
+                                    window.history.pushState({}, '', '/create-org');
+                                }}
                             />
                         )}
                         <ChatDrawer />

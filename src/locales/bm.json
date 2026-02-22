@@ -1,4 +1,84 @@
 {
+    "landing": {
+        "nav": {
+            "login": "I tɔgɔ bɛn",
+            "create_org": "Tɔn sigi"
+        },
+        "hero": {
+            "title": "I ka sigi Espanyi, <1>sariya koɲɛw</1> tɛ tɔɔrɔ ye",
+            "subtitle": "Sariya ni lakali labɛn",
+            "desc": "IA dɛmɛn fɔlɔ bɛɛ kora mɔgɔ kɔkanw ye. I ka jamana kɔnɔ sigi sɛbɛw ni sariya koɲɛw bɛɛ labɛn ni hakili duman ye.",
+            "start_free": "A daminɛ sisan",
+            "book_demo": "A lajɛli ɲini"
+        },
+        "features": {
+            "title": "Mun na LegalFlow?",
+            "subtitle": "A dilala tɔnw ni jaabi dɛmɛnbagaw ye.",
+            "security_title": "Iron Silo™ Lakali",
+            "security_desc": "I ka tɔn bɛ lakatali kɔnɔ.",
+            "ai_title": "STARK 2.0 Masini",
+            "ai_desc": "An ka IA bɛ sɛbɛw kɔnɔ koɲɛw faamu.",
+            "global_title": "Duniya bɛɛ kɔnɔ",
+            "global_desc": "Espanyi, Maroku ni LATAM baarakɛlaw ye."
+        },
+        "pricing": {
+            "title": "Poranw ni sɔngɔw",
+            "subtitle": "I ka baara bonya ni <1>IA sariya</1> ye",
+            "desc": "I ka tɔn poran ɲuman ɲini.",
+            "monthly": "Kalo",
+            "yearly": "San",
+            "two_months_free": "Kalo 2 fu",
+            "popular_badge": "Mɔgɔ bɛɛ b’a fɛ",
+            "from": "K’a daminɛ",
+            "price_suffix": "/kalo",
+            "yearly_suffix": "/san",
+            "cta_start": "A daminɛ sisan",
+            "cta_choose": "Business ɲini",
+            "cta_contact": "Baarakɛlaw sɔrɔ",
+            "plans": {
+                "free": {
+                    "name": "Starter",
+                    "target": "Mɔgɔ kelen kelen",
+                    "desc": "Mɔgɔ kelen kelen ni dɛmɛnbagaw ye.",
+                    "features": [
+                        "Kalo o kalo dossier 10",
+                        "Sɛbɛ scan (OCR)",
+                        "STARK 2.0 dɛmɛn",
+                        "Email dɛmɛn"
+                    ]
+                },
+                "pro": {
+                    "name": "Business",
+                    "target": "Tɔnw ni jaabiw",
+                    "desc": "Tɔnw ni jaabiw n’u bɛ teliya n’u dɛmɛn ɲini.",
+                    "features": [
+                        "Kalo o kalo dossier 50",
+                        "Iron Silo™ lakali",
+                        "Mɔgɔ 3 dɛmɛn",
+                        "Sɛbɛ firi ko",
+                        "Dɛmɛn 24/7"
+                    ]
+                },
+                "business": {
+                    "name": "Enterprise",
+                    "target": "Tɔnbaaw",
+                    "desc": "Tɔnbaaw n’u bɛ dossier caman mara.",
+                    "features": [
+                        "Dossier bɛɛ",
+                        "API sɔrɔli",
+                        "Multi-Tenant jagle",
+                        "Account manager",
+                        "SLA lakatali"
+                    ]
+                }
+            }
+        },
+        "cta": {
+            "title": "I ka baara kɛ ni <1>IA sariya</1> ye",
+            "desc": "Mɔgɔ caman bɛ dɛmɛn sɔrɔ LegalFlow fɛ.",
+            "btn": "Fu a daminɛ"
+        }
+    },
     "nav": {
         "login": "Don",
         "logout": "Bɔ",
@@ -122,17 +202,29 @@
         "free": {
             "name": "Fu",
             "description": "A ɲini k’a lajɛ",
-            "features": ["IA dɛmɛn 5 kalo o kalo", "PDF sɛbɛ 1", "Sɛbɛ ɲini fu"]
+            "features": [
+                "IA dɛmɛn 5 kalo o kalo",
+                "PDF sɛbɛ 1",
+                "Sɛbɛ ɲini fu"
+            ]
         },
         "pro": {
             "name": "Poro",
             "description": "Mɔgɔ kelen kelen ni denbayaw ye",
-            "features": ["IA dɛmɛn 100 kalo o kalo", "PDF sɛbɛ 20", "Sɛbɛ lakaari teliya"]
+            "features": [
+                "IA dɛmɛn 100 kalo o kalo",
+                "PDF sɛbɛ 20",
+                "Sɛbɛ lakaari teliya"
+            ]
         },
         "business": {
             "name": "Baarakɛla",
             "description": "Baarakɛlaw ni tɔnba tɔgɔw ye",
-            "features": ["IA dɛmɛn bɛɛ", "Sɛbɛ bɛɛ", "API sɔrɔli"]
+            "features": [
+                "IA dɛmɛn bɛɛ",
+                "Sɛbɛ bɛɛ",
+                "API sɔrɔli"
+            ]
         }
     },
     "procedures": {

@@ -622,21 +622,21 @@
     },
     "landing": {
         "nav": {
-            "login": "Iniciar Sessão",
+            "login": "Entrar",
             "create_org": "Criar Organização"
         },
         "hero": {
             "new_tag": "Novo: Arquitetura Multi-Tenant Certificada",
             "title": "A sua nova vida em Espanha, <1>sem complicações</1> legais",
             "subtitle": "Gestão Legal & Cultural",
-            "active_ai_tag": "A processar Visto em Tempo Real • IA Ativa",
-            "desc": "O primeiro parceiro legal impulsionado por IA desenhado especificamente para expatriados. Assegure o seu visto e residência com confiança absoluta.",
+            "active_ai_tag": "Processando Visto em Tempo Real • IA Ativa",
+            "desc": "O primeiro parceiro legal impulsionado por IA desenhado especificamente para expatriados. Garanta o seu visto, residência e processos com confiança e clareza absoluta.",
             "start_free": "Começar agora",
             "book_demo": "Ver demonstração"
         },
         "features": {
-            "title": "Porquê a LegalFlow?",
-            "subtitle": "Desenhado para departamentos de RH e agências de serviços administrativos.",
+            "title": "Porquê LegalFlow?",
+            "subtitle": "Desenhado para departamentos de RH e Gestorias.",
             "tech_details": "Detalhes técnicos",
             "response_time": "Tempo de Resposta",
             "speed_advantage": "50% mais rápido que a gestão tradicional",
@@ -645,7 +645,7 @@
             "security_title": "Segurança Iron Silo™",
             "security_desc": "Dados isolados criptograficamente. A sua organização é uma fortaleza impenetrável.",
             "ai_title": "Motor STARK 2.0",
-            "ai_desc": "A nossa IA não apenas lê leis, *entende* os seus contratos internos. Carregue PDFs e guias.",
+            "ai_desc": "A nossa IA não só lê leis, *entende* os seus contratos internos. Carregue PDFs, imagens ou guias de colaborador.",
             "global_title": "Cobertura Global",
             "global_desc": "Adaptado para colaboradores em Espanha, Marrocos e LATAM.",
             "security_expanded": "Utilizamos encriptação AES-256 de grau militar. A arquitetura Iron Silo™ garante o isolamento total de dados por escritório.",

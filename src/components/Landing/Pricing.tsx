@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation, Trans } from 'react-i18next';
 
 interface PricingProps {
-    onCreateOrg: () => void;
+    onCreateOrg: (planId?: string) => void;
     onBookDemo?: () => void;
 }
 
@@ -21,13 +21,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
             icon: 'person',
             popular: false,
             cta: t('landing.pricing.cta_start'),
-            features: [
-                t('landing.pricing.plans.starter.features.0'),
-                t('landing.pricing.plans.starter.features.1'),
-                t('landing.pricing.plans.starter.features.2'),
-                t('landing.pricing.plans.starter.features.3'),
-                t('landing.pricing.plans.starter.features.4')
-            ]
+            features: t('landing.pricing.plans.free.features', { returnObjects: true }) as string[] || []
         },
         {
             id: 'pro',
@@ -38,14 +32,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
             icon: 'groups',
             popular: true,
             cta: t('landing.pricing.cta_choose'),
-            features: [
-                t('landing.pricing.plans.business.features.0'),
-                t('landing.pricing.plans.business.features.1'),
-                t('landing.pricing.plans.business.features.2'),
-                t('landing.pricing.plans.business.features.3'),
-                t('landing.pricing.plans.business.features.4'),
-                t('landing.pricing.plans.business.features.5')
-            ]
+            features: t('landing.pricing.plans.pro.features', { returnObjects: true }) as string[] || []
         },
         {
             id: 'business',
@@ -56,14 +43,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
             icon: 'domain',
             popular: false,
             cta: t('landing.pricing.cta_contact'),
-            features: [
-                t('landing.pricing.plans.enterprise.features.0'),
-                t('landing.pricing.plans.enterprise.features.1'),
-                t('landing.pricing.plans.enterprise.features.2'),
-                t('landing.pricing.plans.enterprise.features.3'),
-                t('landing.pricing.plans.enterprise.features.4'),
-                t('landing.pricing.plans.enterprise.features.5')
-            ]
+            features: t('landing.pricing.plans.business.features', { returnObjects: true }) as string[] || []
         }
     ];
 
@@ -187,7 +167,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
                             </ul>
 
                             <button
-                                onClick={onCreateOrg}
+                                onClick={() => onCreateOrg(plan.id)}
                                 className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer shadow-lg mt-auto
                                     ${plan.popular
                                         ? 'bg-primary text-slate-900 hover:brightness-110 shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.05]'

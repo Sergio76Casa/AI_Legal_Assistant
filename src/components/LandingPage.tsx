@@ -13,7 +13,7 @@ import { Footer } from './Landing/Footer';
 
 interface LandingPageProps {
     onLogin: () => void;
-    onCreateOrg: () => void;
+    onCreateOrg: (planId?: string) => void;
 }
 
 export function LandingPage({ onLogin, onCreateOrg }: LandingPageProps) {

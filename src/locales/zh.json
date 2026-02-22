@@ -496,7 +496,7 @@
             "footer_volume": "需要处理超过 50 个案件？",
             "footer_contact": "咨询我们的商务团队 →",
             "plans": {
-                "starter": {
+                "free": {
                     "name": "Starter",
                     "target": "独立专业人士",
                     "desc": "适合每月处理少量案件的经理、顾问和流动专家。",
@@ -508,7 +508,7 @@
                         "邮件支持"
                     ]
                 },
-                "business": {
+                "pro": {
                     "name": "Business",
                     "target": "事务所与机构",
                     "desc": "专为需要速度和协作的事务所、搬迁机构和咨询公司设计。",
@@ -521,7 +521,7 @@
                         "24/7 优先支持"
                     ]
                 },
-                "enterprise": {
+                "business": {
                     "name": "Enterprise",
                     "target": "大型律所与企业",
                     "desc": "适用于高业务量、人力资源部门及有定制需求的组织。",

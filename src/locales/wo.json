@@ -69,7 +69,7 @@
             "footer_volume": "Ndax danga soxla lu ëpp 50 mbir?",
             "footer_contact": "Waxal ak suñu commercial yi →",
             "plans": {
-                "starter": {
+                "free": {
                     "name": "Starter",
                     "target": "Liggéeykat yi seen bopp",
                     "desc": "Bax na ngir ñi nekk seen bopp wala ñiy jàpale mɔgɔ yi ci mbir yu néew weer wu ne.",
@@ -81,7 +81,7 @@
                         "Ndimbal ci email"
                     ]
                 },
-                "business": {
+                "pro": {
                     "name": "Business",
                     "target": "Këru Liggéey ak Ajans yi",
                     "desc": "Ngir këru liggéey ak ajans yi soxla gaawaay ak liggéeyandoo.",
@@ -94,7 +94,7 @@
                         "Ndimbal saa su ne 24/7"
                     ]
                 },
-                "enterprise": {
+                "business": {
                     "name": "Enterprise",
                     "target": "Këru Liggéey yu mag",
                     "desc": "Ngir mbooloo yi am liggéey bu rëy, këru HR ak soxla yu jagle.",
