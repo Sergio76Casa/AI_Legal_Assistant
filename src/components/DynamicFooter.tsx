@@ -96,24 +96,48 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
 
                         <div className="flex flex-wrap items-center justify-center gap-4 pt-4 w-full">
                             {config.partner_logo_url && (
-                                <a href={config.partner_url || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
-                                    <img src={config.partner_logo_url} className="h-8 object-contain" alt="Partner" />
-                                </a>
+                                config.partner_url ? (
+                                    <a href={config.partner_url} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.partner_logo_url} className="h-8 object-contain" alt="Partner" />
+                                    </a>
+                                ) : (
+                                    <div className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.partner_logo_url} className="h-8 object-contain" alt="Partner" />
+                                    </div>
+                                )
                             )}
                             {config.iso_logo_url && (
-                                <div className="opacity-40 hover:opacity-100 transition-opacity">
-                                    <img src={config.iso_logo_url} className="h-12 object-contain" alt="ISO" />
-                                </div>
+                                config.iso_url ? (
+                                    <a href={config.iso_url} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.iso_logo_url} className="h-12 object-contain" alt="ISO" />
+                                    </a>
+                                ) : (
+                                    <div className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.iso_logo_url} className="h-12 object-contain" alt="ISO" />
+                                    </div>
+                                )
                             )}
                             {config.extra_logo_url && (
-                                <a href={config.extra_url || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
-                                    <img src={config.extra_logo_url} className="h-8 object-contain" alt="Logo Adicional" />
-                                </a>
+                                config.extra_url ? (
+                                    <a href={config.extra_url} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.extra_logo_url} className="h-8 object-contain" alt="Logo Adicional" />
+                                    </a>
+                                ) : (
+                                    <div className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.extra_logo_url} className="h-8 object-contain" alt="Logo Adicional" />
+                                    </div>
+                                )
                             )}
                             {config.extra_logo_url_2 && (
-                                <a href={config.extra_url_2 || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
-                                    <img src={config.extra_logo_url_2} className="h-8 object-contain" alt="Logo Adicional 2" />
-                                </a>
+                                config.extra_url_2 ? (
+                                    <a href={config.extra_url_2} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.extra_logo_url_2} className="h-8 object-contain" alt="Logo Adicional 2" />
+                                    </a>
+                                ) : (
+                                    <div className="opacity-40 hover:opacity-100 transition-opacity">
+                                        <img src={config.extra_logo_url_2} className="h-8 object-contain" alt="Logo Adicional 2" />
+                                    </div>
+                                )
                             )}
                         </div>
 

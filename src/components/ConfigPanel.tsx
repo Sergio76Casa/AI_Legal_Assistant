@@ -59,6 +59,7 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
         partner_logo_url: '',
         partner_url: '',
         iso_logo_url: '',
+        iso_url: '',
         extra_logo_url: '',
         extra_url: '',
         extra_logo_url_2: '',
@@ -96,6 +97,7 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                 partner_logo_url: config.partner_logo_url || '',
                 partner_url: config.partner_url || '',
                 iso_logo_url: config.iso_logo_url || '',
+                iso_url: config.iso_url || '',
                 extra_logo_url: config.extra_logo_url || '',
                 extra_url: config.extra_url || '',
                 extra_logo_url_2: config.extra_logo_url_2 || '',
@@ -637,6 +639,13 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                                                     }} />
                                                 </label>
                                             </div>
+                                            <input
+                                                type="text"
+                                                placeholder="URL del Sello Calidad (Opcional)"
+                                                value={identity.iso_url}
+                                                onChange={e => setIdentity({ ...identity, iso_url: e.target.value })}
+                                                className="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-[9px] text-slate-500 focus:ring-1 focus:ring-primary/30 outline-none"
+                                            />
                                         </div>
 
                                         {/* Extra Logo */}
@@ -696,17 +705,19 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </motion.div>
+            </motion.div >
 
             {/* BLOQUE 2: PERSONALIZACIÓN DEL FOOTER */}
-            <motion.div
+            < motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className={cn(
-                    "bg-white/[0.02] border rounded-3xl backdrop-blur-xl relative overflow-hidden transition-all duration-300",
-                    expandedBlocks.footer ? "border-primary/30 shadow-[0_0_40px_-15px_rgba(var(--primary),0.1)]" : "border-white/5 hover:border-white/10 hover:bg-white/[0.04]"
-                )}
+                className={
+                    cn(
+                        "bg-white/[0.02] border rounded-3xl backdrop-blur-xl relative overflow-hidden transition-all duration-300",
+                        expandedBlocks.footer ? "border-primary/30 shadow-[0_0_40px_-15px_rgba(var(--primary),0.1)]" : "border-white/5 hover:border-white/10 hover:bg-white/[0.04]"
+                    )
+                }
             >
                 <div
                     className="p-6 md:p-8 cursor-pointer flex items-center justify-between group relative z-10"
@@ -864,17 +875,19 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </motion.div>
+            </motion.div >
 
             {/* BLOQUE 3: DATOS DE CONTACTO */}
-            <motion.div
+            < motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
-                className={cn(
-                    "bg-white/[0.02] border rounded-3xl backdrop-blur-xl relative overflow-hidden transition-all duration-300",
-                    expandedBlocks.contact ? "border-primary/30 shadow-[0_0_40px_-15px_rgba(var(--primary),0.1)]" : "border-white/5 hover:border-white/10 hover:bg-white/[0.04]"
-                )}
+                className={
+                    cn(
+                        "bg-white/[0.02] border rounded-3xl backdrop-blur-xl relative overflow-hidden transition-all duration-300",
+                        expandedBlocks.contact ? "border-primary/30 shadow-[0_0_40px_-15px_rgba(var(--primary),0.1)]" : "border-white/5 hover:border-white/10 hover:bg-white/[0.04]"
+                    )
+                }
             >
                 <div
                     className="p-6 md:p-8 cursor-pointer flex items-center justify-between group relative z-10"
@@ -1057,7 +1070,7 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </motion.div>
+            </motion.div >
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1207,7 +1220,7 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                     )}
                 </AnimatePresence>
             </motion.div>
-        </div>
+        </div >
     );
 };
 
