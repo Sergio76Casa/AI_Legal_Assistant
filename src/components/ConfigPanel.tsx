@@ -61,7 +61,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
         iso_logo_url: '',
         extra_logo_url: '',
         extra_url: '',
-        show_logo: true
+        extra_logo_url_2: '',
+        extra_url_2: '',
+        show_logo: true,
+        show_navbar_logo: true
     });
 
     const [contact, setContact] = useState({
@@ -93,7 +96,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                 iso_logo_url: config.iso_logo_url || '',
                 extra_logo_url: config.extra_logo_url || '',
                 extra_url: config.extra_url || '',
-                show_logo: config.show_logo !== false
+                extra_logo_url_2: config.extra_logo_url_2 || '',
+                extra_url_2: config.extra_url_2 || '',
+                show_logo: config.show_logo !== false,
+                show_navbar_logo: config.show_navbar_logo !== false
             });
 
             setContact({
@@ -520,7 +526,27 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                                                 <motion.div
                                                     layout
                                                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                                    className="w-5 h-5 rounded-full bg-white shadow-md z-10"
+                                                    className={cn("w-5 h-5 rounded-full bg-white shadow-md z-10", identity.show_logo ? "ml-auto" : "ml-0")}
+                                                />
+                                            </button>
+                                        </div>
+
+                                        <div className="flex items-center justify-between gap-4 p-5 bg-slate-900/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
+                                            <div>
+                                                <p className="text-sm font-bold text-white">Mostrar Logo en el Navbar</p>
+                                                <p className="text-xs text-slate-500 mt-1">Si se desactiva, renderiza el nombre en texto plano en la cabecera.</p>
+                                            </div>
+                                            <button
+                                                onClick={() => setIdentity({ ...identity, show_navbar_logo: !identity.show_navbar_logo })}
+                                                className={cn(
+                                                    "w-14 h-7 rounded-full transition-colors relative flex items-center px-1 shrink-0",
+                                                    identity.show_navbar_logo ? "bg-primary" : "bg-slate-700"
+                                                )}
+                                            >
+                                                <motion.div
+                                                    layout
+                                                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                                    className={cn("w-5 h-5 rounded-full bg-white shadow-md z-10", identity.show_navbar_logo ? "ml-auto" : "ml-0")}
                                                 />
                                             </button>
                                         </div>
@@ -616,6 +642,32 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                                                 placeholder="Enlace adicional..."
                                                 value={identity.extra_url}
                                                 onChange={e => setIdentity({ ...identity, extra_url: e.target.value })}
+                                                className="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-[9px] text-slate-500 focus:ring-1 focus:ring-primary/30 outline-none"
+                                            />
+                                        </div>
+
+                                        {/* Extra Logo 2 */}
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Logo Adicional 2</label>
+                                            <div className="relative aspect-video rounded-2xl bg-slate-900 border border-white/5 flex items-center justify-center overflow-hidden group/img">
+                                                {identity.extra_logo_url_2 ? (
+                                                    <img src={identity.extra_logo_url_2} className="w-full h-full object-contain p-4" />
+                                                ) : (
+                                                    <ImageIcon className="text-slate-800" size={32} />
+                                                )}
+                                                <label className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                                    {uploadingField === 'extra_logo_url_2' ? <Loader2 size={24} className="animate-spin text-primary" /> : <Upload size={24} className="text-white" />}
+                                                    <input type="file" className="hidden" accept="image/*" onChange={e => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) handleFileUpload('extra_logo_url_2', file);
+                                                    }} />
+                                                </label>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                placeholder="Enlace adicional 2..."
+                                                value={identity.extra_url_2}
+                                                onChange={e => setIdentity({ ...identity, extra_url_2: e.target.value })}
                                                 className="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-[9px] text-slate-500 focus:ring-1 focus:ring-primary/30 outline-none"
                                             />
                                         </div>

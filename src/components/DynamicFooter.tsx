@@ -101,14 +101,19 @@ export const DynamicFooter: React.FC<DynamicFooterProps> = ({ tenant: propTenant
                                 </a>
                             )}
                             {config.iso_logo_url && (
-                                <a href={config.extra_url || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                <div className="opacity-40 hover:opacity-100 transition-opacity">
                                     <img src={config.iso_logo_url} className="h-12 object-contain" alt="ISO" />
-                                </a>
+                                </div>
                             )}
                             {config.extra_logo_url && (
-                                <div className="opacity-40 hover:opacity-100 transition-opacity">
-                                    <img src={config.extra_logo_url} className="h-8 object-contain" alt="Logo Extra" />
-                                </div>
+                                <a href={config.extra_url || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                    <img src={config.extra_logo_url} className="h-8 object-contain" alt="Logo Adicional" />
+                                </a>
+                            )}
+                            {config.extra_logo_url_2 && (
+                                <a href={config.extra_url_2 || '#'} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity">
+                                    <img src={config.extra_logo_url_2} className="h-8 object-contain" alt="Logo Adicional 2" />
+                                </a>
                             )}
                         </div>
 

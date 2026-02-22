@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LanguageSelector } from '../LanguageSelector';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTenant } from '../../lib/TenantContext';
 
 interface NavbarProps {
     onLogin: () => void;
@@ -10,6 +11,7 @@ interface NavbarProps {
 
 export function Navbar({ onLogin, onCreateOrg }: NavbarProps) {
     const { t } = useTranslation();
+    const { tenant } = useTenant();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -17,10 +19,22 @@ export function Navbar({ onLogin, onCreateOrg }: NavbarProps) {
     return (
         <nav className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-50 glass-nav rounded-2xl md:rounded-full px-4 md:px-6 py-2 md:py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-                <div className="text-primary flex items-center">
-                    <span className="material-symbols-outlined text-2xl md:text-3xl font-bold">gavel</span>
-                </div>
-                <span className="text-lg md:text-xl font-bold tracking-tight text-white">LegalFlow</span>
+                {tenant?.config?.show_navbar_logo !== false && tenant?.config?.logo_url ? (
+                    <img
+                        src={tenant.config.logo_url}
+                        alt={tenant.name}
+                        className="h-10 w-auto group-hover:scale-105 transition-transform object-contain min-w-[40px]"
+                    />
+                ) : (
+                    <>
+                        <div className="text-primary flex items-center">
+                            <span className="material-symbols-outlined text-2xl md:text-3xl font-bold">gavel</span>
+                        </div>
+                        <span className="text-lg md:text-xl font-bold tracking-tight text-white">
+                            {tenant?.name || 'LegalFlow'}
+                        </span>
+                    </>
+                )}
             </div>
 
             {/* Desktop Links */}

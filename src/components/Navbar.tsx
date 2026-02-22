@@ -30,7 +30,7 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                     onClick={() => onNavigate?.(user ? 'dashboard' : (tenant ? 'tenant-public' : 'home'))}
                 >
                     <div className="relative">
-                        {tenant?.config?.show_logo && tenant?.config?.logo_url ? (
+                        {tenant?.config?.show_navbar_logo !== false && tenant?.config?.logo_url ? (
                             <img
                                 src={tenant.config.logo_url}
                                 alt={tenant.name}
