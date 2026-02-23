@@ -36,14 +36,12 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                                 alt={tenant.name}
                                 className="h-10 w-auto group-hover:scale-105 transition-transform object-contain min-w-[40px]"
                             />
-                        ) : tenant ? (
-                            <div className="bg-primary/10 p-2 rounded-xl border border-primary/20 group-hover:bg-primary/20 transition-all">
-                                <Building2 size={24} className="text-primary" />
-                            </div>
                         ) : (
-                            <div className="text-primary flex items-center group-hover:scale-105 transition-transform">
-                                <span className="material-symbols-outlined text-3xl font-bold">gavel</span>
-                            </div>
+                            <img
+                                src="/logo.png"
+                                alt="Logo"
+                                className="h-9 w-auto object-contain group-hover:scale-105 transition-transform"
+                            />
                         )}
                         {tenant && (
                             <div className="absolute -bottom-1 -right-1 bg-slate-800 rounded-full p-0.5 border border-white/10 shadow-sm">
@@ -53,14 +51,9 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                     </div>
                     <div className="flex flex-col">
                         {!tenant && (
-                            <>
-                                <span className="font-serif text-lg font-bold tracking-tight text-white leading-none">
-                                    LegalFlow
-                                </span>
-                                <span className="text-[10px] text-slate-500 font-medium leading-none mt-1">
-                                    {t('nav.brand_assistant')}
-                                </span>
-                            </>
+                            <span className="text-[10px] text-slate-500 font-medium leading-none mt-1">
+                                {t('nav.brand_assistant')}
+                            </span>
                         )}
                     </div>
                 </div>

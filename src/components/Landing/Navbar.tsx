@@ -26,14 +26,13 @@ export function Navbar({ onLogin, onCreateOrg }: NavbarProps) {
                         className="h-10 w-auto group-hover:scale-105 transition-transform object-contain min-w-[40px]"
                     />
                 ) : (
-                    <>
-                        <div className="text-primary flex items-center">
-                            <span className="material-symbols-outlined text-2xl md:text-3xl font-bold">gavel</span>
-                        </div>
-                        <span className="text-lg md:text-xl font-bold tracking-tight text-white">
-                            {tenant?.name || 'LegalFlow'}
-                        </span>
-                    </>
+                    <div className="flex items-center gap-2">
+                        <img
+                            src="/logo.png"
+                            alt="Logo"
+                            className="h-9 w-auto object-contain"
+                        />
+                    </div>
                 )}
             </div>
 
@@ -43,7 +42,7 @@ export function Navbar({ onLogin, onCreateOrg }: NavbarProps) {
                     {t('landing.features.title')}
                 </a>
                 <a className="text-sm font-medium text-slate-300 hover:text-primary transition-colors" href="#pricing">
-                    {t('pricing.title')}
+                    {t('landing.pricing.title')}
                 </a>
             </div>
 
@@ -102,7 +101,7 @@ export function Navbar({ onLogin, onCreateOrg }: NavbarProps) {
                             onClick={() => setIsMenuOpen(false)}
                         >
                             <span className="material-symbols-outlined text-primary">payments</span>
-                            {t('pricing.title')}
+                            {t('landing.pricing.title')}
                         </a>
 
                         <div className="h-px bg-white/10 w-full" />

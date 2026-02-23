@@ -104,10 +104,24 @@ Deno.serve(async (req) => {
                         .single()
 
                     if (referral) {
-                        // 1. Lógica de Comisión Fija por Plan Business
-                        // Si el tier es 'business' o el monto corresponde al plan (aprox 149€), comisión fija 29.80€
-                        const isBusiness = sub.tier === 'business' || amountPaid > 100
-                        const commissionAmount = isBusiness ? 29.80 : (amountPaid * 0.20)
+                        // 1. Obtener Configuración Dinámica (con Fallback de Seguridad)
+                        let commissionRate = 20; // Default fallback 20%
+                        try {
+                            const { data: settingsData } = await supabaseAdmin
+                                .from('app_settings')
+                                .select('settings')
+                                .eq('id', 'global')
+                                .maybeSingle();
+
+                            if (settingsData?.settings?.affiliate_commission_rate) {
+                                commissionRate = settingsData.settings.affiliate_commission_rate;
+                            }
+                        } catch (err: any) {
+                            console.error('⚠️ Error fetching app_settings:', err.message);
+                        }
+
+                        // Calcular comisión dinámica basada en el % de la DB
+                        const commissionAmount = amountPaid * (commissionRate / 100);
 
                         const { error: commError } = await supabaseAdmin.from('affiliate_commissions').insert({
                             referral_id: referral.id,

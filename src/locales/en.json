@@ -40,9 +40,9 @@
             "query_contact": "For any questions regarding this document, contact {{email}}"
         },
         "legal": {
-            "privacy_intro": "At LegalFlow we take your data protection very seriously. This policy explains how we collect, use, and protect your personal information.",
-            "cookies_intro": "This policy explains how we use cookies and similar technologies on legalflow.digital.",
-            "legal_intro": "This notice regulates the general conditions of use of the portal legalflow.digital.",
+            "privacy_intro": "We take your data protection very seriously. This policy explains how we collect, use, and protect your personal information.",
+            "cookies_intro": "This policy explains how we use cookies and similar technologies on our platform.",
+            "legal_intro": "This notice regulates the general conditions of use of the portal.",
             "privacy_content": [
                 {
                     "title": "1. Data Controller",
@@ -212,7 +212,7 @@
         }
     },
     "hero": {
-        "title": "Your LegalFlow Consultant in Spain",
+        "title": "Your Immigration Consultant in Spain",
         "subtitle": "Specialized guide for expats and immigrants. AI trained in Spanish immigration laws and regulations.",
         "search_placeholder": "Type your query here (e.g., NIE requirements)...",
         "social_proof": "Trusted by +1,200 families",
@@ -297,7 +297,7 @@
     },
     "legal": {
         "privacy_title": "Privacy Policy",
-        "privacy_content": "At LegalFlow, we protect your personal data. When you upload your documents, they are processed using encryption and only used to provide AI assistance during your active session. We do not sell or share your data with third parties. We comply with Spanish GDPR regulations.",
+        "privacy_content": "We protect your personal data. When you upload your documents, they are processed using encryption and only used to provide AI assistance during your active session. We do not sell or share your data with third parties. We comply with Spanish GDPR regulations.",
         "cookies_title": "Cookie Policy",
         "cookies_content": "We use essential cookies to keep your session active and remember your preferred language. We do not use third-party advertising tracking cookies.",
         "footer_privacy": "Privacy",
@@ -314,128 +314,68 @@
         "status_verified": "Online • Verified Expert",
         "disclaimer": "AI can make mistakes. Verify important legal information."
     },
-    "pricing": {
-        "title": "Choose the perfect plan for you",
-        "subtitle": "Smart legal advice tailored to your needs",
-        "monthly": "Monthly",
-        "yearly": "Yearly",
-        "save_percent": "Save 17%",
-        "per_month": "month",
-        "per_year": "year",
-        "save_yearly": "Save €{{amount}} per year",
-        "current_plan": "Your Current Plan",
-        "most_popular": "⭐ Most Popular",
-        "faq_question": "Have questions?",
-        "faq_contact": "Contact us",
-        "free": {
-            "name": "Free",
-            "description": "Perfect for trying the service",
-            "cta": "Switch to Free",
-            "cta_current": "Current Plan",
-            "features": [
-                "5 AI chat queries per month",
-                "1 PDF document (max 5 MB)",
-                "Basic document search",
-                "Access to public guides"
-            ],
-            "features_excluded": [
-                "Priority support",
-                "Advanced document analysis",
-                "Query export"
-            ]
-        },
-        "pro": {
-            "name": "Pro",
-            "description": "For individuals and families",
-            "cta": "Upgrade to Pro",
-            "cta_current": "Current Plan",
-            "features": [
-                "100 AI chat queries per month",
-                "20 PDF documents (max 20 MB each)",
-                "Advanced search with filters",
-                "Automatic document analysis",
-                "Export queries to PDF/Word",
-                "Email support (48h)",
-                "Unlimited history",
-                "Legal change notifications"
-            ]
-        },
-        "business": {
-            "name": "Business",
-            "description": "For professionals and businesses",
-            "cta": "Upgrade to Business",
-            "cta_current": "Current Plan",
-            "features": [
-                "Unlimited queries",
-                "Unlimited documents (max 50 MB each)",
-                "API access for integrations",
-                "Bulk document analysis",
-                "Custom legal templates",
-                "Priority support (24h)",
-                "Multiple users (up to 5)",
-                "Analytics dashboard",
-                "Lawyer consultations (2h/month)"
-            ]
-        }
-    },
     "upgrade": {
         "chat_query": {
             "title": "You've reached your query limit!",
-            "description": "You've used all your AI chat queries this month.",
-            "free": "5 monthly queries",
-            "pro": "100 monthly queries",
+            "description": "You've used all your STARK 2.0 Engine queries this month.",
+            "free": "50 monthly queries",
+            "pro": "500 monthly queries",
             "business": "Unlimited queries"
         },
         "upload_document": {
-            "title": "You've reached your document limit!",
-            "description": "You've uploaded the maximum documents allowed on your plan.",
-            "free": "1 document",
-            "pro": "20 documents",
-            "business": "Unlimited documents"
+            "title": "You've reached your case limit!",
+            "description": "You've uploaded the maximum number of files allowed on your plan.",
+            "free": "10 files",
+            "pro": "50 files",
+            "business": "Unlimited files"
         },
+        "at_limit_queries_title": "STARK Query Limit Reached!",
+        "at_limit_queries_desc": "You have exhausted your monthly intelligent analysis quota.",
+        "at_limit_docs_title": "Case Limit Reached!",
+        "at_limit_docs_desc": "Your Starter plan is at maximum document capacity.",
+        "monthly_queries": "queries/month",
+        "docs_limit": "files",
+        "unlimited_queries": "Unlimited queries",
+        "unlimited_docs": "Unlimited files",
+        "feature_stark": "Advanced STARK 2.0 Engine analysis",
+        "feature_export": "Export to PDF/Word",
+        "feature_support_priority": "24h Priority support",
+        "feature_history": "Unlimited history",
+        "feature_api": "B2B API access",
+        "feature_multiuser": "Multi-user accounts (up to 3)",
+        "feature_support_24h": "24/7 Priority support",
+        "feature_legal_hours": "2h/month legal consulting",
+        "action_upgrade": "Upgrade to",
         "upgrade_cta": "Upgrade your plan to continue enjoying our services without interruptions.",
         "recommended": "Recommended",
-        "plan_pro": "Pro Plan",
-        "plan_business": "Business Plan",
-        "advanced_analysis": "Advanced document analysis",
-        "export_pdf": "Export to PDF/Word",
-        "priority_support_48": "Priority support (48h)",
-        "unlimited_history": "Unlimited history",
-        "upgrade_to_pro": "Upgrade to Pro",
-        "upgrade_to_business": "Upgrade to Business",
-        "api_access": "API access",
-        "multiple_users": "Multiple users (up to 5)",
-        "priority_support_24": "Priority support (24h)",
-        "lawyer_consult": "Lawyer consultations (2h/month)",
-        "payment_footer": "💳 Secure payment with Stripe • ✅ Cancel anytime • 🔒 Protected data"
+        "payment_footer": "💳 Secure payment with Stripe • ✅ Cancel anytime • 🔒 Iron Silo™ Security"
     },
     "usage": {
-        "title": "Your Current Usage",
-        "period_until": "Current period until",
-        "plan": "Plan",
-        "at_limit": "You've reached your limit!",
-        "near_limit": "Near the limit!",
-        "at_limit_desc": "Upgrade to Pro to continue using the service without limits.",
-        "near_limit_desc": "Consider upgrading to Pro for more queries and documents.",
-        "view_plans": "View Plans",
-        "chat_queries": "AI Chat Queries",
+        "title": "Organization Usage",
+        "period_until": "Next renewal:",
+        "plan": "Contracted Plan",
+        "at_limit": "Limit reached!",
+        "near_limit": "Near the limit",
+        "at_limit_desc": "Upgrade to Business to expand your management capacity.",
+        "near_limit_desc": "Consider upgrading to Business for more files and features.",
+        "view_plans": "View Professional Plans",
+        "chat_queries": "STARK 2.0 Engine Queries",
         "queries": "queries",
         "unlimited": "Unlimited",
         "of": "of",
-        "documents_uploaded": "Documents Uploaded",
-        "documents_word": "documents",
-        "unlock_pro": "Unlock the full potential with Pro",
+        "documents_uploaded": "Managed Files",
+        "documents_word": "files",
+        "unlock_pro": "Boost your firm with the Business Plan",
         "unlock_features": [
-            "100 queries per month (vs 5 current)",
-            "20 documents (vs 1 current)",
-            "Advanced document analysis",
-            "Export to PDF/Word",
-            "Priority support"
+            "50 files/month (vs 10 currently)",
+            "Advanced Iron Silo™ security",
+            "Automatic translation",
+            "24/7 Priority support"
         ],
-        "upgrade_pro_price": "Upgrade to Pro for €9.99/month",
-        "tier_free": "Free",
-        "tier_pro": "Pro",
-        "tier_business": "Business"
+        "upgrade_pro_price": "Upgrade to Business",
+        "tier_free": "Starter",
+        "tier_pro": "Business",
+        "tier_business": "Enterprise"
     },
     "subscription_badge": {
         "current_plan": "Current Plan",
@@ -618,7 +558,7 @@
         "premium_feat3": "Advanced AI analysis of your files",
         "premium_feat4": "Priority Support 24/7",
         "start_premium": "Start with Premium",
-        "powered_by": "Powered by LegalFlow."
+        "powered_by": "Technology powered by our AI team."
     },
     "landing": {
         "nav": {
@@ -633,10 +573,10 @@
             "desc": "The first AI-driven legal partner designed specifically for expats. Secure your visa, residency and procedures with absolute confidence and clarity.",
             "start_free": "Start now",
             "book_demo": "Watch demo",
-            "social_proof": "+2,000 professionals trust LegalFlow."
+            "social_proof": "+2,000 professionals trust our technology."
         },
         "features": {
-            "title": "Why LegalFlow?",
+            "title": "Why choose us?",
             "subtitle": "Designed for HR Departments and Consultancies.",
             "tech_details": "Technical Details",
             "response_time": "Response Time",
@@ -667,7 +607,7 @@
             "marketing_desc": "Banners, demos and content to share",
             "join_btn": "Join the program",
             "golden_close": "Golden Close",
-            "use_free_title": "Use LegalFlow <1>for free</1>",
+            "use_free_title": "Use our platform <1>for free</1>",
             "use_free_desc": "If you bring <1>3 professionals</1> who subscribe, your <2>Business plan is zero cost</2>. It's that simple.",
             "step1": "Register as a Partner",
             "step2": "Share your link with 3 professionals",
@@ -740,7 +680,7 @@
         },
         "cta": {
             "title": "Digitalize your office with <1>immigration AI</1>",
-            "desc": "Join the professionals already managing files, documents and migration queries in half the time with LegalFlow.",
+            "desc": "Join the professionals already managing files, documents and migration queries in half the time with our technology.",
             "btn": "Start free trial",
             "btn_demo": "Request a demo",
             "footer": "No credit card required. No commitment. Setup in 2 minutes."
@@ -1163,5 +1103,10 @@
             "submit": "Request access to the program",
             "footer": "We will process your request in 24-48h. No commitment."
         }
+    },
+    "pricing": {
+        "current_plan": "Current Plan",
+        "change_to_this_plan": "Switch to this Plan",
+        "admin_notice": "As a <1>Workspace Administrator</1>, you can manage limits by modifying the subscription level. Changes are applied instantly to the <2>STARK 2.0™ Engine</2> and <3>Iron Silo™</3> security protocols."
     }
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation, Trans } from 'react-i18next';
+import { PLAN_IDS } from '../../lib/constants/plans';
 
 interface PricingProps {
     onCreateOrg: (planId?: string) => void;
@@ -13,7 +14,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
 
     const plans = [
         {
-            id: 'free',
+            id: PLAN_IDS.STARTER,
             name: t('landing.pricing.plans.free.name'),
             target: t('landing.pricing.plans.free.target'),
             description: t('landing.pricing.plans.free.desc'),
@@ -24,7 +25,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
             features: t('landing.pricing.plans.free.features', { returnObjects: true }) as string[] || []
         },
         {
-            id: 'pro',
+            id: PLAN_IDS.BUSINESS,
             name: t('landing.pricing.plans.pro.name'),
             target: t('landing.pricing.plans.pro.target'),
             description: t('landing.pricing.plans.pro.desc'),
@@ -35,7 +36,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
             features: t('landing.pricing.plans.pro.features', { returnObjects: true }) as string[] || []
         },
         {
-            id: 'business',
+            id: PLAN_IDS.ENTERPRISE,
             name: t('landing.pricing.plans.business.name'),
             target: t('landing.pricing.plans.business.target'),
             description: t('landing.pricing.plans.business.desc'),
@@ -102,7 +103,7 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
                                 : 'border-white/5 hover:border-primary/20'}`}
                     >
                         {/* Dynamic Backgrounds */}
-                        {plan.id === 'enterprise' && (
+                        {plan.id === PLAN_IDS.ENTERPRISE && (
                             <div className="absolute inset-0 z-0">
                                 <img src="/bg-enterprise.png" className="w-full h-full object-cover opacity-60 mix-blend-overlay" alt="" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-background-dark/90 to-transparent"></div>
@@ -167,7 +168,13 @@ export function Pricing({ onCreateOrg, onBookDemo }: PricingProps) {
                             </ul>
 
                             <button
-                                onClick={() => onCreateOrg(plan.id)}
+                                onClick={() => {
+                                    if (plan.id === PLAN_IDS.ENTERPRISE) {
+                                        onBookDemo?.(); // Use onBookDemo as a trigger for the lead form
+                                    } else {
+                                        onCreateOrg(plan.id);
+                                    }
+                                }}
                                 className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer shadow-lg mt-auto
                                     ${plan.popular
                                         ? 'bg-primary text-slate-900 hover:brightness-110 shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.05]'

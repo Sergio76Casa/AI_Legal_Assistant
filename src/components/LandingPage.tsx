@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { BookDemoModal } from './BookDemoModal';
+import { EnterpriseModal } from './EnterpriseModal';
 import { LegalModal } from './Landing/LegalModal';
 import { Navbar } from './Landing/Navbar';
 import { Hero } from './Landing/Hero';
@@ -18,6 +19,7 @@ interface LandingPageProps {
 
 export function LandingPage({ onLogin, onCreateOrg }: LandingPageProps) {
     const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+    const [isEnterpriseModalOpen, setIsEnterpriseModalOpen] = useState(false);
     const [legalModal, setLegalModal] = useState<'privacy' | 'cookies' | null>(null);
 
     return (
@@ -36,7 +38,10 @@ export function LandingPage({ onLogin, onCreateOrg }: LandingPageProps) {
                 <Features />
 
                 {/* Pricing Plans */}
-                <Pricing onCreateOrg={onCreateOrg} onBookDemo={() => setIsDemoModalOpen(true)} />
+                <Pricing
+                    onCreateOrg={onCreateOrg}
+                    onBookDemo={() => setIsEnterpriseModalOpen(true)}
+                />
 
                 {/* Dynamic CTA */}
                 <CTASection onCreateOrg={onCreateOrg} onBookDemo={() => setIsDemoModalOpen(true)} />
@@ -50,6 +55,7 @@ export function LandingPage({ onLogin, onCreateOrg }: LandingPageProps) {
 
             {/* Modals */}
             <BookDemoModal isOpen={isDemoModalOpen} onClose={() => setIsDemoModalOpen(false)} />
+            <EnterpriseModal isOpen={isEnterpriseModalOpen} onClose={() => setIsEnterpriseModalOpen(false)} />
             <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />
         </div>
     );

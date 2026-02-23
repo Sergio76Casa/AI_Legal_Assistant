@@ -11,9 +11,12 @@ export function Footer({ onBookDemo, onOpenLegal }: FooterProps) {
     return (
         <footer className="py-12 px-4 border-t border-white/5 bg-background-dark">
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-                <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-3xl">gavel</span>
-                    <span className="font-bold text-white text-xl">LegalFlow</span>
+                <div className="flex items-center gap-3">
+                    <img
+                        src="/logo.png"
+                        alt="Logo"
+                        className="h-8 w-auto object-contain brightness-0 invert opacity-80"
+                    />
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-8 text-sm text-slate-500">
@@ -29,7 +32,7 @@ export function Footer({ onBookDemo, onOpenLegal }: FooterProps) {
                 </div>
 
                 <p className="text-sm text-slate-500">
-                    © 2026 LegalFlow. {t('landing.footer')}
+                    © 2026. {t('landing.footer')}
                 </p>
             </div>
         </footer>

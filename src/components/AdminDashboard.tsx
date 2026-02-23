@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Upload, CheckCircle2, AlertCircle, Loader2, Globe, Trash2, RefreshCw, Eye, X, Building, Users, Shield, ExternalLink, FileText, Calendar, Sparkles, File as FileIcon, TrendingUp } from 'lucide-react';
+import { Upload, CheckCircle2, AlertCircle, Loader2, Globe, Trash2, RefreshCw, Eye, X, Building, Users, Shield, ExternalLink, FileText, Calendar, Sparkles, File as FileIcon, TrendingUp, Settings2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '../lib/utils';
 
 import { OrganizationPanel } from './OrganizationPanel';
 import { AdminEarnings } from './AdminEarnings';
+import { BusinessSettingsPanel } from './BusinessSettingsPanel';
+import { PLAN_IDS, getPlanMetadata } from '../lib/constants/plans';
+import { useAppSettings } from '../lib/AppSettingsContext';
 
 export const AdminDashboard: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<'content' | 'tenants' | 'organization' | 'earnings'>('earnings');
+    const { settings } = useAppSettings();
+    const [activeTab, setActiveTab] = useState<'content' | 'tenants' | 'organization' | 'earnings' | 'settings'>('earnings');
     const [file, setFile] = useState<File | null>(null);
     const [country, setCountry] = useState<string>('ES');
     const [isUploading, setIsUploading] = useState(false);
@@ -254,7 +258,8 @@ export const AdminDashboard: React.FC = () => {
                         { id: 'earnings', icon: <TrendingUp size={18} />, label: 'Mis Ganancias' },
                         { id: 'content', icon: <Globe size={18} />, label: 'Leyes Globales' },
                         { id: 'tenants', icon: <Building size={18} />, label: 'Organizaciones (Control)' },
-                        { id: 'organization', icon: <Users size={18} />, label: 'Configuración Propia' }
+                        { id: 'organization', icon: <Users size={18} />, label: 'Configuración Propia' },
+                        { id: 'settings', icon: <Settings2 size={18} />, label: 'Configuración de Negocio' }
                     ].map(tab => (
                         <button
                             key={tab.id}
@@ -462,19 +467,17 @@ export const AdminDashboard: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <select
-                                                value={tenant.plan || 'free'}
+                                                value={tenant.plan || PLAN_IDS.STARTER}
                                                 onChange={(e) => handleUpdatePlan(tenant.id, e.target.value)}
                                                 disabled={updatingPlan === tenant.id}
                                                 className={cn(
                                                     "px-2 py-1 rounded text-[10px] font-bold uppercase border-none focus:ring-1 focus:ring-primary cursor-pointer transition-all",
-                                                    tenant.plan === 'business' ? "bg-primary/15 text-primary" : // Enterprise
-                                                        tenant.plan === 'pro' ? "bg-purple-500/15 text-purple-400" : // Business
-                                                            "bg-white/10 text-slate-400" // Starter (free)
+                                                    getPlanMetadata(tenant.plan, settings?.plan_names).badgeClass
                                                 )}
                                             >
-                                                <option value="free">Starter</option>
-                                                <option value="pro">Business</option>
-                                                <option value="business">Enterprise</option>
+                                                <option value={PLAN_IDS.STARTER}>{getPlanMetadata(PLAN_IDS.STARTER, settings?.plan_names).commercialName}</option>
+                                                <option value={PLAN_IDS.BUSINESS}>{getPlanMetadata(PLAN_IDS.BUSINESS, settings?.plan_names).commercialName}</option>
+                                                <option value={PLAN_IDS.ENTERPRISE}>{getPlanMetadata(PLAN_IDS.ENTERPRISE, settings?.plan_names).commercialName}</option>
                                             </select>
                                         </td>
                                         <td className="px-6 py-4 text-right">
@@ -501,6 +504,10 @@ export const AdminDashboard: React.FC = () => {
 
             {activeTab === 'earnings' && (
                 <AdminEarnings />
+            )}
+
+            {activeTab === 'settings' && (
+                <BusinessSettingsPanel />
             )}
             {activeTab === 'organization' && !userProfile?.tenant_id && (
                 <div className="p-12 text-center bg-white/5 rounded-2xl border border-white/10 italic text-slate-500">

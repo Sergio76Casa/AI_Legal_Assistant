@@ -12,6 +12,7 @@ import { HalalCulture } from './components/HalalCulture';
 import { HousingGuide } from './components/HousingGuide';
 import { useEffect, useState, useRef } from 'react';
 import { TenantProvider } from './lib/TenantContext';
+import { AppSettingsProvider } from './lib/AppSettingsContext';
 import { LandingPage } from './components/LandingPage';
 import { CreateOrgForm } from './components/CreateOrgForm';
 import { TenantDashboard } from './components/TenantDashboard';
@@ -217,147 +218,149 @@ function App() {
     const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));
 
     return (
-        <TenantProvider>
-            <ChatProvider>
-                {/* 🖊️ SIGNATURE PAGE: Rendered outside layout for mobile-first fullscreen experience */}
-                {view === 'sign' && signDocumentId ? (
-                    <SignaturePage documentId={signDocumentId} />
-                ) : view === 'tenant-public' ? (
-                    <TenantPublicPage
-                        slug={currentSlug || ''}
-                        onLogin={() => {
-                            setView('login');
-                            window.history.pushState({}, '', '/login');
+        <AppSettingsProvider>
+            <TenantProvider>
+                <ChatProvider>
+                    {/* 🖊️ SIGNATURE PAGE: Rendered outside layout for mobile-first fullscreen experience */}
+                    {view === 'sign' && signDocumentId ? (
+                        <SignaturePage documentId={signDocumentId} />
+                    ) : view === 'tenant-public' ? (
+                        <TenantPublicPage
+                            slug={currentSlug || ''}
+                            onLogin={() => {
+                                setView('login');
+                                window.history.pushState({}, '', '/login');
+                            }}
+                        />
+                    ) : (
+                        <Layout onNavigate={(v) => {
+                            setView(v);
+                            const path = v === 'home' ? '/' : (v === 'dashboard' ? '/dashboard' :
+                                v === 'documents' ? '/dashboard/documents' :
+                                    v === 'templates' ? '/dashboard/templates' :
+                                        v === 'signatures' ? '/dashboard/signatures' :
+                                            v === 'affiliates' ? '/dashboard/affiliates' :
+                                                v === 'admin' ? '/dashboard/admin' :
+                                                    v === 'organization' ? '/dashboard/organization' :
+                                                        v === 'settings' ? '/dashboard/settings' : `/${v}`);
+                            window.history.pushState({}, '', path);
                         }}
-                    />
-                ) : (
-                    <Layout onNavigate={(v) => {
-                        setView(v);
-                        const path = v === 'home' ? '/' : (v === 'dashboard' ? '/dashboard' :
-                            v === 'documents' ? '/dashboard/documents' :
-                                v === 'templates' ? '/dashboard/templates' :
-                                    v === 'signatures' ? '/dashboard/signatures' :
-                                        v === 'affiliates' ? '/dashboard/affiliates' :
-                                            v === 'admin' ? '/dashboard/admin' :
-                                                v === 'organization' ? '/dashboard/organization' :
-                                                    v === 'settings' ? '/dashboard/settings' : `/${v}`);
-                        window.history.pushState({}, '', path);
-                    }}
-                        onOpenLegal={(type) => setLegalModal(type)}
-                        user={user} profile={profile} hideNavFooter={view === 'home'} hideFooter={!!user || view === 'join'} currentView={view}>
-                        {view === 'login' && !user ? (
-                            <AuthForm
-                                onAuthSuccess={() => {
-                                    setShowSplash(true);
-                                    setView('dashboard');
-                                    window.history.pushState({}, '', '/dashboard');
-                                }}
-                                onBack={() => {
-                                    if (currentSlug) {
-                                        setView('tenant-public');
-                                        window.history.pushState({}, '', `/${currentSlug}`);
-                                    } else {
-                                        setView('home');
-                                        window.history.pushState({}, '', '/');
-                                    }
-                                }}
-                            />
-                        ) : view === 'create-org' && !user ? (
-                            <CreateOrgForm
-                                selectedPlan={selectedPlan}
-                                onSuccess={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
-                                onBack={() => {
-                                    if (currentSlug) {
-                                        setView('tenant-public');
-                                        window.history.pushState({}, '', `/${currentSlug}`);
-                                    } else {
-                                        setView('home');
-                                        window.history.pushState({}, '', '/');
-                                    }
-                                }}
-                            />
-                        ) : showAdmin ? (
-                            <AdminDashboard />
-                        ) : (view === 'organization' || view === 'documents' || view === 'templates' || view === 'signatures' || view === 'affiliates' || view === 'settings') && user ? (
-                            <TenantDashboard
-                                user={user}
-                                profile={profile}
-                                initialTab={view}
-                                onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
-                                onNavigate={(v) => { setView(v as any); window.history.pushState({}, '', `/dashboard/${v}`); }}
-                            />
-                        ) : view === 'privacy' ? (
-                            <LegalPage type="privacy" onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
-                        ) : view === 'cookies' ? (
-                            <LegalPage type="cookies" onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
-                        ) : view === 'afiliados-terminos' ? (
-                            <AffiliateTerms onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
-                        ) : view === 'register-affiliate' ? (
-                            <RegisterAffiliate onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
-                        ) : view === 'affiliate-kit' ? (
-                            <AffiliateKit onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
-                        ) : view === 'legal-procedures' ? (
-                            <LegalProcedures onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} user={user} />
-                        ) : view === 'halal-culture' ? (
-                            <HalalCulture onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
-                        ) : view === 'housing-guide' ? (
-                            <HousingGuide onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
-                        ) : view === 'join' ? (
-                            <>
-                                <JoinPage onSuccess={(slug) => {
-                                    if (slug) {
-                                        setCurrentSlug(slug);
-                                        setView('tenant-public');
-                                        window.history.pushState({}, '', `/${slug}`);
-                                    } else {
+                            onOpenLegal={(type) => setLegalModal(type)}
+                            user={user} profile={profile} hideNavFooter={view === 'home'} hideFooter={!!user || view === 'join'} currentView={view}>
+                            {view === 'login' && !user ? (
+                                <AuthForm
+                                    onAuthSuccess={() => {
+                                        setShowSplash(true);
                                         setView('dashboard');
                                         window.history.pushState({}, '', '/dashboard');
-                                    }
-                                }} />
-                                <DynamicFooter
-                                    onOpenLegal={(type) => setLegalModal(type)}
-                                    onOpenService={(type) => setServiceModal(type)}
+                                    }}
+                                    onBack={() => {
+                                        if (currentSlug) {
+                                            setView('tenant-public');
+                                            window.history.pushState({}, '', `/${currentSlug}`);
+                                        } else {
+                                            setView('home');
+                                            window.history.pushState({}, '', '/');
+                                        }
+                                    }}
                                 />
-                            </>
-                        ) : user || view === 'dashboard' ? (
-                            <>
-                                <Hero />
-                                <BentoGrid onNavigate={(v) => {
-                                    setView(v);
-                                    const path = v === 'documents' ? '/dashboard/documents' :
-                                        v === 'affiliates' ? '/dashboard/affiliates' :
-                                            v === 'admin' ? '/dashboard/admin' : `/${v}`;
-                                    window.history.pushState({}, '', path);
-                                }} isAdmin={isAdmin} />
-                                <DynamicFooter
-                                    onOpenLegal={(type) => setLegalModal(type)}
-                                    onOpenService={(type) => setServiceModal(type)}
+                            ) : view === 'create-org' && !user ? (
+                                <CreateOrgForm
+                                    selectedPlan={selectedPlan}
+                                    onSuccess={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
+                                    onBack={() => {
+                                        if (currentSlug) {
+                                            setView('tenant-public');
+                                            window.history.pushState({}, '', `/${currentSlug}`);
+                                        } else {
+                                            setView('home');
+                                            window.history.pushState({}, '', '/');
+                                        }
+                                    }}
                                 />
-                            </>
-                        ) : (
-                            <LandingPage
-                                onLogin={() => { setView('login'); window.history.pushState({}, '', '/login'); }}
-                                onCreateOrg={(planId) => {
-                                    if (planId) setSelectedPlan(planId);
-                                    setView('create-org');
-                                    window.history.pushState({}, '', '/create-org');
-                                }}
+                            ) : showAdmin ? (
+                                <AdminDashboard />
+                            ) : (view === 'organization' || view === 'documents' || view === 'templates' || view === 'signatures' || view === 'affiliates' || view === 'settings') && user ? (
+                                <TenantDashboard
+                                    user={user}
+                                    profile={profile}
+                                    initialTab={view}
+                                    onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }}
+                                    onNavigate={(v) => { setView(v as any); window.history.pushState({}, '', `/dashboard/${v}`); }}
+                                />
+                            ) : view === 'privacy' ? (
+                                <LegalPage type="privacy" onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
+                            ) : view === 'cookies' ? (
+                                <LegalPage type="cookies" onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
+                            ) : view === 'afiliados-terminos' ? (
+                                <AffiliateTerms onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
+                            ) : view === 'register-affiliate' ? (
+                                <RegisterAffiliate onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
+                            ) : view === 'affiliate-kit' ? (
+                                <AffiliateKit onBack={() => { setView(previousView as any); window.history.pushState({}, '', previousView === 'home' ? '/' : `/${previousView}`); }} />
+                            ) : view === 'legal-procedures' ? (
+                                <LegalProcedures onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} user={user} />
+                            ) : view === 'halal-culture' ? (
+                                <HalalCulture onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
+                            ) : view === 'housing-guide' ? (
+                                <HousingGuide onBack={() => { setView('dashboard'); window.history.pushState({}, '', '/dashboard'); }} />
+                            ) : view === 'join' ? (
+                                <>
+                                    <JoinPage onSuccess={(slug) => {
+                                        if (slug) {
+                                            setCurrentSlug(slug);
+                                            setView('tenant-public');
+                                            window.history.pushState({}, '', `/${slug}`);
+                                        } else {
+                                            setView('dashboard');
+                                            window.history.pushState({}, '', '/dashboard');
+                                        }
+                                    }} />
+                                    <DynamicFooter
+                                        onOpenLegal={(type) => setLegalModal(type)}
+                                        onOpenService={(type) => setServiceModal(type)}
+                                    />
+                                </>
+                            ) : user || view === 'dashboard' ? (
+                                <>
+                                    <Hero />
+                                    <BentoGrid onNavigate={(v) => {
+                                        setView(v);
+                                        const path = v === 'documents' ? '/dashboard/documents' :
+                                            v === 'affiliates' ? '/dashboard/affiliates' :
+                                                v === 'admin' ? '/dashboard/admin' : `/${v}`;
+                                        window.history.pushState({}, '', path);
+                                    }} isAdmin={isAdmin} />
+                                    <DynamicFooter
+                                        onOpenLegal={(type) => setLegalModal(type)}
+                                        onOpenService={(type) => setServiceModal(type)}
+                                    />
+                                </>
+                            ) : (
+                                <LandingPage
+                                    onLogin={() => { setView('login'); window.history.pushState({}, '', '/login'); }}
+                                    onCreateOrg={(planId) => {
+                                        if (planId) setSelectedPlan(planId);
+                                        setView('create-org');
+                                        window.history.pushState({}, '', '/create-org');
+                                    }}
+                                />
+                            )}
+                            <ChatDrawer />
+                            <LegalModal
+                                type={legalModal}
+                                onClose={() => setLegalModal(null)}
                             />
-                        )}
-                        <ChatDrawer />
-                        <LegalModal
-                            type={legalModal}
-                            onClose={() => setLegalModal(null)}
-                        />
-                        <ServicesModal
-                            type={serviceModal}
-                            onClose={() => setServiceModal(null)}
-                        />
-                        {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
-                    </Layout>
-                )}
-            </ChatProvider>
-        </TenantProvider>
+                            <ServicesModal
+                                type={serviceModal}
+                                onClose={() => setServiceModal(null)}
+                            />
+                            {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+                        </Layout>
+                    )}
+                </ChatProvider>
+            </TenantProvider>
+        </AppSettingsProvider>
     );
 }
 

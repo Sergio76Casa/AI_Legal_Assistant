@@ -9,6 +9,25 @@ Deno.serve(async (req) => {
   try {
     const { email, password, orgName, username, country_code, referral_code, plan } = await req.json()
 
+    console.log(`[DEBUG] create-organization invoked for ${orgName}. Incoming plan: "${plan}"`)
+
+    // Valid plans mapping
+    const validPlans = ['free', 'pro', 'business'];
+    let finalPlan = 'free';
+
+    if (plan) {
+      if (validPlans.includes(plan)) {
+        finalPlan = plan;
+        console.log(`[DEBUG] Valid plan detected: ${finalPlan}`);
+      } else {
+        console.warn(`[WARNING] Invalid plan "${plan}" received. Falling back to "free".`);
+        // Opcional: Podríamos lanzar error aquí si queremos ser estrictamente rígidos
+        // throw new Error(`Plan inválido: ${plan}`); 
+      }
+    } else {
+      console.log(`[DEBUG] No plan provided, using default: free`);
+    }
+
     // Create Supabase client with Service Role Key (Admin privileges)
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -43,7 +62,8 @@ Deno.serve(async (req) => {
       .insert({
         name: orgName,
         slug: slug,
-        plan: plan || 'free',
+        plan: finalPlan,
+        plan_type: finalPlan, // Mantener paridad mientras se limpia el código
         status: 'active',
         referred_by: referredById // Link to affiliate
       })

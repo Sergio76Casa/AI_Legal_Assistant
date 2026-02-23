@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { cn } from '../lib/utils';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface ConfigPanelProps {
@@ -1192,9 +1192,9 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                                                     {updatingPlan === p.id ? (
                                                         <Loader2 size={16} className="animate-spin mx-auto" />
                                                     ) : isCurrent ? (
-                                                        "Plan Actual"
+                                                        t('pricing.current_plan')
                                                     ) : (
-                                                        "Cambiar a este Plan"
+                                                        t('pricing.change_to_this_plan')
                                                     )}
                                                 </button>
                                             </motion.div>
@@ -1213,8 +1213,10 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                                         <Sparkles className="text-primary" size={20} />
                                     </div>
                                     <p className="text-[11px] font-medium text-slate-300 leading-relaxed max-w-4xl relative z-10">
-                                        Como <strong className="text-white font-bold">Administrador del Workspace</strong>, puedes gestionar los límites modificando el nivel de suscripción.
-                                        Los cambios se aplican de forma instantánea al <span className="text-primary font-bold">Motor STARK 2.0™</span> y a los protocolos de seguridad <span className="text-primary font-bold">Iron Silo™</span>.
+                                        <Trans i18nKey="pricing.admin_notice">
+                                            Como <strong className="text-white font-bold">Administrador del Workspace</strong>, puedes gestionar los límites modificando el nivel de suscripción.
+                                            Los cambios se aplican de forma instantánea al <span className="text-primary font-bold">Motor STARK 2.0™</span> y a los protocolos de seguridad <span className="text-primary font-bold">Iron Silo™</span>.
+                                        </Trans>
                                     </p>
                                 </motion.div>
                             </div>

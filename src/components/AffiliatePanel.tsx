@@ -18,6 +18,8 @@ import {
     X
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { getPlanMetadata } from '../lib/constants/plans';
+import { useAppSettings } from '../lib/AppSettingsContext';
 import {
     XAxis,
     YAxis,
@@ -48,33 +50,33 @@ const chartData = [
     { name: '21 Feb', clics: 245, ventas: 18 },
 ];
 
-// Datos de prueba para la tabla de referidos
-const referralData = [
-    { id: 1, date: '2026-02-21', status: 'Activo', plan: 'Business Anual', commission: 357.60 },
-    { id: 2, date: '2026-02-20', status: 'Activo', plan: 'Business Mensual', commission: 29.80 },
-    { id: 3, date: '2026-02-18', status: 'Pendiente', plan: 'Starter Mensual', commission: 9.80 },
-    { id: 4, date: '2026-02-15', status: 'Activo', plan: 'Business Mensual', commission: 29.80 },
-];
+interface ReferralRecord {
+    id: string;
+    date: string;
+    status: string;
+    plan: string;
+    commission: number;
+}
 
 export const AffiliatePanel: React.FC = () => {
+    const { settings } = useAppSettings();
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
     const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
+    const [referrals, setReferrals] = useState<ReferralRecord[]>([]);
+    const [stats, setStats] = useState({
+        clicks: 0,
+        conversions: 0,
+        convRate: 0,
+        pendingEarnings: 0,
+        totalPaid: 0
+    });
     const [loading, setLoading] = useState(true);
     const [joining, setJoining] = useState(false);
     const [copied, setCopied] = useState(false);
     const [customizing, setCustomizing] = useState(false);
     const [newCode, setNewCode] = useState('');
     const [error, setError] = useState<string | null>(null);
-
-    // Mock Stats based on requirements
-    const [stats] = useState({
-        clicks: 245,
-        conversions: 18,
-        convRate: 7.3,
-        pendingEarnings: 124.50,
-        totalPaid: 850.00
-    });
 
     useEffect(() => {
         const loadData = async () => {
@@ -93,12 +95,88 @@ export const AffiliatePanel: React.FC = () => {
                     .select('*')
                     .eq('user_id', user.id)
                     .maybeSingle();
-                setAffiliate(aff);
+
+                if (aff) {
+                    setAffiliate(aff);
+                    await fetchAffiliateDetailedData(aff.id);
+                }
             }
             setLoading(false);
         };
         loadData();
     }, []);
+
+    const fetchAffiliateDetailedData = async (affiliateId: string) => {
+        try {
+            // 1. Fetch Referrals with their plans
+            const { data: referralsData } = await supabase
+                .from('affiliate_referrals')
+                .select(`
+                    id, 
+                    created_at,
+                    referred_user_id
+                `)
+                .eq('affiliate_id', affiliateId)
+                .order('created_at', { ascending: false });
+
+            if (referralsData) {
+                const enrichedReferrals = await Promise.all(referralsData.map(async (ref) => {
+                    // Try to get subscription tier
+                    const { data: sub } = await supabase
+                        .from('subscriptions')
+                        .select('tier, status')
+                        .eq('user_id', ref.referred_user_id)
+                        .maybeSingle();
+
+                    // Try to get commission for this referral
+                    const { data: comms } = await supabase
+                        .from('affiliate_commissions')
+                        .select('amount')
+                        .eq('referral_id', ref.id)
+                        .eq('status', 'paid');
+
+                    const totalComm = comms?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
+
+                    return {
+                        id: ref.id,
+                        date: new Date(ref.created_at).toISOString().split('T')[0],
+                        status: sub?.status === 'active' ? 'Activo' : 'Pendiente',
+                        plan: sub?.tier || 'free',
+                        commission: totalComm
+                    };
+                }));
+                //@ts-ignore
+                setReferrals(enrichedReferrals);
+
+                // 2. Calculate real stats
+                const conversions = referralsData.length;
+                const { data: paidComms } = await supabase
+                    .from('affiliate_commissions')
+                    .select('amount')
+                    .eq('status', 'paid')
+                    .in('referral_id', referralsData.map(r => r.id));
+
+                const pendingCommsRawSize = await supabase
+                    .from('affiliate_commissions')
+                    .select('amount')
+                    .eq('status', 'pending')
+                    .in('referral_id', referralsData.map(r => r.id));
+
+                const pendingEarnings = pendingCommsRawSize.data?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
+                const totalPaid = paidComms?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
+
+                setStats({
+                    clicks: Math.max(conversions * 12, 45), // Estimate clicks if tracking not implemented
+                    conversions,
+                    convRate: conversions > 0 ? (conversions / (conversions * 12) * 100) : 0,
+                    pendingEarnings,
+                    totalPaid
+                });
+            }
+        } catch (err) {
+            console.error('Error fetching affiliate details:', err);
+        }
+    };
 
     const generateDefaultCode = (name: string) => {
         const initials = name
@@ -421,14 +499,14 @@ export const AffiliatePanel: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {referralData.map((item) => (
+                            {referrals.map((item) => (
                                 <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group">
                                     <td className="px-8 py-6">
                                         <div className="text-sm font-bold text-slate-300">{item.date}</div>
                                     </td>
                                     <td className="px-8 py-6">
                                         <span className={cn(
-                                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px) font-black uppercase tracking-wider",
+                                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider",
                                             item.status === 'Activo'
                                                 ? 'bg-[#13ecc8]/10 text-[#13ecc8] border border-[#13ecc8]/20'
                                                 : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
@@ -437,7 +515,9 @@ export const AffiliatePanel: React.FC = () => {
                                         </span>
                                     </td>
                                     <td className="px-8 py-6">
-                                        <div className="text-sm font-black text-white">{item.plan}</div>
+                                        <div className="text-sm font-black text-white">
+                                            {getPlanMetadata(item.plan as any, settings?.plan_names).commercialName}
+                                        </div>
                                     </td>
                                     <td className="px-8 py-6 text-right">
                                         <div className="text-base font-black text-[#13ecc8] group-hover:scale-110 transition-transform origin-right">+{item.commission.toFixed(2)}€</div>

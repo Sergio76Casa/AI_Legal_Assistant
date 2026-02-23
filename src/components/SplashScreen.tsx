@@ -29,15 +29,12 @@ export function SplashScreen({ onFinish }: SplashScreenProps) {
             <div className="relative flex flex-col items-center gap-6">
                 <div className="pulse-glow">
                     <img
-                        src="/logo.svg"
-                        alt="LegalFlow"
-                        className="w-20 h-20"
+                        src="/logo.png"
+                        alt="Logo"
+                        className="w-24 h-auto object-contain"
                     />
                 </div>
                 <div className="flex flex-col items-center gap-2">
-                    <span className="font-serif text-3xl font-bold text-white tracking-tight">
-                        LegalFlow
-                    </span>
                     <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
                         <span className="text-xs text-slate-500 uppercase tracking-widest font-medium">

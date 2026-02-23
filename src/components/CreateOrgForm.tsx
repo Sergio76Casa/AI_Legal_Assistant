@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { Building, User, Mail, Lock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { PLAN_IDS, getPlanMetadata } from '../lib/constants/plans';
+import { useAppSettings } from '../lib/AppSettingsContext';
+import { cn } from '../lib/utils';
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -16,6 +19,7 @@ interface CreateOrgFormProps {
 
 export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack, selectedPlan }) => {
     const { t } = useTranslation();
+    const { settings } = useAppSettings();
     const [step, setStep] = useState(1);
     const [orgName, setOrgName] = useState('');
     const [email, setEmail] = useState('');
@@ -42,7 +46,7 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack,
                     orgName,
                     username,
                     referral_code: referralCode,
-                    plan: selectedPlan || 'free'
+                    plan: selectedPlan || PLAN_IDS.STARTER
                 }
             });
 
@@ -101,14 +105,31 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack,
             </button>
 
             <div className="text-center mb-8 mt-4">
-                <div className="w-12 h-12 bg-primary/15 text-primary rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg border border-primary/20">
-                    <Building size={24} />
+                <div className="mb-4 flex justify-center">
+                    <img
+                        src="/logo.png"
+                        alt="LegalFlow Logo"
+                        className="h-12 w-auto object-contain"
+                    />
                 </div>
                 <h2 className="text-2xl font-bold text-white">{t('landing.create_org.title')}</h2>
                 <p className="text-primary text-sm">{t('landing.create_org.subtitle')}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Visual Plan Badge */}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-2 flex flex-col items-center text-center animate-in slide-in-from-top-2 duration-500">
+                    <span className={cn(
+                        "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-2 border shadow-sm",
+                        getPlanMetadata(selectedPlan, settings?.plan_names).badgeClass
+                    )}>
+                        Plan Seleccionado: {getPlanMetadata(selectedPlan, settings?.plan_names).commercialName}
+                    </span>
+                    <p className="text-[11px] text-slate-500 font-medium">
+                        {getPlanMetadata(selectedPlan, settings?.plan_names).summary}
+                    </p>
+                </div>
+
                 {/* Organization Name */}
                 <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">{t('landing.create_org.company_name')}</label>

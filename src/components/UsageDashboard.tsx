@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { MessageSquare, FileText, TrendingUp, AlertCircle, Crown } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { PLAN_IDS, getPlanMetadata } from '../lib/constants/plans';
+import { useAppSettings } from '../lib/AppSettingsContext';
+import { cn } from '../lib/utils';
 
 interface UsageData {
     tier: string;
@@ -18,6 +22,8 @@ interface UsageDashboardProps {
 }
 
 export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgradeClick, refreshTrigger }) => {
+    const { t, i18n } = useTranslation();
+    const { settings } = useAppSettings();
     const [usage, setUsage] = useState<UsageData | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -27,27 +33,30 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
 
     const fetchUsage = async () => {
         try {
+            // Obtener perfil y su tenant_id
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('role, subscription_tier, created_at')
+                .select('role, tenant_id, created_at')
                 .eq('id', userId)
                 .maybeSingle();
 
-            const { data: subscription } = await supabase
-                .from('subscriptions')
-                .select('tier, current_period_end')
-                .eq('user_id', userId)
-                .eq('status', 'active')
-                .maybeSingle();
-
+            // Obtener el plan del Tenant (Fuente Única de Verdad en Multi-Tenant)
             let tier = 'free';
+            if (profile?.tenant_id) {
+                const { data: tenant } = await supabase
+                    .from('tenants')
+                    .select('plan')
+                    .eq('id', profile.tenant_id)
+                    .maybeSingle();
 
-            if (profile?.role === 'superadmin' || profile?.role === 'admin') {
+                if (tenant?.plan) {
+                    tier = tenant.plan;
+                }
+            }
+
+            // Fallback o override para Superadmins
+            if (profile?.role === 'superadmin') {
                 tier = 'business';
-            } else if (subscription && subscription.tier !== 'free') {
-                tier = subscription.tier;
-            } else if (profile?.subscription_tier) {
-                tier = profile.subscription_tier;
             }
 
             if (tier === 'premium') tier = 'pro';
@@ -72,15 +81,15 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
 
             const typedLimits = limits as { max_chat_queries: number; max_documents: number } | null;
 
-            const isAdmin = profile?.role === 'superadmin' || profile?.role === 'admin';
+            const isSuperAdmin = profile?.role === 'superadmin';
 
             setUsage({
                 tier,
                 chatQueriesCount: usageData?.chat_queries_count || 0,
                 documentsCount: docsCount || 0,
-                maxChatQueries: isAdmin ? -1 : (typedLimits?.max_chat_queries || 5),
-                maxDocuments: isAdmin ? -1 : (typedLimits?.max_documents || 1),
-                periodEnd: subscription?.current_period_end || profile?.created_at || new Date().toISOString(),
+                maxChatQueries: isSuperAdmin ? -1 : (typedLimits?.max_chat_queries || 50),
+                maxDocuments: isSuperAdmin ? -1 : (typedLimits?.max_documents || 10),
+                periodEnd: profile?.created_at || new Date().toISOString(),
             });
         } catch (error) {
             console.error('Error fetching usage:', error);
@@ -110,59 +119,57 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
     const isNearLimit = chatPercentage > 80 || docsPercentage > 80;
     const isAtLimit = chatPercentage >= 100 || docsPercentage >= 100;
 
-    const tierNames: Record<string, string> = {
-        free: 'Gratuito',
-        pro: 'Pro',
-        business: 'Business',
-    };
-
-    const tierColors: Record<string, string> = {
-        free: 'from-slate-500 to-slate-600',
-        pro: 'from-primary to-emerald-500',
-        business: 'from-purple-500 to-purple-600',
-    };
 
     return (
         <div className="bg-white/5 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/10">
             {/* Header */}
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-white mb-1">Tu Uso Actual</h2>
+                    <h2 className="text-2xl font-bold text-white mb-1">{t('usage.title')}</h2>
                     <p className="text-slate-400 text-sm">
-                        Período actual hasta el {new Date(usage.periodEnd).toLocaleDateString('es-ES')}
+                        {t('usage.period_until')} {new Date(usage.periodEnd).toLocaleDateString(i18n.language === 'es' ? 'es-ES' : 'en-US')}
                     </p>
                 </div>
-                <div className={`px-4 py-2 rounded-lg bg-gradient-to-r ${tierColors[usage.tier]} text-white font-semibold flex items-center gap-2 shadow-lg`}>
+                <div className={cn(
+                    "px-4 py-2 rounded-lg text-white font-semibold flex items-center gap-2 shadow-lg bg-gradient-to-r",
+                    usage.tier === PLAN_IDS.BUSINESS ? "from-purple-500 to-purple-600" :
+                        usage.tier === PLAN_IDS.ENTERPRISE ? "from-primary to-emerald-500" :
+                            "from-slate-500 to-slate-600"
+                )}>
                     <Crown className="w-5 h-5" />
-                    Plan {tierNames[usage.tier]}
+                    {t('usage.plan')} {getPlanMetadata(usage.tier, settings?.plan_names).commercialName}
                 </div>
             </div>
 
             {/* Alert near limit */}
-            {isNearLimit && usage.tier === 'free' && (
-                <div className={`mb-6 p-4 rounded-lg border ${isAtLimit
-                    ? 'bg-red-500/10 border-red-500/30'
-                    : 'bg-amber-500/10 border-amber-500/30'
-                    }`}>
+            {isNearLimit && usage.tier === PLAN_IDS.STARTER && (
+                <div className={cn(
+                    "mb-6 p-4 rounded-lg border",
+                    isAtLimit ? 'bg-red-500/10 border-red-500/30' : 'bg-amber-500/10 border-amber-500/30'
+                )}>
                     <div className="flex items-start gap-3">
-                        <AlertCircle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isAtLimit ? 'text-red-400' : 'text-amber-400'
-                            }`} />
+                        <AlertCircle className={cn(
+                            "w-5 h-5 flex-shrink-0 mt-0.5",
+                            isAtLimit ? 'text-red-400' : 'text-amber-400'
+                        )} />
                         <div>
-                            <p className={`font-semibold ${isAtLimit ? 'text-red-300' : 'text-amber-300'
-                                }`}>
-                                {isAtLimit ? '¡Has alcanzado tu límite!' : '¡Cerca del límite!'}
+                            <p className={cn(
+                                "font-semibold",
+                                isAtLimit ? 'text-red-300' : 'text-amber-300'
+                            )}>
+                                {isAtLimit ? t('usage.at_limit') : t('usage.near_limit')}
                             </p>
-                            <p className={`text-sm mt-1 ${isAtLimit ? 'text-red-400' : 'text-amber-400'
-                                }`}>
-                                {isAtLimit
-                                    ? 'Actualiza a Pro para continuar usando el servicio sin límites.'
-                                    : 'Considera actualizar a Pro para obtener más consultas y documentos.'}
+                            <p className={cn(
+                                "text-sm mt-1",
+                                isAtLimit ? 'text-red-400' : 'text-amber-400'
+                            )}>
+                                {isAtLimit ? t('usage.at_limit_desc') : t('usage.near_limit_desc')}
                             </p>
                             <button
                                 onClick={onUpgradeClick}
                                 className="mt-3 px-4 py-2 bg-primary text-slate-900 rounded-lg font-semibold hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all text-sm"
                             >
-                                Ver Planes
+                                {t('usage.view_plans')}
                             </button>
                         </div>
                     </div>
@@ -178,11 +185,11 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                             <MessageSquare className="w-5 h-5 text-blue-400" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-white">Consultas al Chat IA</p>
+                            <p className="text-sm font-medium text-white">{t('usage.chat_queries')}</p>
                             <p className="text-xs text-blue-300">
                                 {usage.maxChatQueries === -1
-                                    ? `${usage.chatQueriesCount} consultas (Ilimitado)`
-                                    : `${usage.chatQueriesCount} de ${usage.maxChatQueries}`}
+                                    ? `${usage.chatQueriesCount} ${t('usage.queries')} (${t('usage.unlimited')})`
+                                    : `${usage.chatQueriesCount} ${t('usage.of')} ${usage.maxChatQueries}`}
                             </p>
                         </div>
                     </div>
@@ -208,11 +215,11 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                             <FileText className="w-5 h-5 text-primary" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-white">Documentos Subidos</p>
+                            <p className="text-sm font-medium text-white">{t('usage.documents_uploaded')}</p>
                             <p className="text-xs text-primary/70">
                                 {usage.maxDocuments === -1
-                                    ? `${usage.documentsCount} documentos (Ilimitado)`
-                                    : `${usage.documentsCount} de ${usage.maxDocuments}`}
+                                    ? `${usage.documentsCount} ${t('usage.documents_word')} (${t('usage.unlimited')})`
+                                    : `${usage.documentsCount} ${t('usage.of')} ${usage.maxDocuments}`}
                             </p>
                         </div>
                     </div>
@@ -233,26 +240,24 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
             </div>
 
             {/* Upgrade Benefits */}
-            {usage.tier === 'free' && (
+            {usage.tier === PLAN_IDS.STARTER && (
                 <div className="mt-8 p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-xl border border-primary/20">
                     <div className="flex items-start gap-3">
                         <TrendingUp className="w-6 h-6 text-primary flex-shrink-0" />
                         <div>
                             <h3 className="font-semibold text-white mb-2">
-                                Desbloquea todo el potencial con Pro
+                                {t('usage.unlock_pro')}
                             </h3>
                             <ul className="space-y-1 text-sm text-slate-300">
-                                <li>✅ 100 consultas al mes (vs 5 actuales)</li>
-                                <li>✅ 20 documentos (vs 1 actual)</li>
-                                <li>✅ Análisis avanzado de documentos</li>
-                                <li>✅ Exportación a PDF/Word</li>
-                                <li>✅ Soporte prioritario</li>
+                                {(t('usage.unlock_features', { returnObjects: true }) as string[]).map((feature, i) => (
+                                    <li key={i}>✅ {feature}</li>
+                                ))}
                             </ul>
                             <button
                                 onClick={onUpgradeClick}
                                 className="mt-4 px-6 py-2 bg-primary text-slate-900 rounded-lg font-semibold hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/20 transition-all"
                             >
-                                Actualizar a Pro por €9.99/mes
+                                {t('usage.upgrade_pro_price')}
                             </button>
                         </div>
                     </div>
