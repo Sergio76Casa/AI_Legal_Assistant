@@ -26,7 +26,7 @@ export function Layout({ children, onNavigate, onOpenLegal, user, profile, hideN
                         <p className="text-sm text-slate-500">
                             © {new Date().getFullYear()} LegalFlow. {t('nav.contact')}.
                         </p>
-                        <div className="flex justify-center gap-6 mt-4">
+                        <div className="flex justify-center flex-wrap gap-4 md:gap-6 mt-4">
                             <button
                                 onClick={() => onOpenLegal ? onOpenLegal('privacy') : onNavigate?.('privacy')}
                                 className="text-xs text-slate-500 hover:text-primary transition-colors"

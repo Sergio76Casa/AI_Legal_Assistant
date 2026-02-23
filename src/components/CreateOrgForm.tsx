@@ -96,10 +96,10 @@ export const CreateOrgForm: React.FC<CreateOrgFormProps> = ({ onSuccess, onBack,
     }
 
     return (
-        <div className="p-8 bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 max-w-md mx-auto mt-10 relative">
+        <div className="p-6 md:p-8 bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 max-w-md mx-auto mt-24 md:mt-10 mb-20 relative">
             <button
                 onClick={onBack}
-                className="absolute top-4 left-4 text-slate-400 hover:text-white transition-colors"
+                className="absolute top-4 left-4 md:top-6 md:left-6 text-slate-400 hover:text-white transition-colors"
             >
                 ← {t('landing.create_org.back')}
             </button>

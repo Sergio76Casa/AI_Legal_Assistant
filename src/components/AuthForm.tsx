@@ -91,7 +91,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onBack, tenan
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-[#0a0f1d] p-4 md:p-6">
+        <div className="flex min-h-[calc(100vh-80px)] md:min-h-screen items-center justify-center bg-[#0a0f1d] p-4 md:p-6 pb-20 mt-20 md:mt-0">
             {/* Subtle background glow */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]"></div>
@@ -101,7 +101,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess, onBack, tenan
                 {onBack && (
                     <button
                         onClick={onBack}
-                        className="absolute top-6 left-6 flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-primary transition-all group"
+                        className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-primary transition-all group"
                         title={t('procedures.back')}
                     >
                         <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />

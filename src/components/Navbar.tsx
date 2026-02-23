@@ -62,9 +62,9 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                 <div className="flex items-center gap-6">
                     {/* Logged-in user flow */}
                     {user ? (
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-3 md:gap-6">
                             {/* 1. Nombre del Logueado (Static) */}
-                            <div className="flex items-center gap-3">
+                            <div className="hidden md:flex items-center gap-3">
                                 <div className="relative">
                                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-xs font-bold ring-2 ring-slate-900 overflow-hidden border border-white/10">
                                         {username.charAt(0).toUpperCase()}
@@ -81,19 +81,19 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                             {/* 2. Link Dinámico: Mis documentos / Mi dashboard */}
                             <button
                                 onClick={() => onNavigate?.(['documents', 'templates', 'organization', 'affiliates', 'settings'].includes(currentView || '') ? 'dashboard' : 'documents')}
-                                className="text-xs font-bold text-slate-400 hover:text-white transition-colors border-l border-white/10 pl-6 h-8 flex items-center gap-2"
+                                className="text-xs font-bold text-slate-400 hover:text-white transition-colors border-l border-white/10 pl-3 md:pl-6 h-8 flex items-center gap-2"
                             >
                                 <Building2 size={14} className="text-primary/50" />
-                                {['documents', 'templates', 'organization', 'affiliates', 'settings'].includes(currentView || '') ? t('nav.my_dashboard') : (t('nav.documents') || 'Mis documentos')}
+                                <span className="hidden md:inline">{['documents', 'templates', 'organization', 'affiliates', 'settings'].includes(currentView || '') ? t('nav.my_dashboard') : (t('nav.documents') || 'Mis documentos')}</span>
                             </button>
 
                             {/* 3. Logo para cambiar idioma */}
-                            <div className="border-l border-white/10 pl-6 h-8 flex items-center">
+                            <div className="hidden md:flex border-l border-white/10 pl-6 h-8 items-center">
                                 <LanguageSelector />
                             </div>
 
                             {/* 4. Admin (if superadmin) & Logo para cerrar sesion */}
-                            <div className="flex items-center gap-4 border-l border-white/10 pl-6 h-8">
+                            <div className="flex items-center gap-2 md:gap-4 border-l border-white/10 pl-3 md:pl-6 h-8">
                                 {isSuperAdmin && (
                                     <button
                                         onClick={() => onNavigate?.('admin')}
@@ -121,18 +121,20 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                             </div>
                         </div>
                     ) : (
-                        <div className="flex items-center gap-4">
-                            <LanguageSelector />
-                            <div className="h-4 w-px bg-white/10 mx-2" />
+                        <div className="flex items-center gap-3 md:gap-4">
+                            <div className="hidden md:block">
+                                <LanguageSelector />
+                            </div>
+                            <div className="hidden md:block h-4 w-px bg-white/10 mx-2" />
                             <button
                                 onClick={() => onNavigate?.('login')}
-                                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                                className="px-3 md:px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
                             >
                                 {t('nav.login')}
                             </button>
                             <button
                                 onClick={() => onNavigate?.('contact')}
-                                className="px-6 py-2 bg-primary hover:bg-primary/90 text-slate-900 text-sm font-bold rounded-full shadow-lg shadow-primary/20 transition-all"
+                                className="px-4 md:px-6 py-2 bg-primary hover:bg-primary/90 text-slate-900 text-sm font-bold rounded-full shadow-lg shadow-primary/20 transition-all whitespace-nowrap"
                             >
                                 {t('nav.contact')}
                             </button>
