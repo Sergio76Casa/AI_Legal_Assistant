@@ -85,7 +85,6 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
     const [translating, setTranslating] = useState(false);
     const [translationSuccess, setTranslationSuccess] = useState(false);
     const [translationProgress, setTranslationProgress] = React.useState<{ current: number, total: number } | null>(null);
-    const lastTranslatedRef = React.useRef<string>('');
 
     useEffect(() => {
         if (tenant) {
@@ -129,16 +128,11 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
 
                 if (data?.footer_custom_links && data.footer_custom_links.length > 0) {
                     setFooterLinks(data.footer_custom_links);
-                    // Inicializar el hash para evitar traducciones redundantes al cargar
-                    const linksToTranslate = data.footer_custom_links.filter((l: any) => typeof l.title === 'string' && l.title.trim().length > 0);
-                    lastTranslatedRef.current = JSON.stringify(linksToTranslate.map((l: any) => ({ title: l.title, content: l.content })));
                 } else {
                     const defaults = [
                         { id: 'docs', title: 'Información Legal', content: 'Contenido legal de la plataforma...', section: 'legal' }
                     ];
                     setFooterLinks(defaults);
-                    const linksToTranslate = defaults.filter((l: any) => typeof l.title === 'string' && l.title.trim().length > 0);
-                    lastTranslatedRef.current = JSON.stringify(linksToTranslate.map((l: any) => ({ title: l.title, content: l.content })));
                 }
             };
             fetchFooterSettings();
@@ -147,15 +141,6 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
 
     const handleTranslate = async (links: any[]) => {
         const linksToTranslate = links.filter(l => typeof l.title === 'string' && l.title.trim().length > 0);
-
-        // Optimization: Check if content has changed since last translate
-        const currentLinksState = JSON.stringify(linksToTranslate.map(l => ({ title: l.title, content: l.content })));
-
-        // If content is same and they ALL have translations, skip
-        if (currentLinksState === lastTranslatedRef.current && links.every(l => l.translations && Object.keys(l.translations).length > 0)) {
-            console.log('Skipping translation: content has not changed.');
-            return links;
-        }
 
         setTranslating(true);
         setTranslationProgress({ current: 0, total: linksToTranslate.length });
@@ -173,6 +158,15 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                 if (typeof link.title === 'string' && link.title.trim().length > 0) {
                     processed++;
                     setTranslationProgress({ current: processed, total: linksToTranslate.length });
+
+                    // Fingerprint del bloque actual
+                    const currentFingerprint = JSON.stringify({ title: link.title, content: link.content || '' });
+
+                    // Si el fingerprint coincide y ya tiene traducciones, saltamos este bloque
+                    if (link._fingerprint === currentFingerprint && link.translations && Object.keys(link.translations).length > 0) {
+                        console.log(`Skipping block ${i + 1}: content unchanged.`);
+                        continue;
+                    }
 
                     const { data, error } = await supabase.functions.invoke('translate-footer', {
                         body: {
@@ -195,6 +189,9 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                             ...data.translations
                         };
 
+                        // Guardar el fingerprint tras éxito
+                        link._fingerprint = currentFingerprint;
+
                         // Update icon
                         if (data.icon) {
                             link.icon = data.icon;
@@ -204,9 +201,6 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
                     }
                 }
             }
-
-            // Save state of successful translation
-            lastTranslatedRef.current = currentLinksState;
 
             setTranslationSuccess(true);
             setTimeout(() => setTranslationSuccess(false), 5000);
