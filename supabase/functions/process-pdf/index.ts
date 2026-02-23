@@ -16,8 +16,12 @@ Deno.serve(async (req) => {
 
         const supabase = createClient(Deno.env.get('SUPABASE_URL') || '', Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '');
 
-        // Ensure tenant_id is set (default to Global if missing)
-        tenant_id = tenant_id || '00000000-0000-0000-0000-000000000000';
+        if (!tenant_id || tenant_id === '00000000-0000-0000-0000-000000000000') {
+            return new Response(
+                JSON.stringify({ error: "Access Denied: Missing Tenant ID. Iron Silo physical isolation violation." }),
+                { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+        }
 
         if (bucket_id && file_path) {
             console.log("Downloading file from bucket " + bucket_id + ": " + file_path);

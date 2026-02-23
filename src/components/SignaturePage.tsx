@@ -311,12 +311,15 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
                             });
                         }
                     } else {
+                        const fontSize = (field.height || 12) * 0.7;
                         page.drawText(String(val), {
                             x: field.x_coordinate + 2,
-                            y: pageHeight - field.y_coordinate - (field.height * 0.8),
-                            size: (field.height || 12) * 0.7,
+                            y: pageHeight - field.y_coordinate - fontSize,
+                            size: fontSize,
                             font: textFont,
-                            color: rgb(0, 0, 0)
+                            color: rgb(0, 0, 0),
+                            maxWidth: field.width > 20 ? field.width - 4 : undefined,
+                            lineHeight: fontSize * 1.2
                         });
                     }
                 }
@@ -618,6 +621,20 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
                                         name={f.field_key}
                                         type={f.field_key.includes('date') ? 'date' : 'text'}
                                         required
+                                        pattern={
+                                            f.field_key.toLowerCase().includes('dni') || f.field_key.toLowerCase().includes('nie')
+                                                ? "^[XYZxyz]?\\d{7,8}[A-Za-z]$"
+                                                : f.field_key.toLowerCase() === 'cp' || f.field_key.toLowerCase().includes('postal')
+                                                    ? "^\\d{5}$"
+                                                    : undefined
+                                        }
+                                        title={
+                                            f.field_key.toLowerCase().includes('dni') || f.field_key.toLowerCase().includes('nie')
+                                                ? "Debe ser un formato válido de DNI/NIE español (ej. 12345678A o Y1234567Z)"
+                                                : f.field_key.toLowerCase() === 'cp' || f.field_key.toLowerCase().includes('postal')
+                                                    ? "El código postal debe tener exactamente 5 dígitos."
+                                                    : ""
+                                        }
                                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                         placeholder={`Escribe el ${t(`fields.${f.field_key}`).toLowerCase()}`}
                                     />

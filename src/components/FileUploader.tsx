@@ -4,6 +4,7 @@ import { cn } from '../lib/utils';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { useUsageLimits } from '../lib/useUsageLimits';
+import { useTenant } from '../lib/TenantContext';
 import { UpgradeModal } from './UpgradeModal';
 
 interface FileUploaderProps {
@@ -13,6 +14,7 @@ interface FileUploaderProps {
 
 export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, userId }) => {
     const { t } = useTranslation();
+    const { tenant } = useTenant();
     const [isDragging, setIsDragging] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<'idle' | 'uploading' | 'processing' | 'success' | 'error'>('idle');
@@ -63,12 +65,17 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
             return;
         }
 
+        if (!tenant?.id) {
+            setError('Violación estructural: No se pudo verificar el Tenant activo (Iron Silo). Operación bloqueada.');
+            return;
+        }
+
         setStatus('uploading');
         setError(null);
 
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
-        const filePath = `${userId}/${fileName}`;
+        const filePath = `${tenant.id}/${userId}/${fileName}`;
 
         try {
             const { data: { user } } = await supabase.auth.getUser();
@@ -106,7 +113,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onUploadSuccess, use
                     bucket_id: 'user-documents',
                     file_path: filePath,
                     user_id: userId,
-                    document_id: docData?.id
+                    document_id: docData?.id,
+                    tenant_id: tenant.id
                 }
             });
 
