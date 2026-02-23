@@ -140,65 +140,73 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
     }, [tenant]);
 
     const handleTranslate = async (links: any[]) => {
-        const linksToTranslate = links.filter(l => typeof l.title === 'string' && l.title.trim().length > 0);
+        // 1. Identificar qué bloques realmente necesitan traducción
+        const workList = links.map((link, index) => {
+            const hasTitle = typeof link.title === 'string' && link.title.trim().length > 0;
+            if (!hasTitle) return { needsWork: false, index, link };
+
+            const currentFingerprint = JSON.stringify({ title: link.title, content: link.content || '' });
+            const alreadyHasTranslations = link.translations && Object.keys(link.translations).length > 0;
+            const isUnchanged = link._fingerprint === currentFingerprint && alreadyHasTranslations;
+
+            return {
+                needsWork: !isUnchanged,
+                index,
+                link,
+                currentFingerprint
+            };
+        });
+
+        const blocksToTranslate = workList.filter(w => w.needsWork);
+
+        // Si no hay nada que traducir, devolvemos los links tal cual
+        if (blocksToTranslate.length === 0) {
+            console.log('Todos los bloques están al día. Saltando traducción.');
+            return links;
+        }
 
         setTranslating(true);
-        setTranslationProgress({ current: 0, total: linksToTranslate.length });
+        setTranslationProgress({ current: 0, total: blocksToTranslate.length });
 
-        // Deep copy links to avoid mutating state directly during the loop
-        const newLinks = links.map(l => ({
-            ...l,
-            translations: { ...(l.translations || {}) }
-        }));
+        // Copia profunda para trabajar
+        const newLinks = [...links];
 
         try {
-            let processed = 0;
-            for (let i = 0; i < newLinks.length; i++) {
-                const link = newLinks[i];
-                if (typeof link.title === 'string' && link.title.trim().length > 0) {
-                    processed++;
-                    setTranslationProgress({ current: processed, total: linksToTranslate.length });
+            for (let i = 0; i < blocksToTranslate.length; i++) {
+                const workItem = blocksToTranslate[i];
+                const linkIndex = workItem.index;
+                const link = { ...newLinks[linkIndex] }; // Shallow copy of the specific link
 
-                    // Fingerprint del bloque actual
-                    const currentFingerprint = JSON.stringify({ title: link.title, content: link.content || '' });
+                setTranslationProgress({ current: i + 1, total: blocksToTranslate.length });
 
-                    // Si el fingerprint coincide y ya tiene traducciones, saltamos este bloque
-                    if (link._fingerprint === currentFingerprint && link.translations && Object.keys(link.translations).length > 0) {
-                        console.log(`Skipping block ${i + 1}: content unchanged.`);
-                        continue;
+                const { data, error } = await supabase.functions.invoke('translate-footer', {
+                    body: {
+                        title: link.title,
+                        content: link.content || '',
+                        sourceLang: 'auto'
+                    }
+                });
+
+                if (error) {
+                    const errorMsg = error.message || (typeof error === 'string' ? error : 'Error en la Edge Function');
+                    console.error(`Error en bloque ${linkIndex + 1}:`, errorMsg);
+                    // Opcional: alert(`❌ Bloque ${linkIndex + 1}: Falló la traducción.`);
+                    continue;
+                }
+
+                if (data && data.translations && Object.keys(data.translations).length > 0) {
+                    link.translations = {
+                        ...(link.translations || {}),
+                        ...data.translations
+                    };
+                    link._fingerprint = workItem.currentFingerprint;
+
+                    if (data.icon) {
+                        link.icon = data.icon;
                     }
 
-                    const { data, error } = await supabase.functions.invoke('translate-footer', {
-                        body: {
-                            title: link.title,
-                            content: link.content || '',
-                            sourceLang: 'auto'
-                        }
-                    });
-
-                    if (error) {
-                        const errorMsg = error.message || (typeof error === 'string' ? error : 'Error en la Edge Function');
-                        alert(`❌ Bloque ${i + 1}: Falló la traducción (${errorMsg}). Se mantendrán los datos anteriores.`);
-                        continue;
-                    }
-
-                    if (data && data.translations && Object.keys(data.translations).length > 0) {
-                        // MERGE: New AI keys overwrite old ones, but non-returned keys are preserved.
-                        link.translations = {
-                            ...link.translations,
-                            ...data.translations
-                        };
-
-                        // Guardar el fingerprint tras éxito
-                        link._fingerprint = currentFingerprint;
-
-                        // Update icon
-                        if (data.icon) {
-                            link.icon = data.icon;
-                        }
-                    } else {
-                        console.warn(`IA Bloque ${i + 1}: No devolvió traducciones válidas.`);
-                    }
+                    // Actualizar en el array
+                    newLinks[linkIndex] = link;
                 }
             }
 
@@ -206,7 +214,7 @@ export const ConfigPanel: React.FC<ConfigPanelProps> = ({ tenant, refreshTenant 
             setTimeout(() => setTranslationSuccess(false), 5000);
             return newLinks;
         } catch (err: any) {
-            alert(`🛑 Error crítico en el proceso de traducción: ${err.message}`);
+            console.error('Error en handleTranslate:', err);
             return links;
         } finally {
             setTranslating(false);

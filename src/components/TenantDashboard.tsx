@@ -25,7 +25,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     initialTab = 'documents'
 }) => {
     const { t } = useTranslation();
-    const { tenant } = useTenant();
+    const { tenant, refreshTenant } = useTenant();
     const [activeTab, setActiveTab] = useState(initialTab);
     const [subTab, setSubTab] = useState('members');
 
@@ -164,7 +164,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                         />
                     )}
                     {activeTab === 'affiliates' && <AffiliatePanel />}
-                    {activeTab === 'settings' && <ConfigPanel tenant={tenant} refreshTenant={async () => { window.location.reload(); }} />}
+                    {activeTab === 'settings' && <ConfigPanel tenant={tenant} refreshTenant={refreshTenant} />}
                 </div>
             </div>
         </div>

@@ -21,7 +21,6 @@ export interface Tenant {
     name: string;
     slug: string;
     plan: string;
-    plan_type: string;
     is_active: boolean;
     created_at: string;
     config?: any;

@@ -6,7 +6,6 @@ interface Tenant {
     name: string;
     slug: string;
     plan: string;
-    plan_type: string;
     config: any;
 }
 
@@ -64,7 +63,7 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
             if (token) {
                 const { data: invite, error: inviteError } = await supabase
                     .from('tenant_invitations')
-                    .select('*, tenants(id, name, slug, config, plan, plan_type)')
+                    .select('*, tenants(id, name, slug, config, plan)')
                     .eq('token', token)
                     .maybeSingle();
 

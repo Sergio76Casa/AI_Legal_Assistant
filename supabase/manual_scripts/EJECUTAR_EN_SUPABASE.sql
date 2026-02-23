@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.tenants (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL, -- Para subdominios o rutas: app.com/empresa
-    plan_type TEXT DEFAULT 'free', -- 'free', 'pro', 'business'
+    plan TEXT DEFAULT 'free', -- 'free', 'pro', 'business'
     config JSONB DEFAULT '{}', -- Config visual (logo, colores)
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -24,7 +24,7 @@ CREATE POLICY "Public read access to tenants"
 
 -- 2. "Legacy Ark": Crear Tenant Global para datos existentes
 -- Usamos un UUID fijo y conocido para evitar confusiones
-INSERT INTO public.tenants (id, name, slug, plan_type)
+INSERT INTO public.tenants (id, name, slug, plan)
 VALUES ('00000000-0000-0000-0000-000000000000', 'Legal AI Global', 'global', 'business')
 ON CONFLICT (id) DO UPDATE SET name = 'Legal AI Global'; -- Idempotency
 

@@ -5,7 +5,7 @@ create extension if not exists vector;
 create table profiles (
   id uuid references auth.users not null primary key,
   email text,
-  plan_type text default 'free',
+  plan text default 'free',
   query_count int default 0,
   created_at timestamptz default now()
 );
