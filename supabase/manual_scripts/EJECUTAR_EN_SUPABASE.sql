@@ -1,135 +1,344 @@
-﻿-- MigraciÃ³n: Multi-Tenant "Iron Silo" Architecture
--- Fecha: 17 de Febrero, 2026
--- Objetivo: Aislamiento total de datos por OrganizaciÃ³n (Tenant)
+﻿-- ====================================================================
+-- SCRIPT MAESTRO DE CONSOLIDACIÓN: FLUJO DE FIRMA Y AUDITORÍA PÚBLICA
+-- ====================================================================
+-- INSTRUCCIONES: Ejecuta este script completo en el SQL Editor de Supabase.
+-- Este script garantiza que existan todas las tablas, columnas, funciones RPC 
+-- y permisos necesarios para el funcionamiento de SignaturePage.tsx.
 
--- 1. Crear Tabla de Tenants (Organizaciones)
-CREATE TABLE IF NOT EXISTS public.tenants (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name TEXT NOT NULL,
-    slug TEXT UNIQUE NOT NULL, -- Para subdominios o rutas: app.com/empresa
-    plan TEXT DEFAULT 'free', -- 'free', 'pro', 'business'
-    config JSONB DEFAULT '{}', -- Config visual (logo, colores)
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- --------------------------------------------------------------------
+-- 1. EXTENSIÓN DE TABLA PROFILES
+-- --------------------------------------------------------------------
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS second_last_name TEXT,
+ADD COLUMN IF NOT EXISTS nie TEXT,
+ADD COLUMN IF NOT EXISTS birth_date DATE,
+ADD COLUMN IF NOT EXISTS birth_place TEXT,
+ADD COLUMN IF NOT EXISTS birth_country TEXT,
+ADD COLUMN IF NOT EXISTS nationality TEXT,
+ADD COLUMN IF NOT EXISTS sex TEXT,
+ADD COLUMN IF NOT EXISTS phone TEXT,
+ADD COLUMN IF NOT EXISTS city TEXT,
+ADD COLUMN IF NOT EXISTS postal_code TEXT,
+ADD COLUMN IF NOT EXISTS passport_num TEXT,
+ADD COLUMN IF NOT EXISTS civil_status TEXT,
+ADD COLUMN IF NOT EXISTS address_street TEXT,
+ADD COLUMN IF NOT EXISTS address_number TEXT,
+ADD COLUMN IF NOT EXISTS address_floor TEXT,
+ADD COLUMN IF NOT EXISTS address_province TEXT,
+ADD COLUMN IF NOT EXISTS father_name TEXT,
+ADD COLUMN IF NOT EXISTS mother_name TEXT,
+ADD COLUMN IF NOT EXISTS representative_name TEXT,
+ADD COLUMN IF NOT EXISTS representative_nie TEXT;
 
--- Habilitar RLS en Tenants
-ALTER TABLE public.tenants ENABLE ROW LEVEL SECURITY;
+-- --------------------------------------------------------------------
+-- 2. FUNCIONES RPC REQUERIDAS POR SignaturePage.tsx
+-- --------------------------------------------------------------------
 
--- PolÃ­tica: Todos pueden VER tenants (necesario para login/registro)
--- En producciÃ³n estricta, esto se cerrarÃ­a mÃ¡s, pero para MVP es necesario.
-CREATE POLICY "Public read access to tenants"
-    ON public.tenants FOR SELECT
-    USING (true);
-
--- 2. "Legacy Ark": Crear Tenant Global para datos existentes
--- Usamos un UUID fijo y conocido para evitar confusiones
-INSERT INTO public.tenants (id, name, slug, plan)
-VALUES ('00000000-0000-0000-0000-000000000000', 'Legal AI Global', 'global', 'business')
-ON CONFLICT (id) DO UPDATE SET name = 'Legal AI Global'; -- Idempotency
-
--- 3. Inyectar `tenant_id` en tablas Core
--- Profiles
-ALTER TABLE public.profiles 
-ADD COLUMN IF NOT EXISTS tenant_id UUID REFERENCES public.tenants(id) DEFAULT '00000000-0000-0000-0000-000000000000';
-
--- Knowledge Base (Vectores IA)
-ALTER TABLE public.knowledge_base
-ADD COLUMN IF NOT EXISTS tenant_id UUID REFERENCES public.tenants(id) DEFAULT '00000000-0000-0000-0000-000000000000';
-
--- Chat Logs
-ALTER TABLE public.chat_logs
-ADD COLUMN IF NOT EXISTS tenant_id UUID REFERENCES public.tenants(id) DEFAULT '00000000-0000-0000-0000-000000000000';
-
--- Documents (Archivos)
-ALTER TABLE public.documents
-ADD COLUMN IF NOT EXISTS tenant_id UUID REFERENCES public.tenants(id) DEFAULT '00000000-0000-0000-0000-000000000000';
-
--- 4. Actualizar Ãndices para Performance Multitenant
-CREATE INDEX IF NOT EXISTS idx_knowledge_base_tenant ON public.knowledge_base(tenant_id);
-CREATE INDEX IF NOT EXISTS idx_profiles_tenant ON public.profiles(tenant_id);
-CREATE INDEX IF NOT EXISTS idx_chat_logs_tenant ON public.chat_logs(tenant_id);
-CREATE INDEX IF NOT EXISTS idx_documents_tenant ON public.documents(tenant_id);
-
--- 5. BLINDAJE RLS (Security Shield)
--- Actualizamos las polÃ­ticas para que SOLO dejen pasar si el tenant_id coincide
-
--- Profiles: Ver perfil propio Y pertenecer al mismo tenant (aunque auth.uid ya filtra por usuario, esto asegura integridad)
-DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
-CREATE POLICY "Users can view own profile"
-    ON public.profiles FOR SELECT
-    USING (auth.uid() = id); -- Mantenemos simple por ahora, ya que id = auth.uid es fuerte.
-
--- Knowledge Base: EL CAMBIO CRÃTICO
--- Antes: true (o solo auth). Ahora: Solo mi tenant O el Global.
-DROP POLICY IF EXISTS "Authenticated users can read knowledge base" ON public.knowledge_base;
-CREATE POLICY "Tenant Isolation Protocol"
-    ON public.knowledge_base FOR SELECT
-    USING (
-        tenant_id = (SELECT tenant_id FROM public.profiles WHERE id = auth.uid())
-        OR 
-        tenant_id = '00000000-0000-0000-0000-000000000000' -- Acceso a Documentos Globales Legales
-        OR
-        (SELECT role FROM auth.users WHERE id = auth.uid()) = 'service_role' -- Service Role siempre puede
-    );
-
--- Documents: Similar a Knowledge Base
-DROP POLICY IF EXISTS "Users can view own documents" ON public.documents;
-CREATE POLICY "Tenant Isolation - Documents"
-    ON public.documents FOR SELECT
-    USING (
-        (auth.uid() = user_id) -- Propio dueÃ±o
-        AND
-        (tenant_id = (SELECT tenant_id FROM public.profiles WHERE id = auth.uid())) -- Mismo Tenant
-    );
-
--- 6. FunciÃ³n RPC actualizada para BÃºsqueda (Fase 2 PreparaciÃ³n)
--- Actualizamos la firma pero mantenemos lÃ³gica compatible por defecto
-DROP FUNCTION IF EXISTS match_documents;
-
-CREATE OR REPLACE FUNCTION match_documents (
-  query_embedding vector(3072),
-  match_threshold float,
-  match_count int,
-  p_user_id uuid DEFAULT NULL,
-  p_tenant_id uuid DEFAULT '00000000-0000-0000-0000-000000000000' -- Default a Global si no se pasa
-)
-RETURNS TABLE (
-  id bigint,
-  content text,
-  metadata jsonb,
-  similarity float,
-  tenant_id uuid
-)
+-- A. get_signature_request_by_token
+CREATE OR REPLACE FUNCTION public.get_signature_request_by_token(p_token TEXT)
+RETURNS JSON
 LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
 AS $$
+DECLARE
+    v_result JSON;
 BEGIN
-  RETURN QUERY
-  SELECT
-    k.id,
-    k.content,
-    k.metadata,
-    1 - (k.embedding <=> query_embedding) as similarity,
-    k.tenant_id
-  FROM knowledge_base k
-  WHERE 1 - (k.embedding <=> query_embedding) > match_threshold
-  AND (
-      -- Aislamiento de Tenant:
-      -- O es del tenant del usuario
-      k.tenant_id = p_tenant_id
-      OR
-      -- O es contenido Global (Leyes pÃºblicas)
-      k.tenant_id = '00000000-0000-0000-0000-000000000000'
-  )
-  AND (
-      -- Privacidad de Usuario (dentro del Tenant):
-      -- O es documento pÃºblico del tenant (user_id IS NULL)
-      k.user_id IS NULL
-      OR
-      -- O es documento privado del usuario
-      k.user_id = p_user_id
-  )
-  ORDER BY similarity DESC
-  LIMIT match_count;
+    SELECT json_build_object(
+        'id', sr.id,
+        'tenant_id', sr.tenant_id,
+        'template_id', sr.template_id,
+        'client_user_id', sr.client_user_id,
+        'requested_by', sr.requested_by,
+        'status', sr.status,
+        'document_storage_path', sr.document_storage_path,
+        'signed_document_path', sr.signed_document_path,
+        'access_token', sr.access_token,
+        'document_name', sr.document_name,
+        'expires_at', sr.expires_at,
+        'signed_at', sr.signed_at,
+        'created_at', sr.created_at,
+        'tenant_name', t.name,
+        'tenant_slug', t.slug,
+        'tenant_config', t.config
+    ) INTO v_result
+    FROM document_signature_requests sr
+    JOIN tenants t ON sr.tenant_id = t.id
+    WHERE sr.access_token = p_token;
+
+    RETURN v_result;
 END;
 $$;
+
+-- B. mark_signature_expired
+CREATE OR REPLACE FUNCTION public.mark_signature_expired(p_token TEXT)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    UPDATE document_signature_requests
+    SET status = 'expired'
+    WHERE access_token = p_token
+      AND status = 'pending';
+END;
+$$;
+
+-- C. get_signature_template_mappings
+CREATE OR REPLACE FUNCTION public.get_signature_template_mappings(p_token TEXT)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_template_id UUID;
+    v_result JSON;
+BEGIN
+    SELECT template_id INTO v_template_id
+    FROM document_signature_requests
+    WHERE access_token = p_token;
+
+    IF v_template_id IS NULL THEN
+        RETURN '[]'::JSON;
+    END IF;
+
+    SELECT COALESCE(json_agg(f.*), '[]'::JSON)
+    INTO v_result
+    FROM (
+        SELECT *
+        FROM form_fields_mapping
+        WHERE template_id = v_template_id
+    ) f;
+
+    RETURN v_result;
+END;
+$$;
+
+-- D. get_signer_profile_full
+CREATE OR REPLACE FUNCTION public.get_signer_profile_full(p_token TEXT)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_user_id UUID;
+    v_result JSON;
+BEGIN
+    SELECT client_user_id INTO v_user_id
+    FROM document_signature_requests
+    WHERE access_token = p_token;
+
+    IF v_user_id IS NULL THEN
+        RETURN NULL;
+    END IF;
+
+    SELECT json_build_object(
+        'first_name', COALESCE(p.full_name, ''),
+        'full_name', COALESCE(p.full_name, ''),
+        'last_name', COALESCE(p.last_name, ''),
+        'second_last_name', COALESCE(p.second_last_name, ''),
+        'nie', COALESCE(p.nie, ''),
+        'passport_num', COALESCE(p.passport_num, ''),
+        'birth_date', p.birth_date,
+        'birth_place', COALESCE(p.birth_place, ''),
+        'birth_country', COALESCE(p.birth_country, ''),
+        'nationality', COALESCE(p.nationality, ''),
+        'sex', COALESCE(p.sex, ''),
+        'civil_status', COALESCE(p.civil_status, ''),
+        'phone', COALESCE(p.phone, ''),
+        'email', COALESCE(p.email, ''),
+        'address_street', COALESCE(p.address_street, ''),
+        'address_number', COALESCE(p.address_number, ''),
+        'address_floor', COALESCE(p.address_floor, ''),
+        'city', COALESCE(p.city, ''),
+        'postal_code', COALESCE(p.postal_code, ''),
+        'address_province', COALESCE(p.address_province, ''),
+        'father_name', COALESCE(p.father_name, ''),
+        'mother_name', COALESCE(p.mother_name, ''),
+        'representative_name', COALESCE(p.representative_name, ''),
+        'representative_nie', COALESCE(p.representative_nie, '')
+    )
+    INTO v_result
+    FROM profiles p
+    WHERE p.id = v_user_id;
+
+    RETURN v_result;
+END;
+$$;
+
+-- E. update_signer_data_by_token
+CREATE OR REPLACE FUNCTION public.update_signer_data_by_token(p_token TEXT, p_updates JSONB)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_user_id UUID;
+    v_field TEXT;
+    v_value TEXT;
+    v_allowed_fields TEXT[] := ARRAY[
+        'last_name', 'second_last_name', 'nie', 'passport_num', 
+        'birth_date', 'birth_place', 'birth_country', 'nationality', 
+        'sex', 'civil_status', 'phone', 'address_street', 
+        'address_number', 'address_floor', 'city', 'postal_code', 
+        'address_province', 'father_name', 'mother_name',
+        'representative_name', 'representative_nie'
+    ];
+BEGIN
+    SELECT client_user_id INTO v_user_id
+    FROM document_signature_requests
+    WHERE access_token = p_token
+      AND status = 'pending';
+
+    IF v_user_id IS NULL THEN
+        RETURN json_build_object('success', false, 'error', 'Token inválido o expirado.');
+    END IF;
+
+    FOR v_field, v_value IN SELECT * FROM jsonb_each_text(p_updates)
+    LOOP
+        IF v_field = ANY(v_allowed_fields) THEN
+            EXECUTE format('UPDATE profiles SET %I = $1 WHERE id = $2', v_field)
+            USING v_value, v_user_id;
+        END IF;
+    END LOOP;
+
+    IF p_updates ? 'first_name' OR p_updates ? 'full_name' THEN
+        UPDATE profiles SET full_name = COALESCE(p_updates->>'full_name', p_updates->>'first_name') WHERE id = v_user_id;
+    END IF;
+
+    RETURN json_build_object('success', true);
+END;
+$$;
+
+-- F. complete_signature
+CREATE OR REPLACE FUNCTION public.complete_signature(
+    p_token TEXT, 
+    p_signed_document_path TEXT,
+    p_signature_storage_path TEXT,
+    p_signature_hash TEXT,
+    p_signer_name TEXT,
+    p_signer_email TEXT,
+    p_ip_address TEXT,
+    p_user_agent TEXT
+)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    v_request RECORD;
+BEGIN
+    SELECT * INTO v_request
+    FROM document_signature_requests
+    WHERE access_token = p_token
+      AND status = 'pending';
+
+    IF NOT FOUND THEN
+        RETURN json_build_object('success', false, 'error', 'Solicitud no válida o ya completada.');
+    END IF;
+
+    -- Update request status
+    UPDATE document_signature_requests
+    SET status = 'signed',
+        signed_at = now(),
+        signed_document_path = p_signed_document_path
+    WHERE id = v_request.id;
+
+    -- Create audit log
+    INSERT INTO document_signature_logs (
+        signature_request_id,
+        signer_name,
+        signer_email,
+        ip_address,
+        user_agent,
+        signature_hash,
+        signature_storage_path
+    ) VALUES (
+        v_request.id,
+        p_signer_name,
+        p_signer_email,
+        p_ip_address,
+        p_user_agent,
+        p_signature_hash,
+        p_signature_storage_path
+    );
+
+    RETURN json_build_object('success', true);
+END;
+$$;
+
+-- G. verify_document_public
+CREATE OR REPLACE FUNCTION public.verify_document_public(p_request_id UUID)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+    result JSON;
+    req RECORD;
+    log RECORD;
+BEGIN
+    SELECT * INTO req
+    FROM document_signature_requests
+    WHERE id = p_request_id
+      AND status = 'signed';
+
+    IF NOT FOUND THEN
+        RETURN json_build_object('success', false, 'error', 'Documento no encontrado o no está firmado.');
+    END IF;
+
+    SELECT * INTO log
+    FROM document_signature_logs
+    WHERE signature_request_id = req.id
+    ORDER BY created_at DESC
+    LIMIT 1;
+
+    IF NOT FOUND THEN
+        RETURN json_build_object('success', false, 'error', 'Registro de auditoría no encontrado.');
+    END IF;
+
+    DECLARE
+        v_ip_parts TEXT[];
+        v_obfuscated_ip TEXT;
+    BEGIN
+        v_ip_parts := string_to_array(log.ip_address, '.');
+        IF array_length(v_ip_parts, 1) = 4 THEN
+            v_obfuscated_ip := v_ip_parts[1] || '.' || v_ip_parts[2] || '.XX.XX';
+        ELSE
+            v_obfuscated_ip := '***.***.***.***';
+        END IF;
+
+        SELECT json_build_object(
+            'success', true,
+            'document_name', req.document_name,
+            'signed_at', req.signed_at,
+            'signer_name', log.signer_name,
+            'ip_obfuscated', v_obfuscated_ip,
+            'signature_hash', log.signature_hash,
+            'tenant_id', req.tenant_id
+        ) INTO result;
+    END;
+
+    RETURN result;
+END;
+$$;
+
+-- --------------------------------------------------------------------
+-- 3. PERMISOS (Grants)
+-- --------------------------------------------------------------------
+GRANT EXECUTE ON FUNCTION public.get_signature_request_by_token(TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.mark_signature_expired(TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_signature_template_mappings(TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_signer_profile_full(TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.update_signer_data_by_token(TEXT, JSONB) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.complete_signature(TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT, TEXT) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.verify_document_public(UUID) TO anon, authenticated;
+
+-- Confirmation
+SELECT 'SISTEMA LISTO: Todas las funciones RPC han sido instaladas.' as status;

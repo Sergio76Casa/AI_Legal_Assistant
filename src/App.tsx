@@ -26,6 +26,7 @@ import { LegalModal } from './components/Landing/LegalModal';
 import { ServicesModal } from './components/Landing/ServicesModal';
 import { SignaturePage } from './components/SignaturePage';
 import { JoinPage } from './components/JoinPage';
+import { VerifyDocument } from './components/VerifyDocument';
 
 const supabase = createClient(
     import.meta.env.VITE_SUPABASE_URL,
@@ -36,11 +37,12 @@ const supabase = createClient(
 function App() {
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'signatures' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate' | 'affiliate-kit' | 'sign' | 'join'>(
+    const [view, setView] = useState<'home' | 'dashboard' | 'admin' | 'login' | 'create-org' | 'documents' | 'templates' | 'signatures' | 'privacy' | 'cookies' | 'legal-procedures' | 'halal-culture' | 'housing-guide' | 'organization' | 'settings' | 'tenant-public' | 'affiliates' | 'afiliados-terminos' | 'register-affiliate' | 'affiliate-kit' | 'sign' | 'join' | 'verify'>(
         new URLSearchParams(window.location.search).get('token') ? 'join' : 'home'
     );
     const [previousView, setPreviousView] = useState<typeof view | 'home'>('home');
     const [signDocumentId, setSignDocumentId] = useState<string | null>(null);
+    const [verifyDocumentId, setVerifyDocumentId] = useState<string | null>(null);
     const [selectedPlan, setSelectedPlan] = useState<string>('free');
 
     // Track last non-legal view for "back" navigation
@@ -91,6 +93,16 @@ function App() {
                 if (token) {
                     setSignDocumentId(token);
                     setView('sign');
+                    return;
+                }
+            }
+
+            // 🛡️ VERIFY ROUTE: /verify/[token]
+            if (path.startsWith('verify/')) {
+                const token = path.replace('verify/', '');
+                if (token) {
+                    setVerifyDocumentId(token);
+                    setView('verify');
                     return;
                 }
             }
@@ -168,9 +180,9 @@ function App() {
             if (session?.user) {
                 fetchProfile(session.user.id);
             } else {
-                // GUARD: Never redirect away from the signature or join page
+                // GUARD: Never redirect away from the signature, join, or verify page
                 const currentPath = window.location.pathname;
-                if (currentPath.startsWith('/sign/') || currentPath.startsWith('/join')) return;
+                if (currentPath.startsWith('/sign/') || currentPath.startsWith('/join') || currentPath.startsWith('/verify/')) return;
 
                 const slugToRedirect = lastSlugRef.current;
                 setProfile(null);
@@ -191,8 +203,8 @@ function App() {
     // 🚀 REDIRECTION LOGIC: Auto-navigate to dashboard on login
     useEffect(() => {
         // If we have a user and they are on the root/home, send them to dashboard
-        // GUARD: Never redirect away from sign or join pages
-        if (view === 'sign' || view === 'join') return;
+        // GUARD: Never redirect away from sign, join or verify pages
+        if (view === 'sign' || view === 'join' || view === 'verify') return;
         if (user && view === 'home' && (window.location.pathname === '/' || window.location.pathname === '/home')) {
             setView('dashboard');
             window.history.replaceState({}, '', '/dashboard');
@@ -200,8 +212,8 @@ function App() {
     }, [user, view]);
 
     useEffect(() => {
-        // GUARD: Never redirect away from sign or join pages
-        if (view === 'sign' || view === 'join') return;
+        // GUARD: Never redirect away from sign, join or verify pages
+        if (view === 'sign' || view === 'join' || view === 'verify') return;
         const path = window.location.pathname.substring(1);
         if (!path || path === '') {
             // Root
@@ -224,6 +236,8 @@ function App() {
                     {/* 🖊️ SIGNATURE PAGE: Rendered outside layout for mobile-first fullscreen experience */}
                     {view === 'sign' && signDocumentId ? (
                         <SignaturePage documentId={signDocumentId} />
+                    ) : view === 'verify' && verifyDocumentId ? (
+                        <VerifyDocument documentId={verifyDocumentId} />
                     ) : view === 'tenant-public' ? (
                         <TenantPublicPage
                             slug={currentSlug || ''}

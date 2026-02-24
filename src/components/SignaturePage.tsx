@@ -7,6 +7,7 @@ import {
     FileText, Download, Loader2, Info, ChevronRight, Pen, UserPlus
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import QRCode from 'qrcode';
 
 interface SignatureRequest {
     id: string;
@@ -126,26 +127,46 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
                 }
 
                 // 1. Get all mappings for this template
-                const { data: mappings } = await supabase.rpc('get_signature_template_mappings', { p_token: documentId });
-                setFieldMappings(mappings || []);
+                const { data: mappings, error: mapErr } = await supabase.rpc('get_signature_template_mappings', { p_token: documentId });
+                if (mapErr) console.error('Error loading mappings:', mapErr);
+                const allMappings = mappings || [];
+                setFieldMappings(allMappings);
 
                 // 2. Get full profile
-                const { data: profile } = await supabase.rpc('get_signer_profile_full', { p_token: documentId });
+                const { data: profile, error: profErr } = await supabase.rpc('get_signer_profile_full', { p_token: documentId });
+                if (profErr) console.error('Error loading profile:', profErr);
+                const profileData = profile || {};
 
                 // 3. Detect missing fields (Only if not already signed)
                 if (data.status === 'pending') {
-                    const allMappings = mappings || [];
-                    const profileData = profile || {};
-
                     const missing = allMappings.filter((m: any) => {
                         // System fields and signature fields that shouldn't be asked in the form
                         const systemFields = ['today_date', 'client_signature', 'today_day', 'today_month', 'today_year'];
                         if (systemFields.includes(m.field_key)) return false;
                         if (m.field_type === 'signature') return false;
 
-                        const val = profileData[m.field_key];
-                        return val === null || val === undefined || String(val).trim() === '';
+                        // Normalize key check (some templates might use 'first_name' and others 'full_name')
+                        let val = profileData[m.field_key];
+
+                        // Fallback logic for common field name variants
+                        if (val === null || val === undefined || String(val).trim() === '') {
+                            if (m.field_key === 'first_name') val = profileData['full_name'];
+                            if (m.field_key === 'full_name') val = profileData['first_name'];
+                        }
+
+                        const isEmpty = val === null || val === undefined || String(val).trim() === '';
+                        return isEmpty;
                     });
+
+                    // DEBUG: Show status of all required fields
+                    console.group('🔍 Signature Flow Debug: Field Status');
+                    console.table(allMappings.map((m: any) => ({
+                        Key: m.field_key,
+                        Type: m.field_type,
+                        Value: profileData[m.field_key] || 'EMPTY',
+                        Status: (allMappings.filter((miss: any) => miss.field_key === m.field_key).length > 0) ? 'MISSING' : 'OK'
+                    })));
+                    console.groupEnd();
 
                     if (missing.length > 0) {
                         setMissingFields(missing);
@@ -187,9 +208,20 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
 
             // Refresh data and check again
             const { data: profile } = await supabase.rpc('get_signer_profile_full', { p_token: documentId });
+            const profileData = profile || {};
 
             const stillMissing = (fieldMappings || []).filter((m: any) => {
-                const val = (profile || {})[m.field_key];
+                const systemFields = ['today_date', 'client_signature', 'today_day', 'today_month', 'today_year'];
+                if (systemFields.includes(m.field_key)) return false;
+                if (m.field_type === 'signature') return false;
+
+                let val = profileData[m.field_key];
+                // Fallback logic
+                if (val === null || val === undefined || String(val).trim() === '') {
+                    if (m.field_key === 'first_name') val = profileData['full_name'];
+                    if (m.field_key === 'full_name') val = profileData['first_name'];
+                }
+
                 return val === null || val === undefined || String(val).trim() === '';
             });
 
@@ -233,7 +265,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
             ]);
 
             const userAgent = navigator.userAgent;
-            const signerName = fullProfile?.full_name || fullProfile?.username || 'Cliente';
+            const signerName = fullProfile?.full_name || fullProfile?.first_name || fullProfile?.username || 'Cliente';
 
             // Get signer email (separate for safety)
             let signerEmail = '';
@@ -289,11 +321,32 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
                 const pages = pdfDoc.getPages();
                 const textFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
+                // DEBUG: Analyze data to be printed
+                console.group('🖨️ PDF Printing Debug');
+                const printTable = mappingsList.map((f: any) => {
+                    let val = fullProfile[f.field_key] || '';
+                    if (!val && f.field_key === 'first_name') val = fullProfile['full_name'] || '';
+                    if (!val && f.field_key === 'full_name') val = fullProfile['first_name'] || '';
+                    return {
+                        Key: f.field_key,
+                        Type: f.field_type,
+                        FinalValue: val,
+                        Page: f.page_number
+                    };
+                });
+                console.table(printTable);
+                console.groupEnd();
+
                 // FILL TEXT FIELDS
                 for (const field of mappingsList) {
                     if (field.field_type === 'signature') continue;
 
-                    const val = fullProfile[field.field_key] || '';
+                    let val = fullProfile[field.field_key] || '';
+
+                    // Critical fallback mapping
+                    if (!val && field.field_key === 'first_name') val = fullProfile['full_name'] || '';
+                    if (!val && field.field_key === 'full_name') val = fullProfile['first_name'] || '';
+
                     const pageIndex = (field.page_number || 1) - 1;
                     if (pageIndex < 0 || pageIndex >= pages.length) continue;
 
@@ -310,7 +363,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
                                 font: textFont
                             });
                         }
-                    } else {
+                    } else if (val) {
                         const fontSize = (field.height || 12) * 0.7;
                         page.drawText(String(val), {
                             x: field.x_coordinate + 2,
@@ -441,6 +494,54 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
                     width: sealWidth,
                     height: sealHeight,
                 });
+
+                // --- PUBLIC AUDIT PORTAL QR CODE ---
+                try {
+                    const verifyUrl = `${window.location.origin}/verify/${request.id}`;
+                    const qrDataUri = await QRCode.toDataURL(verifyUrl, {
+                        errorCorrectionLevel: 'M',
+                        margin: 1,
+                        width: 150,
+                        color: { dark: '#0a0f1d', light: '#ffffff' }
+                    });
+
+                    const qrImage = await pdfDoc.embedPng(qrDataUri);
+                    const qrSize = 90;
+                    const qrX = aWidth - qrSize - 40;
+                    const qrY = startY - rowHeight * 9 - qrSize - 10;
+
+                    auditPage.drawImage(qrImage, {
+                        x: qrX,
+                        y: qrY,
+                        width: qrSize,
+                        height: qrSize,
+                    });
+
+                    auditPage.drawText('VERIFICACIÓN PÚBLICA', {
+                        x: qrX,
+                        y: qrY + qrSize + 10,
+                        size: 8,
+                        font: auditFontBold,
+                        color: rgb(0.3, 0.3, 0.3),
+                    });
+
+                    auditPage.drawText('Escanee para acceder al', {
+                        x: qrX,
+                        y: qrY - 15,
+                        size: 7,
+                        font: auditFont,
+                        color: rgb(0.5, 0.5, 0.5),
+                    });
+                    auditPage.drawText('Public Audit Portal', {
+                        x: qrX,
+                        y: qrY - 25,
+                        size: 7,
+                        font: auditFontBold,
+                        color: rgb(0.1, 0.4, 0.8),
+                    });
+                } catch (qrErr) {
+                    console.error('Failed to generate verification QR code:', qrErr);
+                }
 
                 // Footer
                 auditPage.drawText('Este documento constituye una prueba legal de la aceptación de los términos del documento original por parte del firmante.', {
@@ -635,7 +736,7 @@ export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
                                                     ? "El código postal debe tener exactamente 5 dígitos."
                                                     : ""
                                         }
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                        className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
                                         placeholder={`Escribe el ${t(`fields.${f.field_key}`).toLowerCase()}`}
                                     />
                                 </div>

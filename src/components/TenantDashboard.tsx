@@ -4,7 +4,7 @@ import { OrganizationPanel } from './OrganizationPanel';
 import { UserDocuments } from './UserDocuments';
 import { TemplateManager } from './TemplateManager';
 import { AffiliatePanel } from './AffiliatePanel';
-import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings, PenTool } from 'lucide-react';
+import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings, PenTool, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
 import { ConfigPanel } from './ConfigPanel';
@@ -164,7 +164,17 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                         />
                     )}
                     {activeTab === 'affiliates' && <AffiliatePanel />}
-                    {activeTab === 'settings' && <ConfigPanel tenant={tenant} refreshTenant={refreshTenant} />}
+                </div>
+
+                {/* 5. Trust Badge Footer */}
+                <div className="mt-16 flex justify-center pb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                    <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-[#0f172a]/80 backdrop-blur-md border border-primary/10 shadow-[0_4px_20px_rgba(19,236,200,0.03)] group hover:border-primary/30 transition-all cursor-default relative overflow-hidden">
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                        <Shield className="text-primary" size={18} />
+                        <span className="text-xs font-semibold text-slate-400 tracking-wide">
+                            Protección <strong className="text-white">Iron Silo™</strong> Activa: Datos Físicamente Aislados
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>

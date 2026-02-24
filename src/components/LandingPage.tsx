@@ -7,6 +7,7 @@ import { Navbar } from './Landing/Navbar';
 import { Hero } from './Landing/Hero';
 import { TrustBar } from './Landing/TrustBar';
 import { Features } from './Landing/Features';
+import { Security } from './Landing/Security';
 import { Pricing } from './Landing/Pricing';
 import { Partners } from './Landing/Partners';
 import { CTASection } from './Landing/CTASection';
@@ -36,6 +37,9 @@ export function LandingPage({ onLogin, onCreateOrg }: LandingPageProps) {
 
                 {/* Bento Feature Grid */}
                 <Features />
+
+                {/* Security Commitment */}
+                <Security />
 
                 {/* Pricing Plans */}
                 <Pricing
