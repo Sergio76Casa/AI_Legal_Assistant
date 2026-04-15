@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 import { Mail, Lock, Loader2, LogIn, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+
 
 interface AuthFormProps {
     onAuthSuccess: () => void;

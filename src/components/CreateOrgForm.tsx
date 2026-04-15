@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 import { Building, User, Mail, Lock, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PLAN_IDS, getPlanMetadata } from '../lib/constants/plans';
 import { useAppSettings } from '../lib/AppSettingsContext';
 import { cn } from '../lib/utils';
 
-const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+
 
 interface CreateOrgFormProps {
     onSuccess: () => void;

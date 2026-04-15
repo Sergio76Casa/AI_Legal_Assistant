@@ -7,7 +7,7 @@ import { AffiliatePanel } from './AffiliatePanel';
 import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings, PenTool, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
-import { ConfigPanel } from './ConfigPanel';
+import { ComplianceTab } from './Admin/ComplianceTab';
 
 interface TenantDashboardProps {
     onBack?: () => void;
@@ -25,7 +25,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     initialTab = 'documents'
 }) => {
     const { t } = useTranslation();
-    const { tenant, refreshTenant } = useTenant();
+    const { tenant } = useTenant();
     const [activeTab, setActiveTab] = useState(initialTab);
     const [subTab, setSubTab] = useState('members');
 
@@ -59,6 +59,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
 
     const mainTabs = [
         { id: 'documents', label: t('tenant_dashboard.documents'), icon: FileText },
+        { id: 'compliance', label: 'Eficiencia & Industria', icon: Shield },
         { id: 'templates', label: t('tenant_dashboard.templates'), icon: LayoutGrid, adminOnly: true },
         { id: 'organization', label: t('tenant_dashboard.organization'), icon: Building2, adminOnly: true },
         { id: 'affiliates', label: t('tenant_dashboard.affiliates'), icon: TrendingUp },
@@ -156,6 +157,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                 {/* 4. Contenido Dinámico */}
                 <div className="page-enter">
                     {activeTab === 'documents' && <UserDocuments userId={user.id} />}
+                    {activeTab === 'compliance' && <ComplianceTab tenantId={tenant.id} />}
                     {activeTab === 'templates' && <TemplateManager />}
                     {activeTab === 'organization' && (
                         <OrganizationPanel
