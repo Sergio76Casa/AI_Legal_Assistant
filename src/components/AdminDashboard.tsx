@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 
 // Shared Components
 import { OrganizationPanel } from './OrganizationPanel';
-import { AdminEarnings } from './AdminEarnings';
+import { AdminEarnings } from './Admin/AdminEarnings';
 import { BusinessSettingsPanel } from './BusinessSettingsPanel';
 import { useAppSettings } from '../lib/AppSettingsContext';
 

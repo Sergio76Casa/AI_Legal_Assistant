@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 export function Layout({ children, onNavigate, onOpenLegal, user, profile, hideNavFooter = false, hideFooter = false, currentView }: {
     children: React.ReactNode,
-    onNavigate?: (v: any) => void,
+    onNavigate?: (v: any, p?: string) => void,
     onOpenLegal?: (type: 'privacy' | 'cookies' | 'legal') => void,
     user?: any,
     profile?: any,

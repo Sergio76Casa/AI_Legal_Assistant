@@ -2,12 +2,12 @@ import { LogOut, ShieldCheck, Building2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from './LanguageSelector';
-
+import { supabase } from '../lib/supabase';
 import { useTenant } from '../lib/TenantContext';
 
 interface NavbarProps {
     className?: string;
-    onNavigate?: (v: any) => void;
+    onNavigate?: (view: any, path?: string) => void;
     user?: any;
     profile?: any;
     currentView?: string;
@@ -80,11 +80,21 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
 
                             {/* 2. Link Dinámico: Mis documentos / Mi dashboard */}
                             <button
-                                onClick={() => onNavigate?.(['documents', 'templates', 'organization', 'affiliates', 'settings'].includes(currentView || '') ? 'dashboard' : 'documents')}
+                                onClick={() => {
+                                    if (currentView === 'dashboard') {
+                                        onNavigate?.('documents', '/dashboard/documents');
+                                    } else {
+                                        onNavigate?.('dashboard', '/dashboard');
+                                    }
+                                }}
                                 className="text-xs font-bold text-slate-400 hover:text-white transition-colors border-l border-white/10 pl-3 md:pl-6 h-8 flex items-center gap-2"
                             >
                                 <Building2 size={14} className="text-primary/50" />
-                                <span className="hidden md:inline">{['documents', 'templates', 'organization', 'affiliates', 'settings'].includes(currentView || '') ? t('nav.my_dashboard') : (t('nav.documents') || 'Mis documentos')}</span>
+                                <span className="hidden md:inline">
+                                    {(currentView === 'documents' || currentView === 'organization' || currentView === 'settings') 
+                                        ? t('nav.my_dashboard') 
+                                        : (t('nav.documents') || 'Mis documentos')}
+                                </span>
                             </button>
 
                             {/* 3. Logo para cambiar idioma */}
@@ -96,22 +106,27 @@ export function Navbar({ className, onNavigate, user, profile, currentView }: Na
                             <div className="flex items-center gap-2 md:gap-4 border-l border-white/10 pl-3 md:pl-6 h-8">
                                 {isSuperAdmin && (
                                     <button
-                                        onClick={() => onNavigate?.('admin')}
+                                        onClick={() => onNavigate?.('admin', '/dashboard/admin')}
                                         className="flex items-center gap-1.5 text-[10px] font-extrabold tracking-wider text-slate-900 bg-primary px-3 py-1.5 rounded-lg hover:bg-primary/90 transition-all uppercase shadow-sm shadow-primary/20"
                                     >
                                         <ShieldCheck size={12} />
                                         Admin
                                     </button>
                                 )}
-
-                                <button
+                                 <button
                                     onClick={() => {
-                                        const supabase = (window as any).supabase;
-                                        if (supabase) {
-                                            supabase.auth.signOut().then(() => {
-                                                // La redirección se maneja centralmente en App.tsx
-                                            });
-                                        }
+                                        console.log('[Navbar] Force logging out...');
+                                        // Non-blocking signOut
+                                        supabase.auth.signOut().catch(err => console.error('SignOut error:', err));
+                                        
+                                        // Immediate cleanup
+                                        localStorage.clear();
+                                        sessionStorage.clear();
+                                        
+                                        // Delay redirect slightly to let request initiate
+                                        setTimeout(() => {
+                                            window.location.href = '/login?logout=true';
+                                        }, 100);
                                     }}
                                     className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-full transition-all"
                                     title={t('nav.logout')}

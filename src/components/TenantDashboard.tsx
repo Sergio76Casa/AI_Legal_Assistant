@@ -39,21 +39,15 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
         if (tabId === 'organization') setSubTab('members');
     };
 
-    if (!tenant) {
-        return (
-            <div className="flex h-screen flex-col items-center justify-center p-8 text-center text-slate-500">
-                <Building2 size={48} className="mb-4 text-slate-600" />
-                <h2 className="text-xl font-semibold text-white">{t('tenant_dashboard.not_found')}</h2>
-                <p className="mt-2 text-slate-400">{t('tenant_dashboard.no_permission')}</p>
-                <button
-                    onClick={onBack}
-                    className="mt-6 px-6 py-2 bg-primary text-slate-900 rounded-full font-bold hover:bg-primary/90 transition-all"
-                >
-                    {t('tenant_dashboard.back_home')}
-                </button>
-            </div>
-        );
-    }
+    const virtualTenant = tenant || {
+        id: 'personal',
+        name: t('tenant_dashboard.personal_workspace', { defaultValue: 'Espacio Personal' }),
+        plan: profile?.plan || 'Free',
+        slug: 'personal',
+        config: {}
+    };
+
+    const displayTenant = virtualTenant;
 
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
 
@@ -72,7 +66,10 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
         { id: 'signatures', label: t('tenant_dashboard.subtabs.signatures'), icon: PenTool },
     ];
 
-    const filteredTabs = mainTabs.filter(tab => !tab.adminOnly || isAdmin);
+    const filteredTabs = mainTabs.filter(tab => {
+        if (tab.adminOnly && !tenant) return false;
+        return !tab.adminOnly || isAdmin;
+    });
 
     return (
         <div className="min-h-screen bg-[#0a0f1d] pb-20 pt-12">
@@ -88,7 +85,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                     </button>
 
                     <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-3">
-                        {tenant.name}
+                        {displayTenant.name}
                     </h1>
 
                     <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500/80">
@@ -100,7 +97,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                         <div className="flex items-center gap-2">
                             <span>{t('tenant_dashboard.plan') || 'Plan'}:</span>
                             <span className="text-white font-black uppercase">
-                                {t(`landing.pricing.plans.${(tenant.plan || 'free').toLowerCase()}.name`, { defaultValue: tenant.plan || 'Free' })}
+                                {t(`landing.pricing.plans.${(displayTenant.plan || 'free').toLowerCase()}.name`, { defaultValue: displayTenant.plan || 'Free' })}
                             </span>
                         </div>
                         <span className="hidden xs:inline opacity-20">|</span>
@@ -157,11 +154,11 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                 {/* 4. Contenido Dinámico */}
                 <div className="page-enter">
                     {activeTab === 'documents' && <UserDocuments userId={user.id} />}
-                    {activeTab === 'compliance' && <ComplianceTab tenantId={tenant.id} />}
+                    {activeTab === 'compliance' && <ComplianceTab tenantId={displayTenant.id} />}
                     {activeTab === 'templates' && <TemplateManager />}
                     {activeTab === 'organization' && (
                         <OrganizationPanel
-                            tenantId={tenant.id}
+                            tenantId={displayTenant.id}
                             subView={subTab as any}
                         />
                     )}

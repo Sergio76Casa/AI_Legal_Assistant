@@ -850,6 +850,7 @@
         "today_date": "Today's Date (Auto)"
     },
     "tenant_dashboard": {
+        "personal_workspace": "Personal Workspace",
         "loading": "Loading organization...",
         "not_found": "Organization not found",
         "no_permission": "You do not have permission to view this panel or belong to any organization.",

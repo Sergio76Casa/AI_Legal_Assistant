@@ -1,9 +1,6 @@
-import React from 'react';
 import { ShieldCheck, Server, Fingerprint, Scale } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 export const Security = () => {
-    const { t } = useTranslation();
 
     const securityFeatures = [
         {

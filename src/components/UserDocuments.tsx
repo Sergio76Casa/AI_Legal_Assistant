@@ -33,17 +33,32 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId }) => {
     useUsageLimits(userId, 'upload_document');
 
     const fetchDocuments = async () => {
+        if (!userId) {
+            console.warn('[UserDocuments] No userId provided to fetchDocuments');
+            setLoading(false);
+            return;
+        }
+
         try {
+            console.log(`[UserDocuments] Fetching documents for user: ${userId}`);
             setLoading(true);
+            setError(null);
+            
             const { data, error } = await supabase
                 .from('documents')
                 .select('*')
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
+            if (error) {
+                console.error('[UserDocuments] Supabase error:', error);
+                throw error;
+            }
+            
+            console.log(`[UserDocuments] Found ${data?.length || 0} documents`);
             setDocuments(data || []);
         } catch (err: any) {
+            console.error('[UserDocuments] Fetch failed:', err);
             setError(err.message);
         } finally {
             setLoading(false);
@@ -52,6 +67,10 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId }) => {
 
     useEffect(() => {
         if (userId) fetchDocuments();
+        
+        return () => {
+            console.log('[UserDocuments] Unmounting/Cleaning up...');
+        };
     }, [userId]);
 
     const deleteDocument = async (doc: UserDocument) => {

@@ -859,6 +859,7 @@
         "today_year": "Año de Hoy (AAAA)"
     },
     "tenant_dashboard": {
+        "personal_workspace": "Espacio Personal",
         "loading": "Cargando organización...",
         "not_found": "No se encontró la organización",
         "no_permission": "No tienes permisos para ver este panel o no perteneces a ninguna organización.",
