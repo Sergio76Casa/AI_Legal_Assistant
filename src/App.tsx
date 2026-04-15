@@ -40,7 +40,6 @@ function App() {
     const [showSplash, setShowSplash] = useState(false);
     const [legalModal, setLegalModal] = useState<'privacy' | 'cookies' | null>(null);
 
-    const showAdmin = isAdmin && (view === 'admin' || window.location.search.includes('admin=true'));
 
     if (sessionLoading) {
         return (
@@ -110,13 +109,13 @@ function App() {
                         }
                     }}
                 />
-            ) : showAdmin ? (
+            ) : (view === 'admin' || (view === 'dashboard' && isAdmin)) ? (
                 <AdminDashboard />
             ) : (view === 'dashboard' || view === 'organization' || view === 'documents' || view === 'templates' || view === 'signatures' || view === 'affiliates' || view === 'settings' || view === 'home') && user ? (
                 <TenantDashboard
                     user={user}
                     profile={profile}
-                    initialTab={view}
+                    initialTab={view === 'dashboard' ? 'documents' : view}
                     onBack={() => navigate('dashboard', '/dashboard')}
                     onNavigate={(v) => navigate(v as any, `/dashboard/${v}`)}
                 />

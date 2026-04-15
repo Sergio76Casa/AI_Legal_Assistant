@@ -8,6 +8,8 @@ import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings, PenTo
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
 import { ComplianceTab } from './Admin/ComplianceTab';
+import { ConfigPanel } from './ConfigPanel';
+import { BusinessSettingsPanel } from './BusinessSettingsPanel';
 
 interface TenantDashboardProps {
     onBack?: () => void;
@@ -25,7 +27,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     initialTab = 'documents'
 }) => {
     const { t } = useTranslation();
-    const { tenant } = useTenant();
+    const { tenant, refreshTenant } = useTenant();
     const [activeTab, setActiveTab] = useState(initialTab);
     const [subTab, setSubTab] = useState('members');
 
@@ -163,6 +165,24 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                         />
                     )}
                     {activeTab === 'affiliates' && <AffiliatePanel />}
+                    {activeTab === 'settings' && (
+                        <div className="space-y-12">
+                            {user?.email === 'lsergiom76@gmail.com' && (
+                                <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
+                                    <BusinessSettingsPanel />
+                                    <div className="h-px bg-white/5 my-12" />
+                                </div>
+                            )}
+                            {tenant && (
+                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <ConfigPanel
+                                        tenant={displayTenant}
+                                        refreshTenant={refreshTenant}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* 5. Trust Badge Footer */}
