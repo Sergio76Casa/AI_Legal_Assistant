@@ -8,28 +8,35 @@ interface SubscriptionBadgeProps {
 }
 
 export const SubscriptionBadge: React.FC<SubscriptionBadgeProps> = ({ className }) => {
-    const { tenant } = useTenant();
+    const { tenant, profile } = useTenant();
     const [isOpen, setIsOpen] = useState(false);
 
-    const tier = (tenant?.plan || 'free').toLowerCase() as 'free' | 'pro' | 'business';
+    // Lógica Unificada: business -> Enterprise
+    const rawTier = (profile?.subscription_tier || tenant?.plan)?.toLowerCase();
+    
+    // Si no hay tier aún (cargando), no renderizamos para evitar parpadeo 'Starter'
+    if (!profile && !tenant) return null;
+
+    const tier = (rawTier === 'business' || rawTier === 'enterprise' || profile?.role === 'superadmin') ? 'enterprise' : 
+                 (rawTier === 'pro' || rawTier === 'premium') ? 'pro' : 'free' as 'free' | 'pro' | 'enterprise';
 
     const badges = {
         free: {
             icon: <Zap className="w-3 h-3" />,
-            label: 'Free',
-            classes: "bg-white/10 text-slate-300 border-white/15 hover:bg-white/15",
+            label: 'Starter',
+            classes: "bg-white/5 text-slate-300 border-white/10 hover:bg-white/10",
             features: ['1 Usuario', '5 Documentos/mes', 'Soporte Básico']
         },
         pro: {
             icon: <Crown className="w-3 h-3" />,
-            label: 'Pro',
-            classes: "bg-primary/15 text-primary border-primary/20 hover:bg-primary/25",
+            label: 'Business',
+            classes: "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20",
             features: ['5 Usuarios', 'Documentos Ilimitados', 'Soporte Prioritario', 'Análisis Avanzado']
         },
-        business: {
+        enterprise: {
             icon: <Rocket className="w-3 h-3" />,
-            label: 'Business',
-            classes: "bg-purple-500/15 text-purple-400 border-purple-500/20 hover:bg-purple-500/25",
+            label: 'Enterprise',
+            classes: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20",
             features: ['Usuarios Ilimitados', 'API Access', 'Soporte 24/7', 'Auditoría Legal', 'Marca Blanca']
         }
     };

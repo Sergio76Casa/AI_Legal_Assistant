@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { MessageSquare, FileText, TrendingUp, AlertCircle, Crown } from 'lucide-react';
+import { MessageSquare, FileText, TrendingUp, AlertCircle, Crown, Rocket } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PLAN_IDS, getPlanMetadata } from '../lib/constants/plans';
 import { useAppSettings } from '../lib/AppSettingsContext';
@@ -36,7 +36,7 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
             // Obtener perfil y su tenant_id
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('role, tenant_id, created_at')
+                .select('role, tenant_id, created_at, subscription_tier')
                 .eq('id', userId)
                 .maybeSingle();
 
@@ -54,9 +54,9 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                 }
             }
 
-            // Fallback o override para Superadmins
-            if (profile?.role === 'superadmin') {
-                tier = 'business';
+            // Fallback o override para Superadmins y cuentas Business -> Enterprise
+            if (profile?.role === 'superadmin' || tier === 'business' || profile?.subscription_tier === 'business') {
+                tier = PLAN_IDS.ENTERPRISE;
             }
 
             if (tier === 'premium') tier = 'pro';
@@ -131,13 +131,17 @@ export const UsageDashboard: React.FC<UsageDashboardProps> = ({ userId, onUpgrad
                     </p>
                 </div>
                 <div className={cn(
-                    "px-4 py-2 rounded-lg text-white font-semibold flex items-center gap-2 shadow-lg bg-gradient-to-r",
-                    usage.tier === PLAN_IDS.BUSINESS ? "from-purple-500 to-purple-600" :
-                        usage.tier === PLAN_IDS.ENTERPRISE ? "from-primary to-emerald-500" :
-                            "from-slate-500 to-slate-600"
+                    "px-4 py-2 rounded-lg text-white font-semibold flex items-center gap-2 shadow-lg transition-all",
+                    (usage.tier === PLAN_IDS.ENTERPRISE)
+                        ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]" 
+                        : usage.tier === PLAN_IDS.BUSINESS 
+                            ? "bg-primary/10 border border-primary/20 text-primary shadow-lg shadow-primary/10" 
+                            : "bg-white/5 border border-white/10 text-slate-300"
                 )}>
-                    <Crown className="w-5 h-5" />
-                    {t('usage.plan')} {getPlanMetadata(usage.tier, settings?.plan_names).commercialName}
+                    {usage.tier === PLAN_IDS.ENTERPRISE ? <Rocket className="w-4 h-4" /> : <Crown className="w-5 h-5 text-white/80" />}
+                    <span className="uppercase tracking-wider">
+                        {t('usage.plan')} {usage.tier === PLAN_IDS.ENTERPRISE ? 'ENTERPRISE' : getPlanMetadata(usage.tier, settings?.plan_names).commercialName}
+                    </span>
                 </div>
             </div>
 

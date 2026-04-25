@@ -12,14 +12,17 @@ create table if not exists public.documents (
 -- Enable RLS for documents
 alter table public.documents enable row level security;
 
+drop policy if exists "Users can view their own documents" on public.documents;
 create policy "Users can view their own documents"
   on public.documents for select
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can insert their own documents" on public.documents;
 create policy "Users can insert their own documents"
   on public.documents for insert
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete their own documents" on public.documents;
 create policy "Users can delete their own documents"
   on public.documents for delete
   using (auth.uid() = user_id);
@@ -32,14 +35,17 @@ add column if not exists document_id uuid references public.documents(id) on del
 -- Enable RLS for knowledge_base
 alter table public.knowledge_base enable row level security;
 
+drop policy if exists "Users can view their own knowledge chunks" on public.knowledge_base;
 create policy "Users can view their own knowledge chunks"
   on public.knowledge_base for select
   using (auth.uid() = user_id);
 
+drop policy if exists "Users can insert their own knowledge chunks" on public.knowledge_base;
 create policy "Users can insert their own knowledge chunks"
   on public.knowledge_base for insert
   with check (auth.uid() = user_id);
 
+drop policy if exists "Users can delete their own knowledge chunks" on public.knowledge_base;
 create policy "Users can delete their own knowledge chunks"
   on public.knowledge_base for delete
   using (auth.uid() = user_id);

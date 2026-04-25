@@ -10,6 +10,7 @@ export function useTenantControl() {
     const [selectedTenant, setSelectedTenant] = useState<any | null>(null);
     const [isLoadingUsers, setIsLoadingUsers] = useState(false);
     const [updatingPlan, setUpdatingPlan] = useState<string | null>(null);
+    const [updatingUserPlan, setUpdatingUserPlan] = useState<string | null>(null);
     const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
     const fetchTenants = useCallback(async () => {
@@ -20,6 +21,7 @@ export function useTenantControl() {
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
+            console.log('[useTenantControl] fetched tenants:', data?.length);
             setTenants(data || []);
         } catch (error: any) {
             console.error('Error fetching tenants:', error);
@@ -65,6 +67,29 @@ export function useTenantControl() {
         }
     };
 
+    const handleUpdateUserPlan = async (userId: string, newPlan: string) => {
+        setUpdatingUserPlan(userId);
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ subscription_tier: newPlan })
+                .eq('id', userId);
+
+            if (error) throw error;
+
+            setStatus({ type: 'success', message: '¡Suscripción de usuario actualizada!' });
+            
+            // Re-fetch users if we have a selected tenant
+            setTenantUsers(prev => prev.map(u => u.id === userId ? { ...u, subscription_tier: newPlan } : u));
+            
+        } catch (error: any) {
+            console.error('Error updating user plan:', error);
+            setStatus({ type: 'error', message: 'Error actualizar usuario: ' + error.message });
+        } finally {
+            setUpdatingUserPlan(null);
+        }
+    };
+
     return {
         tenants,
         tenantUsers,
@@ -72,10 +97,12 @@ export function useTenantControl() {
         setSelectedTenant,
         isLoadingUsers,
         updatingPlan,
+        updatingUserPlan,
         status,
         setStatus,
         fetchTenants,
         fetchTenantUsers,
-        handleUpdatePlan
+        handleUpdatePlan,
+        handleUpdateUserPlan
     };
 }

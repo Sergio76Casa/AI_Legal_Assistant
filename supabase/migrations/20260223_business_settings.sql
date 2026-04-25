@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS public.app_settings (
 );
 
 -- Restricción para asegurar que solo exista una fila 'global'
+ALTER TABLE public.app_settings DROP CONSTRAINT IF EXISTS only_one_row;
 ALTER TABLE public.app_settings ADD CONSTRAINT only_one_row CHECK (id = 'global');
 
 -- 2. Insertar valores por defecto (Starter, Business, Enterprise + 20% Comisión)
@@ -32,11 +33,13 @@ ON CONFLICT (id) DO NOTHING;
 ALTER TABLE public.app_settings ENABLE ROW LEVEL SECURITY;
 
 -- Lectura pública (necesaria para el frontend y webhook)
+DROP POLICY IF EXISTS "Public read app_settings" ON public.app_settings;
 CREATE POLICY "Public read app_settings"
     ON public.app_settings FOR SELECT
     USING (true);
 
 -- Escritura solo para Superadmin
+DROP POLICY IF EXISTS "Superadmin manage app_settings" ON public.app_settings;
 CREATE POLICY "Superadmin manage app_settings"
     ON public.app_settings FOR ALL
     USING (
@@ -55,6 +58,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS tr_update_app_settings_timestamp ON public.app_settings;
 CREATE TRIGGER tr_update_app_settings_timestamp
     BEFORE UPDATE ON public.app_settings
     FOR EACH ROW

@@ -1,4 +1,3 @@
-
 [functions.accept-invite]
 enabled = true
 verify_jwt = true
@@ -19,3 +18,18 @@ entrypoint = "./functions/create-organization/index.ts"
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/invite-user/index.ts"
+
+[functions.process-pdf]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/process-pdf/index.ts"
+
+[functions.chat]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/chat/index.ts"
+
+[functions.delete-document]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/delete-document/index.ts"

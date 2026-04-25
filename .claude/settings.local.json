@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(supabase migration *)",
+      "Bash(set SUPABASE_DB_PASSWORD=937167918Sergio)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase migration list)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase migration repair --status reverted 20260221)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase db push)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase db push --include-all)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase migration repair --status applied 20260221010000_digital_signatures)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase migration repair --status applied 20260221010000)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase migration repair --status reverted 20260221 20260222 20260223)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase migration repair --status applied 20260221030000)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase migration repair --status reverted 20260221 20260222)",
+      "Bash(SUPABASE_DB_PASSWORD=937167918Sergio supabase functions deploy chat)",
+      "Bash(supabase functions *)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")",
+      "Bash(xargs grep *)",
+      "Bash(npm run *)",
+      "Bash(npx tsc *)",
+      "Bash(node -e ' *)",
+      "Bash(supabase db *)"
+    ]
+  }
+}

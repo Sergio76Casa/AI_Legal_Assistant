@@ -171,7 +171,7 @@ export function Features() {
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2">
                                     <div className="h-64 md:h-full relative overflow-hidden">
-                                        <img src={selectedFeature.image} className="w-full h-full object-cover scale-110 hover:scale-100 transition-transform duration-[2s]" alt="" />
+                                        <img src={selectedFeature.image} className="w-full h-full object-cover scale-110 hover:scale-100 transition-transform [transition-duration:2000ms]" alt="" />
                                         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 to-transparent md:hidden"></div>
                                     </div>
                                     <div className="p-8 md:p-12 space-y-6 relative">

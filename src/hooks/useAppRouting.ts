@@ -6,6 +6,7 @@ export type AppView =
     | 'documents' | 'templates' | 'signatures' | 'privacy' 
     | 'cookies' | 'legal-procedures' | 'halal-culture' 
     | 'housing-guide' | 'organization' | 'settings' 
+    | 'compliance' | 'health' | 'programs' 
     | 'tenant-public' | 'affiliates' | 'afiliados-terminos' 
     | 'register-affiliate' | 'affiliate-kit' | 'sign' | 'join' | 'verify';
 
@@ -42,6 +43,9 @@ export function useAppRouting(user: any, profile: any) {
                              newView === 'affiliates' ? '/dashboard/affiliates' :
                              newView === 'admin' ? '/dashboard/admin' :
                              newView === 'organization' ? '/dashboard/organization' :
+                             newView === 'compliance' ? '/dashboard/compliance' :
+                             newView === 'health' ? '/dashboard/health' :
+                             newView === 'programs' ? '/dashboard/programs' :
                              newView === 'settings' ? '/dashboard/settings' : `/${newView}`;
             window.history.pushState({}, '', mappedPath);
         }
@@ -58,7 +62,8 @@ export function useAppRouting(user: any, profile: any) {
             'login', 'create-org', 'privacy', 'cookies', 'home', 'afiliados-terminos', 
             'register-affiliate', 'affiliate-kit', 'join', 'pro', 'pro/pricing', 
             'personal', 'personal/pricing', 'admin', 'dashboard', 'documents', 
-            'templates', 'signatures', 'organization', 'settings', 'affiliates', 'verify', ''
+            'templates', 'signatures', 'organization', 'settings', 'affiliates', 
+            'compliance', 'health', 'programs', 'verify', ''
         ];
 
         // 1. Force 'join' if token is present
@@ -95,6 +100,9 @@ export function useAppRouting(user: any, profile: any) {
             'dashboard/signatures': 'signatures',
             'dashboard/affiliates': 'affiliates',
             'dashboard/organization': 'organization',
+            'dashboard/compliance': 'compliance',
+            'dashboard/health': 'health',
+            'dashboard/programs': 'programs',
             'dashboard/settings': 'settings',
             'dashboard/admin': 'admin'
         };

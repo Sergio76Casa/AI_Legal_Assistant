@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Bot, MessageSquare } from 'lucide-react';
+import { X, Send, Bot, MessageSquare, FileText } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
@@ -7,11 +7,18 @@ import { useChat } from '../lib/ChatContext';
 import { useTranslation } from 'react-i18next';
 import { useUsageLimits } from '../lib/useUsageLimits';
 import { UpgradeModal } from './UpgradeModal';
+import ReactMarkdown from 'react-markdown';
+
+interface Source {
+    title: string;
+    similarity: number;
+}
 
 interface Message {
     id: string;
     role: 'user' | 'assistant';
     content: string;
+    sources?: Source[];
 }
 
 export function ChatDrawer() {
@@ -29,6 +36,7 @@ export function ChatDrawer() {
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -79,6 +87,13 @@ export function ChatDrawer() {
             content: inputValue
         };
 
+        // Capturar el historial ANTES de añadir el nuevo mensaje para enviarlo al backend
+        // Excluye el mensaje de bienvenida (id='1') y limita a últimos 8 (4 intercambios)
+        const historyToSend = messages
+            .filter(m => m.id !== '1' && m.content.trim())
+            .slice(-8)
+            .map(m => ({ id: m.id, role: m.role, content: m.content }));
+
         setMessages(prev => [...prev, newMessage]);
         const userQuery = inputValue;
         setInputValue('');
@@ -90,7 +105,8 @@ export function ChatDrawer() {
                 body: {
                     query: userQuery,
                     lang: i18n.language,
-                    user_id: user?.id
+                    user_id: user?.id,
+                    history: historyToSend   // ← historial de la conversación
                 }
             });
 
@@ -98,19 +114,26 @@ export function ChatDrawer() {
             if (error) throw error;
 
             const fullResponse = data.answer || t('hero.subtitle');
+            const sources: Source[] = data.sources || [];
             const assistantMsgId = Date.now().toString();
 
+            // Añadir mensaje del asistente (con fuentes ya disponibles desde el inicio)
             setMessages(prev => [...prev, {
                 id: assistantMsgId,
                 role: 'assistant',
-                content: ''
+                content: '',
+                sources: sources.filter(s => s.similarity > 0)  // solo fuentes con similitud
             }]);
 
+            // Cancelar cualquier intervalo de escritura anterior antes de iniciar uno nuevo
+            if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+
+            // Efecto de escritura palabra por palabra
             let currentContent = '';
             const words = fullResponse.split(' ');
             let wordIndex = 0;
 
-            const typingInterval = setInterval(() => {
+            typingIntervalRef.current = setInterval(() => {
                 if (wordIndex < words.length) {
                     currentContent += (wordIndex === 0 ? '' : ' ') + words[wordIndex];
                     setMessages((prev: Message[]) => prev.map((msg: Message) =>
@@ -118,9 +141,10 @@ export function ChatDrawer() {
                     ));
                     wordIndex++;
                 } else {
-                    clearInterval(typingInterval);
+                    clearInterval(typingIntervalRef.current!);
+                    typingIntervalRef.current = null;
                 }
-            }, 100);
+            }, 80);
 
             await incrementUsage();
 
@@ -212,7 +236,41 @@ export function ChatDrawer() {
                                             ? "bg-primary text-slate-900 rounded-tr-none"
                                             : "bg-white/5 text-slate-200 border border-white/10 rounded-tl-none"
                                     )}>
-                                        {msg.content}
+                                        {msg.role === 'user' ? (
+                                            msg.content
+                                        ) : (
+                                            <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-li:my-0.5 prose-ul:my-1 prose-strong:text-white">
+                                                <ReactMarkdown>
+                                                    {msg.content}
+                                                </ReactMarkdown>
+                                            </div>
+                                        )}
+
+                                        {/* Fuentes citadas — solo en mensajes del asistente con fuentes */}
+                                        {msg.role === 'assistant' && msg.sources && msg.sources.length > 0 && (
+                                            <div className="mt-3 pt-2 border-t border-white/10 flex flex-wrap gap-x-3 gap-y-1">
+                                                {msg.sources.map((source, idx) => (
+                                                    <span
+                                                        key={idx}
+                                                        className="flex items-center gap-1 text-[10px] text-slate-500 font-medium"
+                                                        title={`Similitud: ${source.similarity}%`}
+                                                    >
+                                                        <FileText size={9} className="text-primary/50" />
+                                                        {source.title
+                                                            .replace(/^\d+_/, '')           // quitar timestamp al inicio
+                                                            .replace(/\s*\(\d+\/\d+\)$/, '') // quitar (n/total)
+                                                            .replace(/\.pdf$/i, '')          // quitar extensión
+                                                            .replace(/_/g, ' ')              // guiones por espacios
+                                                            .trim()
+                                                            .substring(0, 40)               // máximo 40 chars
+                                                        }
+                                                        {source.similarity > 0 && (
+                                                            <span className="text-primary/50">· {source.similarity}%</span>
+                                                        )}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}

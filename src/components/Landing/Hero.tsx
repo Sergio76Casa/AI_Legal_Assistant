@@ -70,7 +70,7 @@ export function Hero({ onCreateOrg, onBookDemo }: HeroProps) {
                         <div className="relative z-10 w-full h-full glass-card rounded-3xl overflow-hidden border border-white/10 shadow-2xl transition-all duration-500 group-hover:border-primary/30">
                             <img
                                 src="/hero-dashboard.jpg"
-                                alt="Lexpats - Multinational Legal Support"
+                                alt="Legal AI Global - Industrial Efficiency & Compliance"
                                 className="w-full h-full object-cover transform transition-transform duration-1000 group-hover:scale-105"
                                 onError={(e) => {
                                     // Fallback to a high-quality abstract legal/tech image if file is missing

@@ -1,614 +1,191 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    Users,
-    Link as LinkIcon,
-    Copy,
-    Check,
-    TrendingUp,
-    DollarSign,
-    AlertCircle,
-    Loader2,
-    Edit3,
-    Banknote,
-    ArrowUpRight,
-    Calendar,
-    MousePointer2,
-    X
-} from 'lucide-react';
+import { TrendingUp, AlertCircle, X, Loader2, Sparkles, HelpCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { getPlanMetadata } from '../lib/constants/plans';
-import { useAppSettings } from '../lib/AppSettingsContext';
-import {
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    AreaChart,
-    Area
-} from 'recharts';
 
-interface AffiliateData {
-    id: string;
-    affiliate_code: string;
-    status: 'pending' | 'active';
-    total_earned: number;
-    created_at: string;
-}
+// Hooks
+import { useAffiliateStats } from '../hooks/affiliate/useAffiliateStats';
+import { useAffiliateActions } from '../hooks/affiliate/useAffiliateActions';
 
-const MIN_PAYOUT = 50; // Umbral mínimo en €
-
-// Datos de prueba para el gráfico
-const chartData = [
-    { name: '01 Feb', clics: 45, ventas: 2 },
-    { name: '05 Feb', clics: 89, ventas: 5 },
-    { name: '10 Feb', clics: 120, ventas: 8 },
-    { name: '15 Feb', clics: 167, ventas: 12 },
-    { name: '20 Feb', clics: 210, ventas: 15 },
-    { name: '21 Feb', clics: 245, ventas: 18 },
-];
-
-interface ReferralRecord {
-    id: string;
-    date: string;
-    status: string;
-    plan: string;
-    commission: number;
-}
+// Sub-components
+import { AffiliateOnboarding } from './Affiliate/AffiliateOnboarding';
+import { StatsGrid } from './Affiliate/StatsGrid';
+import { PerformanceAnalytics } from './Affiliate/PerformanceAnalytics';
+import { AffiliateLinkManager } from './Affiliate/AffiliateLinkManager';
+import { ReferralHistory } from './Affiliate/ReferralHistory';
+import { AffiliateRanking } from './Affiliate/AffiliateRanking';
+import { ViewHeader } from './Admin/ViewHeader';
 
 export const AffiliatePanel: React.FC = () => {
-    const { settings } = useAppSettings();
     const [user, setUser] = useState<any>(null);
     const [profile, setProfile] = useState<any>(null);
-    const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
-    const [referrals, setReferrals] = useState<ReferralRecord[]>([]);
-    const [stats, setStats] = useState({
-        clicks: 0,
-        conversions: 0,
-        convRate: 0,
-        pendingEarnings: 0,
-        totalPaid: 0
-    });
-    const [loading, setLoading] = useState(true);
-    const [joining, setJoining] = useState(false);
-    const [copied, setCopied] = useState(false);
-    const [customizing, setCustomizing] = useState(false);
-    const [newCode, setNewCode] = useState('');
-    const [error, setError] = useState<string | null>(null);
+    const [affiliate, setAffiliate] = useState<any>(null);
+    const [initialLoading, setInitialLoading] = useState(true);
+
+    // Hooks
+    const { loading: statsLoading, stats, referrals, chartData, refreshStats } = useAffiliateStats(affiliate?.id);
+    const { 
+        joining, updating, copied, error, setError, 
+        handleJoin, handleUpdateCode, handleCopyLink 
+    } = useAffiliateActions(user?.id, profile);
 
     useEffect(() => {
-        const loadData = async () => {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                setUser(user);
-                const { data: prof } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user.id)
-                    .single();
+        const init = async () => {
+            const { data: { user: authUser } } = await supabase.auth.getUser();
+            if (authUser) {
+                setUser(authUser);
+                const { data: prof } = await supabase.from('profiles').select('*').eq('id', authUser.id).single();
                 setProfile(prof);
-
-                const { data: aff } = await supabase
-                    .from('affiliates')
-                    .select('*')
-                    .eq('user_id', user.id)
-                    .maybeSingle();
-
-                if (aff) {
-                    setAffiliate(aff);
-                    await fetchAffiliateDetailedData(aff.id);
-                }
+                const { data: aff } = await supabase.from('affiliates').select('*').eq('user_id', authUser.id).maybeSingle();
+                setAffiliate(aff);
             }
-            setLoading(false);
+            setInitialLoading(false);
         };
-        loadData();
+        init();
     }, []);
 
-    const fetchAffiliateDetailedData = async (affiliateId: string) => {
-        try {
-            // 1. Fetch Referrals with their plans
-            const { data: referralsData } = await supabase
-                .from('affiliate_referrals')
-                .select(`
-                    id, 
-                    created_at,
-                    referred_user_id
-                `)
-                .eq('affiliate_id', affiliateId)
-                .order('created_at', { ascending: false });
+    const onJoinClick = async () => {
+        const newAff = await handleJoin();
+        if (newAff) setAffiliate(newAff);
+    };
 
-            if (referralsData) {
-                const enrichedReferrals = await Promise.all(referralsData.map(async (ref) => {
-                    // Try to get subscription tier
-                    const { data: sub } = await supabase
-                        .from('subscriptions')
-                        .select('tier, status')
-                        .eq('user_id', ref.referred_user_id)
-                        .maybeSingle();
-
-                    // Try to get commission for this referral
-                    const { data: comms } = await supabase
-                        .from('affiliate_commissions')
-                        .select('amount')
-                        .eq('referral_id', ref.id)
-                        .eq('status', 'paid');
-
-                    const totalComm = comms?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
-
-                    return {
-                        id: ref.id,
-                        date: new Date(ref.created_at).toISOString().split('T')[0],
-                        status: sub?.status === 'active' ? 'Activo' : 'Pendiente',
-                        plan: sub?.tier || 'free',
-                        commission: totalComm
-                    };
-                }));
-                //@ts-ignore
-                setReferrals(enrichedReferrals);
-
-                // 2. Calculate real stats
-                const conversions = referralsData.length;
-                const { data: paidComms } = await supabase
-                    .from('affiliate_commissions')
-                    .select('amount')
-                    .eq('status', 'paid')
-                    .in('referral_id', referralsData.map(r => r.id));
-
-                const pendingCommsRawSize = await supabase
-                    .from('affiliate_commissions')
-                    .select('amount')
-                    .eq('status', 'pending')
-                    .in('referral_id', referralsData.map(r => r.id));
-
-                const pendingEarnings = pendingCommsRawSize.data?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
-                const totalPaid = paidComms?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
-
-                setStats({
-                    clicks: Math.max(conversions * 12, 45), // Estimate clicks if tracking not implemented
-                    conversions,
-                    convRate: conversions > 0 ? (conversions / (conversions * 12) * 100) : 0,
-                    pendingEarnings,
-                    totalPaid
-                });
-            }
-        } catch (err) {
-            console.error('Error fetching affiliate details:', err);
+    const onUpdateAffiliateCode = async (newCode: string) => {
+        const success = await handleUpdateCode(affiliate.id, newCode);
+        if (success) {
+            setAffiliate({ ...affiliate, affiliate_code: newCode.toUpperCase() });
         }
+        return success;
     };
 
-    const generateDefaultCode = (name: string) => {
-        const initials = name
-            .split(' ')
-            .map(n => n[0])
-            .join('')
-            .toUpperCase()
-            .substring(0, 3);
-        const random = Math.floor(1000 + Math.random() * 9000);
-        return `${initials}${random}`;
-    };
-
-    const handleJoin = async () => {
-        if (!user || !profile) return;
-        setJoining(true);
-        setError(null);
-        try {
-            const defaultCode = generateDefaultCode(profile.username || user.email.split('@')[0]);
-            const { data, error: joinErr } = await supabase
-                .from('affiliates')
-                .insert({
-                    user_id: user.id,
-                    affiliate_code: defaultCode,
-                    status: 'active'
-                })
-                .select()
-                .single();
-            if (joinErr) throw joinErr;
-            setAffiliate(data);
-        } catch (err: any) {
-            console.error(err);
-            setError(err.message);
-        } finally {
-            setJoining(false);
-        }
-    };
-
-    const handleCopy = () => {
-        if (!affiliate) return;
-        const url = `https://legalflow.digital?ref=${affiliate.affiliate_code}`;
-        navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    const handleSaveCustomCode = async () => {
-        if (!affiliate || !newCode.trim()) return;
-        setError(null);
-        try {
-            const cleanCode = newCode.trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
-            const { error: updateErr } = await supabase
-                .from('affiliates')
-                .update({ affiliate_code: cleanCode })
-                .eq('id', affiliate.id);
-            if (updateErr) {
-                if (updateErr.code === '23505') throw new Error('Este código ya está en uso. Prueba con otro.');
-                throw updateErr;
-            }
-            setAffiliate({ ...affiliate, affiliate_code: cleanCode });
-            setCustomizing(false);
-        } catch (err: any) {
-            setError(err.message);
-        }
-    };
-
-    if (loading) {
+    if (initialLoading) {
         return (
-            <div className="flex items-center justify-center p-20">
-                <Loader2 className="animate-spin text-[#13ecc8]" size={40} />
+            <div className="flex flex-col items-center justify-center p-40 gap-4">
+                <Loader2 className="animate-spin text-primary" size={40} />
+                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">Sincronizando Red Stark...</span>
             </div>
         );
     }
 
     if (!affiliate) {
-        return (
-            <div className="max-w-4xl mx-auto p-6">
-                <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-[2.5rem] p-12 text-center text-white relative overflow-hidden shadow-2xl border border-white/5">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-[#13ecc8]/10 rounded-full blur-[150px] -mr-48 -mt-48"></div>
-
-                    <div className="relative z-10">
-                        <div className="w-20 h-20 bg-[#13ecc8]/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-[#13ecc8]/20">
-                            <TrendingUp size={40} className="text-[#13ecc8]" />
-                        </div>
-
-                        <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
-                            Programa de Partners
-                        </h1>
-
-                        <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-                            Gana comisiones recurrentes recomendando la tecnología líder en extranjería a otros profesionales.
-                        </p>
-
-                        <div className="grid md:grid-cols-3 gap-6 mb-12 text-left">
-                            {[
-                                { title: '20%', desc: 'Comisión Recurrente' },
-                                { title: '30 días', desc: 'Ventana de Atribución' },
-                                { title: '50€', desc: 'Umbral mínimo de pago' }
-                            ].map((feat, i) => (
-                                <div key={i} className="bg-white/5 border border-white/10 p-8 rounded-3xl backdrop-blur-sm">
-                                    <div className="text-3xl font-black text-[#13ecc8] mb-1">{feat.title}</div>
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">{feat.desc}</div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <button
-                            onClick={handleJoin}
-                            disabled={joining}
-                            className="px-12 py-5 bg-[#13ecc8] hover:brightness-110 text-slate-900 text-lg font-black rounded-2xl transition-all shadow-xl shadow-[#13ecc8]/20 active:scale-95 flex items-center gap-3 mx-auto uppercase tracking-widest"
-                        >
-                            {joining ? <Loader2 className="animate-spin" /> : <TrendingUp size={24} />}
-                            Unirme ahora
-                        </button>
-
-                        {error && (
-                            <div className="mt-6 text-red-400 text-sm font-bold flex items-center justify-center gap-2">
-                                <AlertCircle size={16} /> {error}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
+        return <AffiliateOnboarding onJoin={onJoinClick} joining={joining} error={error} />;
     }
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8 pb-20">
-            <AnimatePresence>
-                {/* 1. Alerta de Nueva Comisión */}
-                {profile?.last_notification && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                        animate={{ opacity: 1, height: 'auto', marginBottom: 32 }}
-                        exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                        className="bg-[#13ecc8]/10 border border-[#13ecc8]/20 rounded-3xl p-6 flex items-center justify-between gap-4 text-[#13ecc8] overflow-hidden"
-                    >
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-2xl bg-[#13ecc8]/10 flex items-center justify-center border border-[#13ecc8]/20">
-                                <TrendingUp size={24} />
+        <div className="page-enter space-y-12">
+            <ViewHeader 
+                icon={TrendingUp} 
+                title="Programa de afiliados" 
+                subtitle={`Identificador de Nodo: ${affiliate.id.substring(0, 8)}`}
+                badge={affiliate.status === 'active' ? 'PROTOCOLO ACTIVO' : 'VALIDACIÓN PENDIENTE'}
+                badgeColor={affiliate.status === 'active' ? 'primary' : 'amber'}
+            />
+
+            <div className="max-w-7xl mx-auto space-y-10 pb-20 px-4">
+                <AnimatePresence>
+                    {/* 1. Commission Notification */}
+                    {profile?.last_notification && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="bg-primary/10 border border-primary/20 rounded-3xl p-6 flex items-center justify-between gap-4 text-primary relative overflow-hidden group mb-8"
+                        >
+                            <div className="absolute inset-y-0 left-0 w-1 bg-primary" />
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                    <Sparkles size={24} />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-black uppercase tracking-widest">¡Protocolo de Pago Activado!</p>
+                                    <p className="text-xs text-primary/70 font-bold">{profile.last_notification}</p>
+                                </div>
+                            </div>
+                            <button
+                                onClick={async () => {
+                                    await supabase.from('profiles').update({ last_notification: null }).eq('id', user.id);
+                                    setProfile({ ...profile, last_notification: null });
+                                }}
+                                className="p-2 text-primary/40 hover:text-primary transition-colors hover:bg-primary/10 rounded-xl"
+                            >
+                                <X size={20} />
+                            </button>
+                        </motion.div>
+                    )}
+
+                    {/* 2. Verification Banner */}
+                    {affiliate.status === 'pending' && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 flex items-center gap-4 text-amber-500 group"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 border border-amber-500/20 group-hover:rotate-12 transition-transform">
+                                <AlertCircle size={20} />
                             </div>
                             <div>
-                                <p className="text-sm font-black uppercase tracking-widest">¡Nueva Comisión Ingresada!</p>
-                                <p className="text-xs text-[#13ecc8]/70 font-medium">{profile.last_notification}</p>
+                                <p className="text-xs font-black uppercase tracking-widest">Estado: Verificación Stark en Curso</p>
+                                <p className="text-[10px] text-amber-500/70 font-bold uppercase tracking-tighter mt-1">Tu cuenta será plenamente funcional en las próximas 24-48 horas después del análisis de seguridad.</p>
                             </div>
-                        </div>
-                        <button
-                            onClick={async () => {
-                                await supabase.from('profiles').update({ last_notification: null }).eq('id', user.id);
-                                setProfile({ ...profile, last_notification: null });
-                            }}
-                            className="text-[#13ecc8]/40 hover:text-[#13ecc8] transition-colors"
-                        >
-                            <X size={20} />
-                        </button>
-                    </motion.div>
-                )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
-                {/* 2. Banner de Validación Pendiente */}
-                {affiliate.status === 'pending' && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-center gap-4 text-amber-400 group"
-                    >
-                        <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 border border-amber-500/20 group-hover:scale-110 transition-transform">
-                            <AlertCircle size={20} />
-                        </div>
-                        <div>
-                            <p className="text-sm font-black uppercase tracking-widest">Modo Lectura • Validación en curso</p>
-                            <p className="text-xs text-amber-500/70 font-medium">Podrás retirar tus comisiones una vez finalice el proceso de revisión (24-48h).</p>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                {/* 1. Stats Grid */}
+                <StatsGrid stats={stats} />
 
-            {/* Header */}
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div className="space-y-1">
-                    <h2 className="text-3xl font-black text-white flex items-center gap-3 tracking-tight">
-                        <TrendingUp size={32} className="text-[#13ecc8]" />
-                        Panel de Afiliado
-                    </h2>
-                    <p className="text-slate-500 font-medium px-1">
-                        Bienvenido de nuevo, <span className="text-white font-bold">{profile?.username || 'Partner'}</span> · Tu comisión es del <span className="text-[#13ecc8] font-black">20% vitalicia</span>
-                    </p>
-                </div>
-                <div className={cn(
-                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] w-fit border",
-                    affiliate.status === 'active'
-                        ? 'bg-[#13ecc8]/5 text-[#13ecc8] border-[#13ecc8]/20'
-                        : 'bg-amber-500/5 text-amber-500 border-amber-500/20'
-                )}>
-                    {affiliate.status === 'active' ? '● Cuenta Activa' : '● Verificación Pendiente'}
-                </div>
-            </header>
-
-            {/* 1. Metric Cards Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                {[
-                    { label: 'Clics Totales', value: stats.clicks, icon: MousePointer2, color: 'text-blue-400' },
-                    { label: 'Conversiones', value: stats.conversions, icon: Users, color: 'text-[#13ecc8]' },
-                    { label: 'Tasa de Conv.', value: `${stats.convRate}%`, icon: ArrowUpRight, color: 'text-amber-400' },
-                    { label: 'Ingr. Pendientes', value: `${stats.pendingEarnings.toFixed(2)}€`, icon: DollarSign, color: 'text-primary' },
-                    { label: 'Total Cobrado', value: `${stats.totalPaid.toFixed(2)}€`, icon: Banknote, color: 'text-slate-300' },
-                ].map((stat, i) => (
-                    <div key={i} className="bg-white/5 border border-white/10 p-6 rounded-3xl backdrop-blur-sm group hover:border-[#13ecc8]/30 transition-all">
-                        <div className="flex items-center justify-between mb-4">
-                            <stat.icon size={18} className={stat.color} />
-                            <div className="w-2 h-2 rounded-full bg-white/10 group-hover:bg-[#13ecc8]/50 transition-colors" />
-                        </div>
-                        <div className="text-2xl font-black text-white mb-1 tracking-tight">{stat.value}</div>
-                        <div className="text-[9px] font-black uppercase tracking-widest text-slate-500">{stat.label}</div>
+                {/* 2. Charts & Link Management */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+                    <div className="lg:col-span-2">
+                        <PerformanceAnalytics data={chartData} />
                     </div>
-                ))}
-            </div>
+                    <div className="lg:col-span-1 h-full">
+                        <AffiliateLinkManager 
+                            affiliateCode={affiliate.affiliate_code}
+                            onUpdateCode={onUpdateAffiliateCode}
+                            onCopy={() => handleCopyLink(affiliate.affiliate_code)}
+                            copied={copied}
+                            updating={updating}
+                            error={error}
+                        />
+                    </div>
+                </div>
 
-            {/* Main Content Section: Chart & Affiliate Link */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* 2. Performance Chart */}
-                <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-[2.5rem] p-8 space-y-6 overflow-hidden relative">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-2">
-                            Rendimiento 30 días
-                        </h3>
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Clics</span>
+                {/* 3. Ranking & Support */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <div className="lg:col-span-8">
+                        <ReferralHistory referrals={referrals} />
+                    </div>
+                    <div className="lg:col-span-4">
+                        <AffiliateRanking />
+                    </div>
+                </div>
+
+                {/* 4. Support Footer Card */}
+                <div className="bg-[#0A0F1D]/40 backdrop-blur-2xl border border-white/5 rounded-[40px] p-10 lg:p-14 relative overflow-hidden group">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                        <div className="space-y-6">
+                            <div className="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center border border-indigo-500/20">
+                                <HelpCircle size={28} className="text-indigo-400" />
                             </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-[#13ecc8]" />
-                                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Ventas</span>
-                            </div>
+                            <h4 className="text-2xl font-black text-white tracking-tight">Liquidación de Activos</h4>
+                            <p className="text-sm text-slate-400 leading-relaxed font-medium">
+                                Tus comisiones activas se consolidan mensualmente. Las transferencias se ejecutan entre el <span className="text-white font-black">día 1 y 5</span> de cada ciclo fiscal Stark, siempre que el saldo supere los <span className="text-primary font-black">50.00€</span>.
+                            </p>
                         </div>
-                    </div>
-
-                    <div className="h-[300px] w-full mt-4">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={chartData}>
-                                <defs>
-                                    <linearGradient id="colorClics" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                                    </linearGradient>
-                                    <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#13ecc8" stopOpacity={0.2} />
-                                        <stop offset="95%" stopColor="#13ecc8" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-                                <XAxis
-                                    dataKey="name"
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }}
-                                    dy={10}
-                                />
-                                <YAxis
-                                    axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: '#475569', fontSize: 10, fontWeight: 'bold' }}
-                                />
-                                <Tooltip
-                                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', fontSize: '12px' }}
-                                    itemStyle={{ fontWeight: 'bold' }}
-                                />
-                                <Area type="monotone" dataKey="clics" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorClics)" />
-                                <Area type="monotone" dataKey="ventas" stroke="#13ecc8" strokeWidth={3} fillOpacity={1} fill="url(#colorVentas)" />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-
-                {/* 4. Enlace de Afiliado Destacado */}
-                <div className="bg-gradient-to-br from-primary/10 to-blue-500/10 border border-[#13ecc8]/20 rounded-[2.5rem] p-10 flex flex-col justify-between group">
-                    <div className="space-y-6">
-                        <div className="w-16 h-16 bg-[#13ecc8]/10 rounded-2xl flex items-center justify-center border border-[#13ecc8]/20 group-hover:scale-110 transition-transform">
-                            <LinkIcon size={32} className="text-[#13ecc8]" />
-                        </div>
-                        <div className="space-y-2">
-                            <h3 className="text-xl font-black text-white tracking-tight">Tu Enlace Único</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">Comparte este enlace para empezar a generar comisiones recurrentes hoy mismo.</p>
-                        </div>
-                        <div className="bg-slate-950/50 border border-white/5 p-4 rounded-2xl text-center">
-                            <span className="text-[#13ecc8] font-mono font-bold text-sm block truncate">legalflow.digital?ref={affiliate.affiliate_code}</span>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={handleCopy}
-                        className={cn(
-                            "w-full py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-3 transition-all mt-8",
-                            copied
-                                ? "bg-[#13ecc8] text-slate-900 shadow-[0_0_30px_rgba(19,236,200,0.3)]"
-                                : "bg-white/5 text-white hover:bg-white/10 border border-white/10"
-                        )}
-                    >
-                        {copied ? <><Check size={18} /> ¡Copiado!</> : <><Copy size={18} /> Copiar Enlace</>}
-                    </button>
-                </div>
-            </div>
-
-            {/* 3. Tabla de Referidos */}
-            <div className="bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden">
-                <div className="p-8 border-b border-white/10 flex items-center justify-between">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-white flex items-center gap-2">
-                        <Calendar size={16} className="text-slate-500" />
-                        Historial de Referidos
-                    </h3>
-                    <div className="text-[10px] font-medium text-slate-500 italic">Mostrando últimos 10 movimientos</div>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead>
-                            <tr className="bg-white/[0.02]">
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Fecha</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Estado</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Plan Contratado</th>
-                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">Tu Comisión</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/5">
-                            {referrals.map((item) => (
-                                <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group">
-                                    <td className="px-8 py-6">
-                                        <div className="text-sm font-bold text-slate-300">{item.date}</div>
-                                    </td>
-                                    <td className="px-8 py-6">
-                                        <span className={cn(
-                                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider",
-                                            item.status === 'Activo'
-                                                ? 'bg-[#13ecc8]/10 text-[#13ecc8] border border-[#13ecc8]/20'
-                                                : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                                        )}>
-                                            {item.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-8 py-6">
-                                        <div className="text-sm font-black text-white">
-                                            {getPlanMetadata(item.plan as any, settings?.plan_names).commercialName}
-                                        </div>
-                                    </td>
-                                    <td className="px-8 py-6 text-right">
-                                        <div className="text-base font-black text-[#13ecc8] group-hover:scale-110 transition-transform origin-right">+{item.commission.toFixed(2)}€</div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="p-6 bg-white/[0.01] border-t border-white/10 flex justify-center">
-                    <button className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors">Cargar historial completo</button>
-                </div>
-            </div>
-
-            {/* Footer / FAQ & Ranking */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/5 border border-white/10 rounded-[2.5rem] p-10 backdrop-blur-md">
-                    <div className="space-y-4">
-                        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20">
-                            <AlertCircle size={24} className="text-primary" />
-                        </div>
-                        <h4 className="text-lg font-black text-white uppercase tracking-tight">¿Cómo recibo mis pagos?</h4>
-                        <p className="text-slate-400 text-sm leading-relaxed">
-                            Tus comisiones se acumulan durante el mes. Entre el <span className="text-white font-bold">día 1 y 5</span> del mes siguiente, si has superado los <span className="text-white font-bold">{MIN_PAYOUT}€</span>, recibirás el pago automáticamente vía Stripe o transferencia.
-                        </p>
-                    </div>
-                    <div className="flex flex-col justify-end">
-                        {!customizing ? (
-                            <button
-                                onClick={() => {
-                                    setNewCode(affiliate.affiliate_code);
-                                    setCustomizing(true);
-                                }}
-                                className="w-fit flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-[#13ecc8] transition-all bg-white/5 px-6 py-3 rounded-xl border border-white/10"
-                            >
-                                <Edit3 size={14} /> Personalizar mi código exclusivo
-                            </button>
-                        ) : (
-                            <div className="p-6 bg-slate-950/30 rounded-2xl border border-white/5 space-y-4 animate-in slide-in-from-bottom-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">Personalizar Código</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={newCode}
-                                        onChange={(e) => setNewCode(e.target.value)}
-                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm outline-none focus:border-[#13ecc8]/50 font-bold"
-                                    />
-                                    <button
-                                        onClick={handleSaveCustomCode}
-                                        className="bg-[#13ecc8] text-slate-900 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest"
-                                    >
-                                        Guardar
-                                    </button>
-                                    <button
-                                        onClick={() => setCustomizing(false)}
-                                        className="text-slate-500 px-2 py-2 text-[10px] font-black uppercase tracking-widest"
-                                    >
-                                        ×
-                                    </button>
+                        <div className="flex flex-col justify-center items-center md:items-end">
+                            <div className="bg-slate-900/50 p-8 rounded-3xl border border-white/5 text-center md:text-right w-full max-w-sm relative group/inner">
+                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/inner:rotate-45 transition-transform">
+                                    <Sparkles size={40} className="text-primary" />
+                                </div>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-3 block">Próximo Pago Estimado</span>
+                                <div className="text-4xl font-black text-white tracking-tighter tabular-nums">1.250,00€</div>
+                                <div className="mt-4 text-[9px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-4 py-2 rounded-xl inline-block">
+                                    Ciclo: Mayo 2026
                                 </div>
                             </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* 1. Top Partners Ranking */}
-                <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-10 flex flex-col gap-6 backdrop-blur-md relative overflow-hidden group">
-                    <div className="flex items-center gap-3">
-                        <TrendingUp size={20} className="text-[#13ecc8]" />
-                        <h4 className="text-xs font-black uppercase tracking-widest text-white">Top Partners del Mes</h4>
-                    </div>
-
-                    <div className="space-y-4">
-                        {[
-                            { rank: 1, name: 'Partner #12', amount: 1450.20, color: 'text-amber-400' },
-                            { rank: 2, name: 'Partner #42', amount: 1250.00, color: 'text-slate-300' },
-                            { rank: 3, name: 'Partner #09', amount: 980.50, color: 'text-amber-700' },
-                        ].map((p, i) => (
-                            <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-[#13ecc8]/20 transition-all">
-                                <div className="flex items-center gap-3">
-                                    <span className={cn("text-lg font-black", p.color)}>#{p.rank}</span>
-                                    <span className="text-xs font-bold text-slate-400">{p.name}</span>
-                                </div>
-                                <div className="text-sm font-black text-white">{p.amount.toFixed(2)}€</div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-auto text-center">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-600">Actualizado hace 2 horas</p>
-                    </div>
+                        </div>
+                     </div>
                 </div>
             </div>
         </div>

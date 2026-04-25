@@ -8,6 +8,7 @@ interface AppSettings {
         business: string;
     };
     affiliate_commission_rate: number;
+    navigation_style?: 'topnav' | 'sidebar';
 }
 
 interface AppSettingsContextType {
@@ -43,7 +44,8 @@ export const AppSettingsProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     pro: 'Business',
                     business: 'Enterprise'
                 },
-                affiliate_commission_rate: 20
+                affiliate_commission_rate: 20,
+                navigation_style: 'topnav'
             });
         } finally {
             setIsLoading(false);

@@ -7,6 +7,7 @@ import { cn } from '../lib/utils';
 import { UsageDashboard } from './UsageDashboard';
 import { UpgradeModal } from './UpgradeModal';
 import { useUsageLimits } from '../lib/useUsageLimits';
+import { ViewHeader } from './Admin/ViewHeader';
 
 interface UserDocument {
     id: string;
@@ -138,43 +139,30 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId }) => {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <div className="flex items-center gap-4">
-                        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                            <FileText size={24} className="text-primary" />
-                            {t('docs.title')}
-                        </h2>
+        <div className="page-enter space-y-12">
+            <ViewHeader 
+                icon={FileText} 
+                title="Mis Documentos" 
+                subtitle="Gestión de Archivos y Evidencias"
+                badge="Cifrado SHA-256"
+                badgeColor="emerald"
+            />
 
-                        {/* SHA-256 Integrity Indicator */}
-                        <div className="group relative flex items-center justify-center w-7 h-7 rounded-full bg-primary/10 border border-primary/20 text-primary hover:bg-primary hover:text-slate-900 transition-colors cursor-help shadow-[0_0_10px_rgba(19,236,200,0.1)]">
-                            <ShieldCheck size={14} />
-
-                            {/* Tooltip */}
-                            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-3 w-56 p-3 bg-[#0f172a] text-xs text-slate-300 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border border-white/10 text-center pointer-events-none">
-                                Cada firma cuenta con trazabilidad <strong className="text-primary">SHA-256</strong> e IP de auditoría.
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-[#0f172a]"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <p className="text-slate-400 mt-1 text-sm">
-                        {t('docs.subtitle')}
-                    </p>
+            <div className="max-w-7xl mx-auto space-y-8 pb-20">
+                <div className="flex justify-end px-4 mb-4">
+                    <button
+                        onClick={() => setShowUploader(!showUploader)}
+                        className={cn(
+                            "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg",
+                            showUploader
+                                ? "bg-white/10 text-slate-300 hover:bg-white/15 border border-white/10"
+                                : "bg-primary text-slate-900 hover:bg-primary/90 shadow-primary/20"
+                        )}
+                    >
+                        {showUploader ? <X size={18} /> : <Plus size={18} />}
+                        <span className="hidden md:inline">{showUploader ? t('docs.cancel') : t('docs.upload_btn')}</span>
+                    </button>
                 </div>
-                <button
-                    onClick={() => setShowUploader(!showUploader)}
-                    className={cn(
-                        "flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-lg",
-                        showUploader
-                            ? "bg-white/10 text-slate-300 hover:bg-white/15 border border-white/10"
-                            : "bg-primary text-slate-900 hover:bg-primary/90 shadow-primary/20"
-                    )}
-                >
-                    {showUploader ? <X size={18} /> : <Plus size={18} />}
-                    <span className="hidden md:inline">{showUploader ? t('docs.cancel') : t('docs.upload_btn')}</span>
-                </button>
-            </div>
 
             {/* Usage Dashboard */}
             <div className="mb-12">
@@ -297,11 +285,12 @@ export const UserDocuments: React.FC<UserDocumentsProps> = ({ userId }) => {
                 </div>
             )}
 
-            <UpgradeModal
-                isOpen={showUpgradeModal}
-                onClose={() => setShowUpgradeModal(false)}
-                limitType="upload_document"
-            />
+                <UpgradeModal
+                    isOpen={showUpgradeModal}
+                    onClose={() => setShowUpgradeModal(false)}
+                    limitType="upload_document"
+                />
+            </div>
         </div>
     );
 };

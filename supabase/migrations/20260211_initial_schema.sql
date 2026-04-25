@@ -31,13 +31,12 @@ create table if not exists public.knowledge_base (
   id bigserial primary key,
   content text not null,
   metadata jsonb,
-  embedding vector(768), -- Compatible con text-embedding-004 de Google
+  embedding vector(3072), -- gemini-embedding-001: 3072 dimensiones
   created_at timestamp with time zone default now()
 );
 
--- Índice para búsqueda de similitud de coseno
-create index on public.knowledge_base using ivfflat (embedding vector_cosine_ops)
-  with (lists = 100);
+-- Nota: el índice HNSW sobre embedding se crea en la migración
+-- 20260417200000_fix_rag_multitenant.sql (ivfflat tiene límite de 2000 dims).
 
 -- Tabla de Historial de Chat
 create table if not exists public.chat_history (

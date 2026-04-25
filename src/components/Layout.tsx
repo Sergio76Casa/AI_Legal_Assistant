@@ -1,6 +1,9 @@
 import React from 'react';
 import { Navbar } from './Navbar';
 import { useTranslation } from 'react-i18next';
+import { useAppSettings } from '../lib/AppSettingsContext';
+import { useLocation } from 'react-router-dom';
+
 
 export function Layout({ children, onNavigate, onOpenLegal, user, profile, hideNavFooter = false, hideFooter = false, currentView }: {
     children: React.ReactNode,
@@ -13,11 +16,16 @@ export function Layout({ children, onNavigate, onOpenLegal, user, profile, hideN
     currentView?: string
 }) {
     const { t } = useTranslation();
+    const { settings } = useAppSettings();
+    const location = useLocation();
+
+    const isSidebarDashboard = settings?.navigation_style === 'sidebar' && location.pathname.startsWith('/dashboard');
+    const shouldAddPadding = !hideNavFooter && !isSidebarDashboard;
 
     return (
         <div className="min-h-screen flex flex-col bg-[#0a0f1d] font-sans text-slate-100 antialiased">
             {!hideNavFooter && <Navbar onNavigate={onNavigate} user={user} profile={profile} currentView={currentView} />}
-            <main className={`flex-grow ${hideNavFooter ? '' : 'pt-20'} page-enter`}>
+            <main className={`flex-grow ${shouldAddPadding ? 'pt-20' : ''} page-enter`}>
                 {children}
             </main>
             {!hideNavFooter && !hideFooter && (

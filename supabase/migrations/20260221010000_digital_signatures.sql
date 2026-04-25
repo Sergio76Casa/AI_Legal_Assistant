@@ -67,6 +67,7 @@ ALTER TABLE public.document_signature_logs ENABLE ROW LEVEL SECURITY;
 -- 6. RLS POLICIES FOR SIGNATURE REQUESTS
 
 -- Admins of the tenant can view all signature requests
+DROP POLICY IF EXISTS "Admins can view signature requests" ON public.document_signature_requests;
 CREATE POLICY "Admins can view signature requests"
 ON public.document_signature_requests FOR SELECT
 USING (
@@ -78,11 +79,13 @@ USING (
 );
 
 -- Clients can view their own signature requests
+DROP POLICY IF EXISTS "Clients can view own signature requests" ON public.document_signature_requests;
 CREATE POLICY "Clients can view own signature requests"
 ON public.document_signature_requests FOR SELECT
 USING (client_user_id = auth.uid());
 
 -- Admins can create signature requests
+DROP POLICY IF EXISTS "Admins can create signature requests" ON public.document_signature_requests;
 CREATE POLICY "Admins can create signature requests"
 ON public.document_signature_requests FOR INSERT
 WITH CHECK (
@@ -94,12 +97,14 @@ WITH CHECK (
 );
 
 -- Clients can update (sign) their own pending requests
+DROP POLICY IF EXISTS "Clients can sign own requests" ON public.document_signature_requests;
 CREATE POLICY "Clients can sign own requests"
 ON public.document_signature_requests FOR UPDATE
 USING (client_user_id = auth.uid() AND status = 'pending')
 WITH CHECK (client_user_id = auth.uid());
 
 -- Admins can manage (cancel) signature requests
+DROP POLICY IF EXISTS "Admins can manage signature requests" ON public.document_signature_requests;
 CREATE POLICY "Admins can manage signature requests"
 ON public.document_signature_requests FOR ALL
 USING (
@@ -113,6 +118,7 @@ USING (
 -- 7. RLS POLICIES FOR SIGNATURE LOGS
 
 -- Admins can view all logs for their tenant
+DROP POLICY IF EXISTS "Admins can view signature logs" ON public.document_signature_logs;
 CREATE POLICY "Admins can view signature logs"
 ON public.document_signature_logs FOR SELECT
 USING (
@@ -126,11 +132,13 @@ USING (
 );
 
 -- Clients can view logs for their own signatures
+DROP POLICY IF EXISTS "Clients can view own signature logs" ON public.document_signature_logs;
 CREATE POLICY "Clients can view own signature logs"
 ON public.document_signature_logs FOR SELECT
 USING (signer_user_id = auth.uid());
 
 -- Anyone authenticated can insert a log (during signing process)
+DROP POLICY IF EXISTS "Authenticated can create signature logs" ON public.document_signature_logs;
 CREATE POLICY "Authenticated can create signature logs"
 ON public.document_signature_logs FOR INSERT
 WITH CHECK (auth.uid() IS NOT NULL);
@@ -147,10 +155,12 @@ VALUES (
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage policies for signatures bucket
+DROP POLICY IF EXISTS "Authenticated users can view signatures" ON storage.objects;
 CREATE POLICY "Authenticated users can view signatures"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'signatures' AND auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can upload signatures" ON storage.objects;
 CREATE POLICY "Authenticated users can upload signatures"
 ON storage.objects FOR INSERT
 WITH CHECK (bucket_id = 'signatures' AND auth.role() = 'authenticated');

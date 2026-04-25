@@ -19,7 +19,7 @@ export const PLANS_METADATA = {
         maxDocuments: 10,
         maxQueries: 50,
         color: 'slate',
-        badgeClass: 'bg-white/10 text-slate-400',
+        badgeClass: 'bg-white/10 text-slate-400 border-white/10',
         summary: 'Ideal para profesionales con hasta 10 expedientes mensuales.'
     },
     [PLAN_IDS.BUSINESS]: {
@@ -27,8 +27,8 @@ export const PLANS_METADATA = {
         commercialName: 'Business',
         maxDocuments: 50,
         maxQueries: 500,
-        color: 'purple',
-        badgeClass: 'bg-purple-500/15 text-purple-400',
+        color: 'primary',
+        badgeClass: 'bg-primary/10 text-primary border-primary/20',
         summary: 'Perfecto para despachos en crecimiento (hasta 50 expedientes).'
     },
     [PLAN_IDS.ENTERPRISE]: {
@@ -36,8 +36,8 @@ export const PLANS_METADATA = {
         commercialName: 'Enterprise',
         maxDocuments: -1, // Ilimitado
         maxQueries: -1,  // Ilimitado
-        color: 'primary',
-        badgeClass: 'bg-primary/15 text-primary',
+        color: 'emerald',
+        badgeClass: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
         summary: 'Capacidad ilimitada y consultoría estratégica personalizada.'
     }
 } as const;

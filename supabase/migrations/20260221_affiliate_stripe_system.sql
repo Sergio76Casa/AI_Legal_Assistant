@@ -44,6 +44,7 @@ ALTER TABLE public.affiliate_referrals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliate_commissions ENABLE ROW LEVEL SECURITY;
 
 -- Los afiliados pueden ver sus propios referidos
+DROP POLICY IF EXISTS "Affiliates can view own referrals" ON public.affiliate_referrals;
 CREATE POLICY "Affiliates can view own referrals"
     ON public.affiliate_referrals FOR SELECT
     USING (
@@ -53,6 +54,7 @@ CREATE POLICY "Affiliates can view own referrals"
     );
 
 -- Los afiliados pueden ver sus propias comisiones
+DROP POLICY IF EXISTS "Affiliates can view own commissions" ON public.affiliate_commissions;
 CREATE POLICY "Affiliates can view own commissions"
     ON public.affiliate_commissions FOR SELECT
     USING (

@@ -1,41 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
-import { supabase } from '../lib/supabase';
-import { SignaturePad } from './SignaturePad';
-import {
-    CheckCircle2, Clock, Shield, AlertCircle,
-    FileText, Download, Loader2, Info, ChevronRight, Pen, UserPlus
-} from 'lucide-react';
+import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Loader2, AlertCircle, CheckCircle2, FileText, Download, ChevronRight, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import QRCode from 'qrcode';
 
-interface SignatureRequest {
-    id: string;
-    tenant_id: string;
-    template_id: string;
-    client_user_id: string;
-    requested_by: string;
-    status: 'pending' | 'signed' | 'expired' | 'cancelled';
-    document_storage_path: string;
-    signed_document_path: string | null;
-    access_token: string;
-    document_name: string;
-    expires_at: string;
-    signed_at: string | null;
-    created_at: string;
-}
+// Hooks
+import { useSignatureFlow } from '../hooks/signature/useSignatureFlow';
+import { useSignaturePersistence } from '../hooks/signature/useSignaturePersistence';
 
-interface TenantInfo {
-    name: string;
-    slug: string;
-    config: {
-        primary_color?: string;
-        logo_url?: string;
-        contact_email?: string;
-    };
-}
-
-type SigningState = 'loading' | 'missing_data' | 'ready' | 'signing' | 'processing' | 'success' | 'already_signed' | 'expired' | 'error';
+// Sub-components
+import { DocumentViewer } from './Signature/DocumentViewer';
+import { SignaturePad } from './Signature/SignaturePad';
+import { AuditTrail } from './Signature/AuditTrail';
 
 interface SignaturePageProps {
     documentId: string;
@@ -43,998 +18,355 @@ interface SignaturePageProps {
 
 export const SignaturePage: React.FC<SignaturePageProps> = ({ documentId }) => {
     const { t } = useTranslation();
-    const [state, setState] = useState<SigningState>('loading');
-    const [request, setRequest] = useState<SignatureRequest | null>(null);
-    const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
-    const [fieldMappings, setFieldMappings] = useState<any[]>([]);
-    const [missingFields, setMissingFields] = useState<any[]>([]);
-    const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [progress, setProgress] = useState('');
-    const [progressPct, setProgressPct] = useState(0);
-    const [isSavingData, setIsSavingData] = useState(false);
+    
+    // Logic Orchestration
+    const {
+        state, setState,
+        request, setRequest,
+        tenantInfo,
+        missingFields,
+        pdfPreviewUrl,
+        errorMessage,
+        isSavingData,
+        handleDataSubmit
+    } = useSignatureFlow(documentId);
 
-    // Load signature request data using RPC (bypasses RLS for public access)
-    useEffect(() => {
-        const loadRequest = async () => {
-            try {
-                // Use RPC function that bypasses RLS via SECURITY DEFINER
-                const { data, error } = await supabase
-                    .rpc('get_signature_request_by_token', { p_token: documentId });
+    const {
+        progress,
+        progressPct,
+        handleSignatureComplete,
+        handleDownload
+    } = useSignaturePersistence();
 
-                if (error || !data) {
-                    setState('error');
-                    setErrorMessage('Documento no encontrado o enlace inválido.');
-                    return;
-                }
+    const [auditData, setAuditData] = React.useState<any>(null);
 
-                // Extract tenant info from the combined response
-                const requestData: SignatureRequest = {
-                    id: data.id,
-                    tenant_id: data.tenant_id,
-                    template_id: data.template_id,
-                    client_user_id: data.client_user_id,
-                    requested_by: data.requested_by,
-                    status: data.status,
-                    document_storage_path: data.document_storage_path,
-                    signed_document_path: data.signed_document_path,
-                    access_token: data.access_token,
-                    document_name: data.document_name,
-                    expires_at: data.expires_at,
-                    signed_at: data.signed_at,
-                    created_at: data.created_at,
-                };
-
-                setRequest(requestData);
-
-                // Set tenant info from the same RPC response
-                if (data.tenant_name) {
-                    setTenantInfo({
-                        name: data.tenant_name,
-                        slug: data.tenant_slug || 'global',
-                        config: data.tenant_config || {}
-                    });
-                }
-
-                // Check status
-                if (data.status === 'signed') {
-                    setState('already_signed');
-                    return;
-                }
-
-                if (data.status === 'expired' || data.status === 'cancelled') {
-                    setState('expired');
-                    return;
-                }
-
-                // Check expiration
-                if (new Date(data.expires_at) < new Date()) {
-                    setState('expired');
-                    // Mark as expired via RPC
-                    await supabase.rpc('mark_signature_expired', { p_token: documentId });
-                    return;
-                }
-
-                // Generate PDF preview URL
-                if (data.document_storage_path) {
-                    const { data: signedUrl } = await supabase.storage
-                        .from('signatures')
-                        .createSignedUrl(data.document_storage_path, 3600);
-
-                    if (signedUrl?.signedUrl) {
-                        setPdfPreviewUrl(signedUrl.signedUrl);
-                    }
-                }
-
-                // 1. Get all mappings for this template
-                const { data: mappings, error: mapErr } = await supabase.rpc('get_signature_template_mappings', { p_token: documentId });
-                if (mapErr) console.error('Error loading mappings:', mapErr);
-                const allMappings = mappings || [];
-                setFieldMappings(allMappings);
-
-                // 2. Get full profile
-                const { data: profile, error: profErr } = await supabase.rpc('get_signer_profile_full', { p_token: documentId });
-                if (profErr) console.error('Error loading profile:', profErr);
-                const profileData = profile || {};
-
-                // 3. Detect missing fields (Only if not already signed)
-                if (data.status === 'pending') {
-                    const missing = allMappings.filter((m: any) => {
-                        // System fields and signature fields that shouldn't be asked in the form
-                        const systemFields = ['today_date', 'client_signature', 'today_day', 'today_month', 'today_year'];
-                        if (systemFields.includes(m.field_key)) return false;
-                        if (m.field_type === 'signature') return false;
-
-                        // Normalize key check (some templates might use 'first_name' and others 'full_name')
-                        let val = profileData[m.field_key];
-
-                        // Fallback logic for common field name variants
-                        if (val === null || val === undefined || String(val).trim() === '') {
-                            if (m.field_key === 'first_name') val = profileData['full_name'];
-                            if (m.field_key === 'full_name') val = profileData['first_name'];
-                        }
-
-                        const isEmpty = val === null || val === undefined || String(val).trim() === '';
-                        return isEmpty;
-                    });
-
-                    // DEBUG: Show status of all required fields
-                    console.group('🔍 Signature Flow Debug: Field Status');
-                    console.table(allMappings.map((m: any) => ({
-                        Key: m.field_key,
-                        Type: m.field_type,
-                        Value: profileData[m.field_key] || 'EMPTY',
-                        Status: (allMappings.filter((miss: any) => miss.field_key === m.field_key).length > 0) ? 'MISSING' : 'OK'
-                    })));
-                    console.groupEnd();
-
-                    if (missing.length > 0) {
-                        setMissingFields(missing);
-                        setState('missing_data');
-                        return;
-                    }
-                }
-
-                setState('ready');
-            } catch (err) {
-                console.error('Error loading signature request:', err);
-                setState('error');
-                setErrorMessage('Error al cargar la solicitud de firma.');
-            }
-        };
-
-        loadRequest();
-    }, [documentId]);
-
-    const getClientIP = async () => {
-        try {
-            const res = await fetch('https://api.ipify.org?format=json');
-            const data = await res.json();
-            return data.ip;
-        } catch {
-            return 'Desconocida';
-        }
-    };
-
-    const handleDataSubmit = async (formData: any) => {
-        setIsSavingData(true);
-        try {
-            const { error } = await supabase.rpc('update_signer_data_by_token', {
-                p_token: documentId,
-                p_updates: formData
-            });
-
-            if (error) throw error;
-
-            // Refresh data and check again
-            const { data: profile } = await supabase.rpc('get_signer_profile_full', { p_token: documentId });
-            const profileData = profile || {};
-
-            const stillMissing = (fieldMappings || []).filter((m: any) => {
-                const systemFields = ['today_date', 'client_signature', 'today_day', 'today_month', 'today_year'];
-                if (systemFields.includes(m.field_key)) return false;
-                if (m.field_type === 'signature') return false;
-
-                let val = profileData[m.field_key];
-                // Fallback logic
-                if (val === null || val === undefined || String(val).trim() === '') {
-                    if (m.field_key === 'first_name') val = profileData['full_name'];
-                    if (m.field_key === 'full_name') val = profileData['first_name'];
-                }
-
-                return val === null || val === undefined || String(val).trim() === '';
-            });
-
-            if (stillMissing.length === 0) {
-                setMissingFields([]);
-                setState('ready');
-            } else {
-                setMissingFields(stillMissing);
-            }
-        } catch (error) {
-            console.error('Error saving data:', error);
-            alert('Error al guardar los datos. Por favor, revise los campos y reintente.');
-        } finally {
-            setIsSavingData(false);
-        }
-    };
-
-    // SHA-256 hash helper
-    const hashData = async (data: string): Promise<string> => {
-        const encoder = new TextEncoder();
-        const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(data));
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    };
-
-    // Handle signature confirmation
-    const handleSignatureConfirm = useCallback(async (signatureDataUrl: string) => {
-        if (!request) return;
-
+    const onSignatureConfirm = async (signatureDataUrl: string) => {
+        if (!request || !tenantInfo) return;
         setState('processing');
-        setProgress('Iniciando proceso seguro...');
-        setProgressPct(5);
-
         try {
-            // 1 & 2. Parallelize data fetching for speed
-            const [clientIP, { data: fullProfile }] = await Promise.all([
-                getClientIP(),
-                supabase.rpc('get_signer_profile_full', {
-                    p_token: request.access_token
-                })
-            ]);
-
-            const userAgent = navigator.userAgent;
-            const signerName = fullProfile?.full_name || fullProfile?.first_name || fullProfile?.username || 'Cliente';
-
-            // Get signer email (separate for safety)
-            let signerEmail = '';
-            try {
-                const { data: userData } = await supabase.auth.getUser();
-                signerEmail = userData.user?.email || '';
-            } catch { /* Silent */ }
-
-            setProgressPct(30);
-            // 3. Convert signature data URL to blob and upload
-            setProgress('Guardando firma digital...');
-            setProgressPct(40);
-            const signatureBlob = await (await fetch(signatureDataUrl)).blob();
-            const signaturePath = `${request.tenant_id}/${request.id}/signature_${Date.now()}.png`;
-
-            const { error: uploadErr } = await supabase.storage
-                .from('signatures')
-                .upload(signaturePath, signatureBlob, {
-                    contentType: 'image/png'
-                });
-
-            if (uploadErr) throw new Error('Error al guardar la firma');
-
-            // 4. Embed signature into PDF using pdf-lib
-            setProgress('Estampando firma en el documento...');
-            setProgressPct(55);
-
-            let pdfBytes: Uint8Array | null = null;
-            let signedDocPath = '';
-
-            if (request.document_storage_path) {
-                // Download the base PDF
-                const { data: pdfData, error: dlError } = await supabase.storage
-                    .from('signatures')
-                    .download(request.document_storage_path);
-
-                if (dlError || !pdfData) throw new Error('Error descargando documento PDF');
-
-                const pdfArrayBuffer = await pdfData.arrayBuffer();
-                const pdfDoc = await PDFDocument.load(pdfArrayBuffer);
-
-                // Embed signature image
-                const sigImageBytes = await signatureBlob.arrayBuffer();
-                const sigImage = await pdfDoc.embedPng(new Uint8Array(sigImageBytes));
-
-                // 3. Get signature field coordinates via RPC (Secured with token)
-                const { data: allMappings } = await supabase.rpc('get_signature_template_mappings', {
-                    p_token: request.access_token
-                });
-
-                const mappingsList = allMappings || [];
-                console.log('Document Mappings found:', mappingsList.length);
-                const pages = pdfDoc.getPages();
-                const textFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-                // DEBUG: Analyze data to be printed
-                console.group('🖨️ PDF Printing Debug');
-                const printTable = mappingsList.map((f: any) => {
-                    let val = fullProfile[f.field_key] || '';
-                    if (!val && f.field_key === 'first_name') val = fullProfile['full_name'] || '';
-                    if (!val && f.field_key === 'full_name') val = fullProfile['first_name'] || '';
-                    return {
-                        Key: f.field_key,
-                        Type: f.field_type,
-                        FinalValue: val,
-                        Page: f.page_number
-                    };
-                });
-                console.table(printTable);
-                console.groupEnd();
-
-                // FILL TEXT FIELDS
-                for (const field of mappingsList) {
-                    if (field.field_type === 'signature') continue;
-
-                    let val = fullProfile[field.field_key] || '';
-
-                    // Critical fallback mapping
-                    if (!val && field.field_key === 'first_name') val = fullProfile['full_name'] || '';
-                    if (!val && field.field_key === 'full_name') val = fullProfile['first_name'] || '';
-
-                    const pageIndex = (field.page_number || 1) - 1;
-                    if (pageIndex < 0 || pageIndex >= pages.length) continue;
-
-                    const page = pages[pageIndex];
-                    const { height: pageHeight } = page.getSize();
-
-                    if (field.field_type === 'checkbox') {
-                        const isSelected = String(val).toLowerCase() === String(field.trigger_value || 'true').toLowerCase();
-                        if (isSelected) {
-                            page.drawText('X', {
-                                x: field.x_coordinate + (field.width / 4),
-                                y: pageHeight - field.y_coordinate - (field.height * 0.8),
-                                size: field.height * 0.8,
-                                font: textFont
-                            });
-                        }
-                    } else if (val) {
-                        const fontSize = (field.height || 12) * 0.7;
-                        page.drawText(String(val), {
-                            x: field.x_coordinate + 2,
-                            y: pageHeight - field.y_coordinate - fontSize,
-                            size: fontSize,
-                            font: textFont,
-                            color: rgb(0, 0, 0),
-                            maxWidth: field.width > 20 ? field.width - 4 : undefined,
-                            lineHeight: fontSize * 1.2
-                        });
-                    }
-                }
-
-                // EMBED SIGNATURES
-                const sigFieldMappings = mappingsList.filter((m: any) => m.field_type === 'signature');
-
-                if (sigFieldMappings.length > 0) {
-                    // Place in ALL mapped signature fields
-                    for (const field of sigFieldMappings) {
-                        const pageIndex = (field.page_number || 1) - 1;
-                        if (pageIndex < 0 || pageIndex >= pages.length) continue;
-
-                        const page = pages[pageIndex];
-                        const { height: pageHeight } = page.getSize();
-
-                        const sigWidth = field.width || 150;
-                        const sigHeight = (sigWidth / sigImage.width) * sigImage.height;
-                        const maxHeight = field.height || 50;
-                        const finalHeight = Math.min(sigHeight, maxHeight);
-                        const finalWidth = (finalHeight / sigImage.height) * sigImage.width;
-
-                        page.drawImage(sigImage, {
-                            x: field.x_coordinate,
-                            y: pageHeight - field.y_coordinate - finalHeight,
-                            width: finalWidth,
-                            height: finalHeight,
-                        });
-                    }
-                } else {
-                    // Fallback: Place signature at bottom of last page ONLY if no mappings exist
-                    const lastPage = pages[pages.length - 1];
-                    const { width: pgWidth } = lastPage.getSize();
-
-                    const sigWidth = 150;
-                    const sigHeight = (sigWidth / sigImage.width) * sigImage.height;
-                    const maxHeight = 60;
-                    const finalHeight = Math.min(sigHeight, maxHeight);
-                    const finalWidth = (finalHeight / sigImage.height) * sigImage.width;
-
-                    lastPage.drawImage(sigImage, {
-                        x: pgWidth / 2 - finalWidth / 2,
-                        y: 60,
-                        width: finalWidth,
-                        height: finalHeight,
-                    });
-                }
-
-                // --- ADD AUDIT CERTIFICATE PAGE ---
-                const auditPage = pdfDoc.addPage();
-                const { width: aWidth, height: aHeight } = auditPage.getSize();
-                const auditFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-                const auditFontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-                // Header (Branding)
-                auditPage.drawRectangle({
-                    x: 0,
-                    y: aHeight - 80,
-                    width: aWidth,
-                    height: 80,
-                    color: rgb(0.04, 0.09, 0.16), // Dark slate
-                });
-
-                auditPage.drawText('CERTIFICADO DE FIRMA DIGITAL', {
-                    x: 40,
-                    y: aHeight - 45,
-                    size: 20,
-                    font: auditFontBold,
-                    color: rgb(1, 1, 1),
-                });
-
-                auditPage.drawText(tenantInfo?.name || 'LegalFlow', {
-                    x: 40,
-                    y: aHeight - 65,
-                    size: 10,
-                    font: auditFont,
-                    color: rgb(0.7, 0.7, 0.7),
-                });
-
-                // Audit Data Table
-                const startY = aHeight - 130;
-                const rowHeight = 25;
-                const drawRow = (label: string, value: string, y: number) => {
-                    auditPage.drawText(label, { x: 40, y, size: 10, font: auditFontBold, color: rgb(0.3, 0.3, 0.3) });
-                    auditPage.drawText(value || '-', { x: 180, y, size: 10, font: auditFont, color: rgb(0.1, 0.1, 0.1) });
-                    auditPage.drawLine({
-                        start: { x: 40, y: y - 8 },
-                        end: { x: aWidth - 40, y: y - 8 },
-                        thickness: 0.5,
-                        color: rgb(0.9, 0.9, 0.9),
-                    });
-                };
-
-                const sigHash = await hashData(signatureDataUrl);
-
-                drawRow('ID de Solicitud:', request.id.substring(0, 18).toUpperCase(), startY);
-                drawRow('Firmante:', signerName, startY - rowHeight);
-                drawRow('Email:', signerEmail || 'No proporcionado', startY - rowHeight * 2);
-                drawRow('Fecha y Hora:', new Date().toLocaleString('es-ES'), startY - rowHeight * 3);
-                drawRow('Dirección IP:', clientIP, startY - rowHeight * 4);
-                drawRow('Navegador / OS:', userAgent.substring(0, 60), startY - rowHeight * 5);
-                drawRow('Hash de Firma:', `${sigHash.substring(0, 32)}...`, startY - rowHeight * 6);
-                drawRow('Estado:', 'FIRMA COMPLETA Y VALIDADA', startY - rowHeight * 7);
-
-                // Draw Signature Seal
-                auditPage.drawText('SELLO DE FIRMA', {
-                    x: 40,
-                    y: startY - rowHeight * 9,
-                    size: 10,
-                    font: auditFontBold,
-                    color: rgb(0.3, 0.3, 0.3)
-                });
-
-                const sealWidth = 120;
-                const sealHeight = (sealWidth / sigImage.width) * sigImage.height;
-                auditPage.drawImage(sigImage, {
-                    x: 40,
-                    y: startY - rowHeight * 9 - sealHeight - 10,
-                    width: sealWidth,
-                    height: sealHeight,
-                });
-
-                // --- PUBLIC AUDIT PORTAL QR CODE ---
-                try {
-                    const verifyUrl = `${window.location.origin}/verify/${request.id}`;
-                    const qrDataUri = await QRCode.toDataURL(verifyUrl, {
-                        errorCorrectionLevel: 'M',
-                        margin: 1,
-                        width: 150,
-                        color: { dark: '#0a0f1d', light: '#ffffff' }
-                    });
-
-                    const qrImage = await pdfDoc.embedPng(qrDataUri);
-                    const qrSize = 90;
-                    const qrX = aWidth - qrSize - 40;
-                    const qrY = startY - rowHeight * 9 - qrSize - 10;
-
-                    auditPage.drawImage(qrImage, {
-                        x: qrX,
-                        y: qrY,
-                        width: qrSize,
-                        height: qrSize,
-                    });
-
-                    auditPage.drawText('VERIFICACIÓN PÚBLICA', {
-                        x: qrX,
-                        y: qrY + qrSize + 10,
-                        size: 8,
-                        font: auditFontBold,
-                        color: rgb(0.3, 0.3, 0.3),
-                    });
-
-                    auditPage.drawText('Escanee para acceder al', {
-                        x: qrX,
-                        y: qrY - 15,
-                        size: 7,
-                        font: auditFont,
-                        color: rgb(0.5, 0.5, 0.5),
-                    });
-                    auditPage.drawText('Public Audit Portal', {
-                        x: qrX,
-                        y: qrY - 25,
-                        size: 7,
-                        font: auditFontBold,
-                        color: rgb(0.1, 0.4, 0.8),
-                    });
-                } catch (qrErr) {
-                    console.error('Failed to generate verification QR code:', qrErr);
-                }
-
-                // Footer
-                auditPage.drawText('Este documento constituye una prueba legal de la aceptación de los términos del documento original por parte del firmante.', {
-                    x: 40,
-                    y: 60,
-                    size: 8,
-                    font: auditFont,
-                    color: rgb(0.5, 0.5, 0.5),
-                });
-                auditPage.drawText('LegalFlow Secure Signature Process · Iron Silo™ Technology', {
-                    x: 40,
-                    y: 45,
-                    size: 8,
-                    font: auditFontBold,
-                    color: rgb(0.1, 0.4, 0.8),
-                });
-
-                setProgress('Generando archivo final...');
-                setProgressPct(75);
-                pdfBytes = await pdfDoc.save();
-            }
-
-            // 5. Upload signed PDF
-            setProgress('Almacenando documento firmado...');
-            setProgressPct(85);
-            if (pdfBytes) {
-                signedDocPath = `${request.tenant_id}/${request.id}/signed_${Date.now()}.pdf`;
-
-                const { error: signedUpErr } = await supabase.storage
-                    .from('signatures')
-                    .upload(signedDocPath, new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' }), {
-                        contentType: 'application/pdf'
-                    });
-
-                if (signedUpErr) throw new Error('Error al guardar documento firmado');
-            }
-
-            // 6. Generate signature hash for database log
-            const finalSignatureHash = await hashData(signatureDataUrl);
-
-            // 7. Complete signature via RPC (atomic: update status + create audit log)
-            setProgress('Certificando validez legal...');
-            setProgressPct(95);
-
-            const { data: completeResult, error: completeError } = await supabase
-                .rpc('complete_signature', {
-                    p_token: request.access_token,
-                    p_signed_document_path: signedDocPath || '',
-                    p_signature_storage_path: signaturePath,
-                    p_signature_hash: finalSignatureHash,
-                    p_signer_name: signerName,
-                    p_signer_email: signerEmail,
-                    p_ip_address: clientIP,
-                    p_user_agent: userAgent
-                });
-
-            if (completeError) throw new Error('Error al completar la firma');
-            if (completeResult && !completeResult.success) {
-                throw new Error(completeResult.error || 'Error al procesar la firma');
-            }
-
-            setProgressPct(100);
-
-            // --- CRITICAL: Update local state so download button knows the path ---
-            setRequest(prev => prev ? {
-                ...prev,
-                status: 'signed',
-                signed_document_path: signedDocPath,
-                signed_at: new Date().toISOString()
-            } : null);
-
-            setState('success');
-        } catch (err: unknown) {
-            console.error('Error processing signature:', err);
-            const msg = err instanceof Error ? err.message : 'Error al procesar la firma';
-            alert(`Error: ${msg}`); // Critical alert
+            const result = await handleSignatureComplete(signatureDataUrl, request, tenantInfo);
+            setAuditData(result);
+            setState('preview_certificate');
+        } catch (err: any) {
             setState('error');
-            setErrorMessage(msg);
-        }
-    }, [request, tenantInfo]);
-
-    // Download signed document
-    const handleDownload = async () => {
-        const path = request?.signed_document_path;
-        if (!path) {
-            alert('El documento firmado todavía se está procesando o no está disponible.');
-            return;
-        }
-
-        try {
-            // Use native download method (returns blob) - most robust for mobile/CORS
-            const { data, error } = await supabase.storage
-                .from('signatures')
-                .download(path);
-
-            if (error) throw error;
-
-            // Create local URL for the blob
-            const url = window.URL.createObjectURL(data);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            // Sanitize filename
-            const safeName = request.document_name.replace(/[/\\?%*:|"<>]/g, '-').replace(/\.[^/.]+$/, "");
-            a.download = `${safeName}_firmado.pdf`;
-
-            document.body.appendChild(a);
-            a.click();
-
-            // Cleanup
-            setTimeout(() => {
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            }, 100);
-
-        } catch (err) {
-            console.error('Error downloading document:', err);
-            // Last resort fallback: open signed URL
-            try {
-                const { data: signed } = await supabase.storage
-                    .from('signatures')
-                    .createSignedUrl(path, 60);
-                if (signed?.signedUrl) {
-                    window.location.assign(signed.signedUrl);
-                } else {
-                    alert('No se pudo descargar el archivo. Por favor, reintente en unos momentos.');
-                }
-            } catch {
-                alert('No se pudo descargar el documento.');
-            }
+            // Error handling already done in hook or via alert
         }
     };
 
-    // ─── RENDER STATES ──────────────────────────────────────────
+    // --- RENDER HELPERS ---
 
-    // Data Entry Form Case
-    if (state === 'missing_data') {
+    const Layout = ({ children, title, subtitle }: { children: React.ReactNode, title?: string, subtitle?: string }) => (
+        <div className="min-h-screen bg-[#050811] text-white flex flex-col font-sans selection:bg-primary/30">
+            {/* Optimized Dark Space Background */}
+            <div className="fixed inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(var(--primary),0.05)_0%,transparent_50%)] pointer-events-none" />
+            
+            <header className="sticky top-0 z-50 bg-[#050811]/80 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                        <Sparkles size={18} />
+                    </div>
+                    <div className="flex flex-col">
+                        <span className="text-sm font-black tracking-tight uppercase">{tenantInfo?.name || 'LegalFlow'}</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Protocolo Seguro Stark</span>
+                    </div>
+                </div>
+                <div className="px-3 py-1 bg-white/5 border border-white/5 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400">
+                    ID: {documentId.substring(0, 8)}
+                </div>
+            </header>
+
+            <main className="flex-1 w-full max-w-6xl mx-auto px-6 py-10 lg:py-16 grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
+                {(title || subtitle) && (
+                    <div className="lg:col-span-12 mb-4">
+                        <h1 className="text-3xl lg:text-5xl font-black tracking-tighter mb-4 leading-none">
+                            {title}
+                        </h1>
+                        <p className="text-slate-500 text-sm font-medium max-w-2xl">{subtitle}</p>
+                    </div>
+                )}
+                <AnimatePresence mode="wait">
+                    {children}
+                </AnimatePresence>
+            </main>
+        </div>
+    );
+
+    // --- STATE MACHINE RENDERING ---
+
+    if (state === 'loading') {
         return (
-            <div className="min-h-screen bg-slate-50">
-                <header className="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-10">
-                    <div className="max-w-lg mx-auto flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                                <UserPlus className="text-primary" size={16} />
-                            </div>
-                            <span className="font-bold text-slate-800 tracking-tight">Completar Datos</span>
+            <Layout>
+                <div className="lg:col-span-12 flex flex-col items-center justify-center py-40 gap-6">
+                    <div className="relative">
+                        <div className="w-16 h-16 border-2 border-primary/10 border-t-primary rounded-full animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
                         </div>
                     </div>
-                </header>
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/50">Iniciando Sesión Encriptada...</p>
+                </div>
+            </Layout>
+        );
+    }
 
-                <main className="max-w-lg mx-auto px-4 py-8">
-                    <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-6">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
-                                <Info className="text-amber-500" size={24} />
-                            </div>
-                            <div>
-                                <h2 className="text-base font-bold text-slate-900 leading-tight">Datos Necesarios</h2>
-                                <p className="text-[11px] text-slate-400">Para generar este documento correctamente, necesitamos completar la siguiente información:</p>
-                            </div>
-                        </div>
+    if (state === 'error') {
+        return (
+            <Layout title="Error de Acceso" subtitle="No hemos podido cargar el documento solicitado.">
+                <div className="lg:col-span-12 flex flex-col items-center max-w-md mx-auto text-center gap-6">
+                    <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center text-red-500 border border-red-500/20">
+                        <AlertCircle size={40} />
+                    </div>
+                    <p className="text-slate-400 font-medium">{errorMessage}</p>
+                    <button onClick={() => window.location.reload()} className="px-8 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-black uppercase tracking-widest text-[10px] border border-white/10 transition-all"> Reintentar </button>
+                </div>
+            </Layout>
+        );
+    }
 
+    if (state === 'missing_data') {
+        return (
+            <Layout title="Datos Requeridos" subtitle="Proporcione la información faltante para generar el certificado de firma.">
+                <div className="lg:col-span-7">
+                    <div className="bg-white/[0.02] border border-white/5 rounded-[32px] p-8 backdrop-blur-xl">
                         <form onSubmit={(e) => {
                             e.preventDefault();
                             const fd = new FormData(e.currentTarget);
                             const updates: any = {};
-                            missingFields.forEach(f => {
-                                updates[f.field_key] = fd.get(f.field_key);
-                            });
+                            missingFields.forEach(f => updates[f.field_key] = fd.get(f.field_key));
                             handleDataSubmit(updates);
-                        }} className="space-y-4">
-                            {missingFields.map(f => (
-                                <div key={f.field_key} className="space-y-1.5">
-                                    <label className="text-[11px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                                        {t(`fields.${f.field_key}`)}
-                                    </label>
-                                    <input
-                                        name={f.field_key}
-                                        type={f.field_key.includes('date') ? 'date' : 'text'}
-                                        required
-                                        pattern={
-                                            f.field_key.toLowerCase().includes('dni') || f.field_key.toLowerCase().includes('nie')
-                                                ? "^[XYZxyz]?\\d{7,8}[A-Za-z]$"
-                                                : f.field_key.toLowerCase() === 'cp' || f.field_key.toLowerCase().includes('postal')
-                                                    ? "^\\d{5}$"
-                                                    : undefined
-                                        }
-                                        title={
-                                            f.field_key.toLowerCase().includes('dni') || f.field_key.toLowerCase().includes('nie')
-                                                ? "Debe ser un formato válido de DNI/NIE español (ej. 12345678A o Y1234567Z)"
-                                                : f.field_key.toLowerCase() === 'cp' || f.field_key.toLowerCase().includes('postal')
-                                                    ? "El código postal debe tener exactamente 5 dígitos."
-                                                    : ""
-                                        }
-                                        className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all shadow-sm"
-                                        placeholder={`Escribe el ${t(`fields.${f.field_key}`).toLowerCase()}`}
-                                    />
-                                </div>
-                            ))}
-
+                        }} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {missingFields.map(f => (
+                                    <div key={f.field_key} className="flex flex-col gap-2 group">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 group-focus-within:text-primary transition-colors">
+                                            {t(`fields.${f.field_key}`)}
+                                        </label>
+                                        <input
+                                            name={f.field_key}
+                                            type={f.field_key.includes('date') ? 'date' : 'text'}
+                                            required
+                                            className="w-full bg-slate-900 border border-white/10 rounded-2xl px-5 py-4 text-sm font-medium text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-700"
+                                            placeholder={`Ingrese su ${t(`fields.${f.field_key}`).toLowerCase()}`}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
                             <button
                                 type="submit"
                                 disabled={isSavingData}
-                                className="w-full bg-slate-900 text-white rounded-2xl py-4 font-black text-sm mt-4 shadow-xl active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full bg-white text-slate-900 rounded-2xl py-5 font-black text-sm uppercase tracking-widest shadow-2xl hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-3"
                             >
-                                {isSavingData ? <Loader2 className="animate-spin" size={20} /> : (
-                                    <>CONFIRMAR Y CONTINUAR <ChevronRight size={18} /></>
-                                )}
+                                {isSavingData ? <Loader2 className="animate-spin" size={20} /> : <>Siguiente Paso <ChevronRight size={18} /></>}
                             </button>
                         </form>
                     </div>
-
-                    <p className="text-center text-[10px] text-slate-400 font-medium">Estos datos se guardarán en su expediente para futuros trámites.</p>
-                </main>
-            </div>
+                </div>
+                <div className="lg:col-span-5">
+                    <AuditTrail status="Esperando Datos de Perfil" requestID={documentId} />
+                </div>
+            </Layout>
         );
     }
 
-    // Fullscreen Signature Pad
     if (state === 'signing') {
         return (
             <SignaturePad
-                onConfirm={handleSignatureConfirm}
+                onConfirm={onSignatureConfirm}
                 onCancel={() => setState('ready')}
                 signerName={tenantInfo?.name}
             />
         );
     }
 
-    // Main Layout (Mobile-First)
-    return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex flex-col">
-            {/* Header with branding */}
-            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200/50 px-4 py-3 shrink-0">
-                <div className="max-w-lg mx-auto flex items-center justify-between">
-                    <div
-                        className="flex items-center gap-2 cursor-pointer"
-                        onClick={() => window.location.href = `${window.location.origin}/${tenantInfo?.slug && tenantInfo.slug !== 'global' ? tenantInfo.slug : ''}`}
-                    >
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Pen className="text-primary" size={16} />
-                        </div>
-                        <span className="font-black text-slate-800 tracking-tighter uppercase">
-                            {tenantInfo?.name || 'LegalFlow'}
-                        </span>
+    if (state === 'processing') {
+        return (
+            <Layout>
+                <div className="lg:col-span-12 flex flex-col items-center justify-center py-40 gap-8">
+                    <div className="w-full max-w-md bg-white/5 rounded-full h-1 overflow-hidden">
+                        <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progressPct}%` }}
+                            className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"
+                        />
                     </div>
-                    <div className="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[10px] font-bold uppercase tracking-wider">
-                        Certificado Seguro
+                    <div className="flex flex-col items-center gap-3">
+                        <p className="text-xl font-black text-white tracking-tight">{progress}</p>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.5em]">{progressPct}% COMPLETADO</p>
                     </div>
+                    <Loader2 size={32} className="text-primary/20 animate-spin" />
                 </div>
-            </header>
+            </Layout>
+        );
+    }
 
-            <main className="max-w-lg mx-auto px-4 py-8 flex-1">
-                {/* Loading State */}
-                {state === 'loading' && (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <Loader2 className="animate-spin text-primary mb-4" size={32} />
-                        <p className="text-slate-500 font-medium">Cargando documento...</p>
-                    </div>
-                )}
-
-                {/* Processing State */}
-                {state === 'processing' && (
-                    <div className="flex flex-col items-center justify-center py-20 px-4">
-                        <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center mb-8 relative">
-                            <Loader2 className="animate-spin text-primary" size={40} />
-                            <div className="absolute inset-0 rounded-full border-2 border-primary/10 border-t-primary animate-[spin_2s_linear_infinite]"></div>
+    if (state === 'preview_certificate') {
+        return (
+            <Layout>
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8 overflow-y-auto">
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="fixed inset-0 bg-[#050811]/90 backdrop-blur-sm"
+                    />
+                    
+                    <motion.div 
+                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        className="relative w-full max-w-5xl bg-[#0A0F1D]/80 backdrop-blur-3xl border border-white/10 rounded-[40px] shadow-[0_0_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col md:flex-row max-h-[90vh]"
+                    >
+                        {/* Left Side: Document Preview */}
+                        <div className="flex-1 min-h-[400px] border-r border-white/5 bg-[#050811]/50">
+                            <DocumentViewer pdfUrl={pdfPreviewUrl} title="Vista Previa Firmada" />
                         </div>
 
-                        <h2 className="text-xl font-bold text-slate-800 mb-2">Procesando documento</h2>
-                        <p className="text-slate-400 text-sm font-medium mb-8 text-center">{progress}</p>
-
-                        {/* Progress Bar Container */}
-                        <div className="w-full max-w-xs bg-slate-100 h-2.5 rounded-full overflow-hidden mb-3 border border-slate-200/50">
-                            <div
-                                className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-500 ease-out rounded-full shadow-[0_0_10px_rgba(37,99,235,0.3)]"
-                                style={{ width: `${progressPct}%` }}
-                            ></div>
-                        </div>
-                        <div className="text-[10px] font-black text-blue-600/60 uppercase tracking-widest">
-                            {progressPct}% Completado
-                        </div>
-                    </div>
-                )}
-
-                {/* Ready to Sign */}
-                {state === 'ready' && request && (
-                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                            <div className="flex items-center gap-4 mb-6">
-                                <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0">
-                                    <FileText className="text-blue-600" size={28} />
+                        {/* Right Side: Audit Info */}
+                        <div className="w-full md:w-[400px] p-8 md:p-12 flex flex-col gap-8 overflow-y-auto">
+                            <div className="space-y-4">
+                                <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                                    <CheckCircle2 size={28} />
                                 </div>
-                                <div className="overflow-hidden">
-                                    <h1 className="text-lg font-bold text-slate-900 truncate">
-                                        {request.document_name}
-                                    </h1>
-                                    <p className="text-xs text-slate-400 font-medium">
-                                        Documento para firma digital
+                                <h2 className="text-3xl font-black text-white tracking-tighter">Certificado de Integridad</h2>
+                                <p className="text-slate-500 text-xs font-medium leading-relaxed uppercase tracking-widest">
+                                    Firma procesada exitosamente. Revise los parámetros de seguridad técnica.
+                                </p>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Hash de Firma SHA-256</span>
+                                    <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl font-mono text-[9px] text-primary break-all">
+                                        {auditData?.signatureHash}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Dirección IP</span>
+                                        <p className="text-xs font-bold text-white tracking-wider">{auditData?.ipAddress}</p>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Protocolo</span>
+                                        <p className="text-xs font-bold text-emerald-500">Stark SSL v2</p>
+                                    </div>
+                                </div>
+
+                                <div className="p-5 bg-primary/5 border border-primary/10 rounded-2xl space-y-2">
+                                    <div className="flex items-center gap-2 text-primary">
+                                        <Loader2 size={12} className="animate-spin" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Timestamp Verificado</span>
+                                    </div>
+                                    <p className="text-xs font-medium text-slate-400">
+                                        {auditData?.timestamp && new Date(auditData.timestamp).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'medium' })}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                                    <Shield size={16} className="text-emerald-500 shrink-0" />
-                                    <div className="text-[11px] leading-tight text-slate-600">
-                                        Firma vinculante con certificación de auditoría, IP y hash de integridad.
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                                    <Clock size={16} className="text-amber-500 shrink-0" />
-                                    <div className="text-[11px] leading-tight text-slate-600">
-                                        Expira el {new Date(request.expires_at).toLocaleDateString('es-ES', {
-                                            day: '2-digit', month: 'long', year: 'numeric'
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* PDF Preview info */}
-                        <div className="bg-blue-50/50 rounded-2xl p-6 border border-blue-100 flex items-start gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm">
-                                <Info className="text-blue-500" size={20} />
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-bold text-slate-800 mb-1">Instrucciones</h3>
-                                <p className="text-[11px] text-slate-500 leading-relaxed mb-4">
-                                    Revise el documento y proceda a firmar pulsando el botón inferior.
-                                    Se generará un certificado de firma al finalizar.
-                                </p>
-                                {pdfPreviewUrl && (
-                                    <button
-                                        onClick={() => window.open(pdfPreviewUrl, '_blank')}
-                                        className="flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
-                                    >
-                                        Ver documento completo <ChevronRight size={14} />
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Sign Action */}
-                        <div className="pt-4">
-                            <button
-                                onClick={() => setState('signing')}
-                                className="w-full py-5 bg-slate-900 text-white rounded-3xl font-black text-base shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-3"
-                            >
-                                <Pen size={20} />
-                                FIRMAR AHORA
-                            </button>
-                            <p className="text-center text-[10px] text-slate-400 mt-4 leading-relaxed">
-                                Al pulsar en FIRMAR AHORA, acepta el uso de firmas electrónicas bajo la Ley 59/2003 y el Reglamento eIDAS.
-                            </p>
-                        </div>
-                    </div>
-                )}
-
-                {/* Success State */}
-                {state === 'success' && (
-                    <div className="flex flex-col items-center justify-center py-16 animate-in zoom-in-95 duration-500">
-                        <div className="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center mb-8 relative">
-                            <div className="absolute inset-0 rounded-full border-4 border-emerald-500/20 animate-ping"></div>
-                            <CheckCircle2 size={48} className="text-emerald-500" />
-                        </div>
-                        <h2 className="text-2xl font-bold text-slate-800 mb-3 text-center">¡Documento Firmado!</h2>
-                        <p className="text-sm text-slate-500 text-center max-w-xs mb-10">
-                            La firma se ha procesado correctamente y el abogado ha sido notificado. Ya puedes descargar tu copia firmada.
-                        </p>
-
-                        <div className="w-full space-y-3">
-                            <button
-                                onClick={handleDownload}
-                                className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/20"
-                            >
-                                <Download size={18} />
-                                DESCARGAR COPIA FIRMADA
-                            </button>
-                            <button
-                                onClick={() => window.location.href = `${window.location.origin}/${tenantInfo?.slug && tenantInfo.slug !== 'global' ? tenantInfo.slug : ''}`}
-                                className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-colors"
-                            >
-                                Volver al inicio
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Already Signed */}
-                {state === 'already_signed' && (
-                    <div className="flex flex-col items-center justify-center py-16 animate-in fade-in">
-                        <div className="w-20 h-20 rounded-3xl bg-blue-50 flex items-center justify-center mb-6">
-                            <CheckCircle2 size={40} className="text-blue-500" />
-                        </div>
-                        <h2 className="text-xl font-bold text-slate-800 mb-2">Documento ya firmado</h2>
-                        <p className="text-sm text-slate-400 text-center max-w-xs">
-                            Este documento ya fue firmado el {request?.signed_at ? new Date(request.signed_at).toLocaleDateString('es-ES', {
-                                day: '2-digit',
-                                month: 'long',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })
-                                : 'una fecha anterior'
-                            }.
-                        </p>
-
-                        <div className="w-full space-y-3 mt-8">
-                            {request?.signed_document_path && (
+                            <div className="mt-auto flex flex-col gap-4">
                                 <button
-                                    onClick={handleDownload}
-                                    className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow-xl shadow-blue-600/20"
+                                    onClick={() => {
+                                        setRequest(prev => prev ? {
+                                            ...prev,
+                                            status: 'signed',
+                                            signed_document_path: auditData.signedPath,
+                                            signed_at: auditData.timestamp
+                                        } : null);
+                                        setState('success');
+                                    }}
+                                    className="w-full py-5 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
                                 >
-                                    <Download size={18} />
-                                    Descargar copia firmada
+                                    Autorizar Archivo Definitivo
                                 </button>
-                            )}
-
-                            <button
-                                onClick={() => window.location.href = `${window.location.origin}/${tenantInfo?.slug && tenantInfo.slug !== 'global' ? tenantInfo.slug : ''}`}
-                                className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-colors"
-                            >
-                                Volver al inicio
-                            </button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Expired State */}
-                {state === 'expired' && (
-                    <div className="flex flex-col items-center justify-center py-16 animate-in fade-in text-center">
-                        <div className="w-20 h-20 rounded-3xl bg-orange-50 flex items-center justify-center mb-6">
-                            <Clock size={40} className="text-orange-500" />
-                        </div>
-                        <h2 className="text-xl font-bold text-slate-800 mb-2">Enlace expirado</h2>
-                        <p className="text-sm text-slate-400 max-w-xs mx-auto mb-6">
-                            Este enlace de firma ha caducado o ha sido cancelado por seguridad.
-                            Contacte con su abogado para solicitar uno nuevo.
-                        </p>
-                        <div className="flex flex-col gap-4 w-full">
-                            {tenantInfo?.config?.contact_email && (
-                                <a
-                                    href={`mailto:${tenantInfo.config.contact_email}`}
-                                    className="text-blue-600 text-sm font-bold hover:underline"
+                                <button
+                                    onClick={() => setState('ready')}
+                                    className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] hover:text-white transition-colors"
                                 >
-                                    {tenantInfo.config.contact_email}
-                                </a>
-                            )}
-
-                            <button
-                                onClick={() => window.location.href = `${window.location.origin}/${tenantInfo?.slug && tenantInfo.slug !== 'global' ? tenantInfo.slug : ''}`}
-                                className="w-full py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition-colors"
-                            >
-                                Volver al inicio
-                            </button>
+                                    Volver / Corregir
+                                </button>
+                            </div>
                         </div>
+                    </motion.div>
+                </div>
+            </Layout>
+        );
+    }
+
+    if (state === 'success' || state === 'already_signed') {
+        return (
+            <Layout title="Documento Firmado" subtitle="El proceso se ha completado con éxito. Se ha generado un certificado de integridad legal.">
+                <div className="lg:col-span-7 flex flex-col gap-8">
+                    <div className="p-10 bg-emerald-500/10 border border-emerald-500/20 rounded-[32px] flex flex-col items-center text-center gap-6">
+                        <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+                            <CheckCircle2 size={40} className="text-slate-900" />
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-black text-white">¡Firma Certificada!</h2>
+                            <p className="text-slate-400 text-sm mt-2">Su documento ha sido sellado y almacenado de forma segura.</p>
+                        </div>
+                        <button
+                            onClick={() => handleDownload(request?.signed_document_path || '', request?.document_name || 'documento')}
+                            className="w-full max-w-xs py-5 bg-white text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] transition-all shadow-xl"
+                        >
+                            <Download size={20} /> Descargar PDF Firmado
+                        </button>
                     </div>
-                )}
+                </div>
+                <div className="lg:col-span-5">
+                    <AuditTrail status="Protegido por Stark Protocol" requestID={documentId} />
+                </div>
+            </Layout>
+        );
+    }
 
-                {/* Error State */}
-                {state === 'error' && (
-                    <div className="flex flex-col items-center justify-center py-16 animate-in fade-in text-center">
-                        <div className="w-20 h-20 rounded-3xl bg-red-50 flex items-center justify-center mb-6">
-                            <AlertCircle size={40} className="text-red-500" />
-                        </div>
-                        <h2 className="text-xl font-bold text-slate-800 mb-2">Error</h2>
-                        <p className="text-sm text-slate-400 max-w-xs mx-auto mb-6">
-                            {errorMessage || 'Ha ocurrido un problema al cargar el documento.'}
+    if (state === 'expired') {
+        return (
+            <Layout title="Enlace Expirado" subtitle="Esta solicitud de firma ya no es válida o ha sido cancelada.">
+                <div className="lg:col-span-12 flex flex-col items-center py-20 gap-6">
+                    <div className="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500 border border-amber-500/20">
+                        <AlertCircle size={40} />
+                    </div>
+                    <p className="text-slate-400 font-medium text-center max-w-sm">
+                        Por motivos de seguridad, los enlaces de firma tienen una validez temporal. Solicite un nuevo enlace al administrador.
+                    </p>
+                </div>
+            </Layout>
+        );
+    }
+
+    return (
+        <Layout>
+            <div className="lg:col-span-7 space-y-10">
+                <DocumentViewer pdfUrl={pdfPreviewUrl} title={request?.document_name || 'Documento'} />
+                
+                <div className="bg-primary/10 border border-primary/20 rounded-3xl p-6 flex items-start gap-4">
+                    <div className="p-3 bg-primary/20 rounded-2xl text-primary shrink-0">
+                        <FileText size={24} />
+                    </div>
+                    <div>
+                        <h4 className="text-sm font-black text-white uppercase tracking-tight">Revise el documento</h4>
+                        <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                            Al proceder con la firma, usted acepta los términos y condiciones vinculados a este documento. Su identidad y parámetros técnicos serán registrados.
                         </p>
-                        <div className="flex flex-col gap-3 w-full max-w-xs mx-auto">
-                            <button
-                                onClick={() => window.location.reload()}
-                                className="px-6 py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm"
-                            >
-                                Reintentar
-                            </button>
-                            <button
-                                onClick={() => window.location.href = `${window.location.origin}/${tenantInfo?.slug && tenantInfo.slug !== 'global' ? tenantInfo.slug : ''}`}
-                                className="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm"
-                            >
-                                Volver al inicio
-                            </button>
-                        </div>
                     </div>
-                )}
-            </main>
+                </div>
+            </div>
 
-            {/* Footer */}
-            <footer className="max-w-lg mx-auto px-4 py-8 text-center shrink-0">
-                <p className="text-[10px] text-slate-300 font-bold uppercase tracking-widest">
-                    Seguridad LegalFlow · © {new Date().getFullYear()}
+            <div className="lg:col-span-5 space-y-8">
+                <AuditTrail status="Esperando Firma" requestID={documentId} />
+                
+                <motion.button
+                    whileHover={{ scale: 1.02, boxShadow: '0 0 30px rgba(var(--primary),0.3)' }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setState('signing')}
+                    className="w-full py-6 bg-primary text-slate-900 rounded-[32px] font-black text-lg uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 flex items-center justify-center gap-4 group"
+                >
+                    <Sparkles className="group-hover:rotate-12 transition-transform" />
+                    INICIAR FIRMA
+                </motion.button>
+                
+                <p className="text-[10px] text-center text-slate-600 font-bold uppercase tracking-widest">
+                    Procesado por Iron Silo™ Signature Engine
                 </p>
-            </footer>
-        </div>
+            </div>
+        </Layout>
     );
 };

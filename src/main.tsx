@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
 import './lib/i18n'
@@ -9,12 +10,14 @@ import { ChatProvider } from './lib/ChatContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <AppSettingsProvider>
-            <TenantProvider>
-                <ChatProvider>
-                    <App />
-                </ChatProvider>
-            </TenantProvider>
-        </AppSettingsProvider>
+        <BrowserRouter>
+            <AppSettingsProvider>
+                <TenantProvider>
+                    <ChatProvider>
+                        <App />
+                    </ChatProvider>
+                </TenantProvider>
+            </AppSettingsProvider>
+        </BrowserRouter>
     </React.StrictMode>,
 )

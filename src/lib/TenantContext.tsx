@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useRef } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useRef, useCallback } from 'react';
 import { supabase } from './supabase';
 
 interface Tenant {
@@ -48,7 +48,7 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
     const refreshingRef = useRef(false);
     const lastSessionIdRef = useRef<string | null>(null);
 
-    const syncFullState = async (session: any) => {
+    const syncFullState = useCallback(async (session: any) => {
         if (refreshingRef.current) return;
         
         try {
@@ -58,32 +58,49 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
             const currentUser = session?.user || null;
             setUser(currentUser);
 
-            if (!currentUser) {
-                setProfile(null);
-                setTenant(null);
-                setLoading(false);
-                return;
+            // 1. Determine Tenant to load
+            let tenantToLoad = null;
+            let currentProfileData = null;
+
+            // Priority 1: From Profile (if logged in)
+            if (currentUser) {
+                const { data } = await supabase
+                    .from('profiles')
+                    .select('*, tenants(*)')
+                    .eq('id', currentUser.id)
+                    .maybeSingle();
+
+                currentProfileData = data;
+                if (currentProfileData?.tenants) {
+                    tenantToLoad = currentProfileData.tenants;
+                }
             }
 
-            // 1. Fetch Profile
-            const { data: profileData } = await supabase
-                .from('profiles')
-                .select('*, tenants(slug)')
-                .eq('id', currentUser.id)
-                .maybeSingle();
+            // Priority 2: From URL Slug (if not already loaded or no profile)
+            if (!tenantToLoad) {
+                const path = window.location.pathname;
+                const pathParts = path.split('/').filter(Boolean);
+                const potentialSlug = pathParts[0];
 
-            setProfile(profileData);
+                // Reserved paths that shouldn't be treated as slugs
+                const reservedPaths = ['dashboard', 'login', 'create-org', 'documents', 'admin', 'join'];
+                
+                if (potentialSlug && !reservedPaths.includes(potentialSlug)) {
+                    console.log(`[TenantProvider] detected slug in URL: ${potentialSlug}`);
+                    const { data: tenantData } = await supabase
+                        .from('tenants')
+                        .select('*')
+                        .eq('slug', potentialSlug)
+                        .maybeSingle();
+                    
+                    if (tenantData) {
+                        tenantToLoad = tenantData;
+                    }
+                }
+            }
 
-            // 2. Fetch Tenant
-            if (profileData?.tenant_id) {
-                const { data: tenantData } = await supabase
-                    .from('tenants')
-                    .select('*')
-                    .eq('id', profileData.tenant_id)
-                    .maybeSingle();
-                setTenant(tenantData);
-            } else {
-                // Fallback: Check for invitation token if no tenant yet
+            // Priority 3: Fallback invitation token
+            if (!tenantToLoad) {
                 const token = new URLSearchParams(window.location.search).get('token');
                 if (token) {
                     const { data: invite } = await supabase
@@ -91,18 +108,39 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
                         .select('*, tenants(*)')
                         .eq('token', token)
                         .maybeSingle();
-                    if (invite?.tenants) setTenant(invite.tenants as any);
-                } else {
-                    setTenant(null);
+                    if (invite?.tenants) tenantToLoad = invite.tenants as any;
                 }
             }
+
+            // Sync subscription_tier if missing from profile but present in tenant
+            if (currentProfileData && tenantToLoad) {
+                // Prioritize tenant plan over individual profile tier if operating under a tenant
+                let effectiveTier = tenantToLoad.plan;
+                if (!effectiveTier || effectiveTier === 'free') {
+                    effectiveTier = currentProfileData.subscription_tier || 'free';
+                }
+                
+                if (currentProfileData.role === 'superadmin' || currentProfileData.role === 'admin') effectiveTier = 'business';
+                
+                currentProfileData.subscription_tier = effectiveTier;
+            } else if (currentProfileData?.role === 'superadmin' || currentProfileData?.role === 'admin') {
+                currentProfileData.subscription_tier = 'business';
+            }
+
+            setProfile(currentProfileData);
+            setTenant(tenantToLoad);
         } catch (error) {
             console.error('[TenantProvider] Fatal sync error:', error);
         } finally {
             setLoading(false);
             refreshingRef.current = false;
         }
-    };
+    }, []);
+
+    const refreshTenant = useCallback(async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        await syncFullState(session);
+    }, [syncFullState]);
 
     useEffect(() => {
         let mounted = true;
@@ -131,7 +169,10 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
         };
     }, []);
 
-    const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
+    const isAdmin = 
+        user?.email === 'lsergiom76@gmail.com' || 
+        profile?.role === 'admin' || 
+        profile?.role === 'superadmin';
 
     return (
         <TenantContext.Provider value={{ 
@@ -140,7 +181,7 @@ export const TenantProvider = ({ children }: { children: ReactNode }) => {
             profile, 
             isAdmin, 
             loading, 
-            refreshTenant: () => syncFullState(null) // Generic refresh
+            refreshTenant
         }}>
             {children}
         </TenantContext.Provider>

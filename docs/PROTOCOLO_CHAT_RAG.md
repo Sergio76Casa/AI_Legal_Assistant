@@ -1,6 +1,6 @@
 # 📜 Protocolo de Calibración: Sistema Chat RAG (Legal & Halal)
-> **ÚLTIMA REVISIÓN:** 17 Febrero 2026
-> **ESTADO:** CRÍTICO - PRE-MIGRACIÓN MULTI-TENANT
+> **ÚLTIMA REVISIÓN:** 17 Abril 2026
+> **ESTADO:** OPTIMIZADO - SOPORTE DOCUMENTOS LARGOS (200+ PÁGS)
 
 Este documento contiene la configuración **EXACTA Y VINCULANTE** del cerebro de la IA (Gemini). Cualquier desviación de estos parámetros resultará en una degradación de la personalidad "STARK" o fallos en la recuperación de documentos.
 
@@ -80,16 +80,19 @@ La función busca documentos donde:
 
 ## 4. Pipeline de Ingesta (PDFs e Imágenes)
 
-La función `process-pdf` no es solo un lector de texto. Es un **pipeline multimodal**.
+La función `process-pdf` ha sido evolucionada de un sistema basado solo en IA a un sistema de **Extracción Nativa Híbrida**.
 
 1.  **Detección de MimeType:**
     *   Soporta: `pdf`, `jpg`, `jpeg`, `png`, `webp`, `heic`, `heif`.
-2.  **Estrategia de Extracción con Gemini 2.0 Flash:**
-    *   **Si es PDF:** "Extrae todo el texto de forma literal..."
-    *   **Si es Imagen:** "Extrae todo el texto visible... Si es un documento, transcribe..."
-3.  **Metadatos Críticos:**
-    *   `source`: Guarda el `file_path` original. Usado para borrado en cascada.
-    *   `type`: Siempre etiquetado como `document` en `knowledge_base`.
+2.  **Estrategia de Extracción:**
+    *   **PDFs Nativos:** Utiliza la librería `unpdf` para extraer el texto de forma directa y completa. Esto elimina el límite de tokens de salida de la IA, permitiendo procesar documentos de **más de 200 páginas** sin pérdida de información.
+    *   **PDFs Escaneados / Imágenes:** Fallback automático a `gemini-2.0-flash` (Visión) para OCR cuando no hay capa de texto detectable.
+3.  **Chunking Inteligente (400/50):**
+    *   El texto extraído se divide en fragmentos de **400 palabras** con un solapamiento (overlap) de **50 palabras**.
+    *   **SIN LÍMITES:** Se ha eliminado el tope artificial de 50 chunks. Un documento genera tantos fragmentos como necesite para su integridad total.
+4.  **Metadatos Críticos:**
+    *   `source`: Guarda el `file_path` original.
+    *   `chunk_index` / `total_chunks`: Rastreo de la posición del fragmento en el documento original.
 
 ---
 

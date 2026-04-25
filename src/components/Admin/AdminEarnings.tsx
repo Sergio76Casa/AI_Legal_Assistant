@@ -5,6 +5,8 @@ import { EarningsKPIs } from './EarningsKPIs';
 import { EarningsCharts } from './EarningsCharts';
 import { AffiliateRanking } from './AffiliateRanking';
 import { TransactionMonitor } from './TransactionMonitor';
+import { ViewHeader } from './ViewHeader';
+import { TrendingUp, Activity } from 'lucide-react';
 
 interface AdminStats {
     mrr: number;
@@ -42,9 +44,11 @@ export const AdminEarnings: React.FC = () => {
                 });
 
                 // 2. Fetch Commissions & Active Affiliates
-                const { data: commissions } = await supabase
+                const { data: commissions, error: commError } = await supabase
                     .from('affiliate_commissions')
                     .select('amount, referral_id(affiliate_id)');
+
+                if (commError) console.error('Error loading commissions:', commError);
 
                 const totalComm = commissions?.reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
                 const activeAffIds = new Set(commissions?.map(c => (c.referral_id as any)?.affiliate_id) || []);
@@ -65,11 +69,14 @@ export const AdminEarnings: React.FC = () => {
                 setTopAffiliates(topAffs || []);
 
                 // 4. Recent Payments
-                const { data: recPayments } = await supabase
+                // Note: explicit constraint binding to resolve PGRST201 ambiguity as per console hint
+                const { data: recPayments, error: recPaymentsError } = await supabase
                     .from('affiliate_commissions')
-                    .select('*, referral_id(affiliate_id(affiliate_code), referred_user_id(profiles(full_name)))')
+                    .select('*, referral_id(affiliate_id(affiliate_code), profiles!fk_referred_user_profile(full_name))')
                     .order('created_at', { ascending: false })
                     .limit(6);
+
+                if (recPaymentsError) console.error('Error loading payments:', recPaymentsError);
                 setRecentPayments(recPayments || []);
 
             } catch (err) {
@@ -92,15 +99,25 @@ export const AdminEarnings: React.FC = () => {
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700">
-            <EarningsKPIs stats={stats} />
+        <div className="space-y-12 page-enter">
+            <ViewHeader 
+                icon={Activity} 
+                title="Dashboard Partners" 
+                subtitle="Analítica de Rendimiento Global"
+                badge="Sincronización Stark"
+                badgeColor="primary"
+            />
+
+            <div className="max-w-7xl mx-auto space-y-10">
+                <EarningsKPIs stats={stats} />
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <EarningsCharts data={mockChartData} />
                 <AffiliateRanking topAffiliates={topAffiliates} />
             </div>
 
-            <TransactionMonitor payments={recentPayments} />
+                <TransactionMonitor payments={recentPayments} />
+            </div>
         </div>
     );
 };

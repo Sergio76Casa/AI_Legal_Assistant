@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useTenant } from '../lib/TenantContext';
 import { OrganizationPanel } from './OrganizationPanel';
 import { UserDocuments } from './UserDocuments';
 import { TemplateManager } from './TemplateManager';
 import { AffiliatePanel } from './AffiliatePanel';
-import { Building2, ArrowLeft, FileText, LayoutGrid, TrendingUp, Settings, PenTool, Shield } from 'lucide-react';
+import { Building2, FileText, LayoutGrid, Settings, PenTool, Shield, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
 import { ComplianceTab } from './Admin/ComplianceTab';
 import { ConfigPanel } from './ConfigPanel';
-import { BusinessSettingsPanel } from './BusinessSettingsPanel';
+import { HealthMonitorPanel } from './HealthMonitorPanel';
+import { Sidebar } from './Sidebar';
+import { useAppSettings } from '../lib/AppSettingsContext';
+import { getPlanMetadata } from '../lib/constants/plans';
+import { HomeView } from './HomeView';
 
 interface TenantDashboardProps {
     onBack?: () => void;
@@ -20,14 +25,14 @@ interface TenantDashboardProps {
 }
 
 export const TenantDashboard: React.FC<TenantDashboardProps> = ({
-    onBack,
     onNavigate,
     user,
     profile,
-    initialTab = 'documents'
+    initialTab = 'home'
 }) => {
     const { t } = useTranslation();
     const { tenant, refreshTenant } = useTenant();
+    const { settings } = useAppSettings();
     const [activeTab, setActiveTab] = useState(initialTab);
     const [subTab, setSubTab] = useState('members');
 
@@ -50,16 +55,18 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     };
 
     const displayTenant = virtualTenant;
+    const planMetadata = getPlanMetadata(profile?.subscription_tier || tenant?.plan || 'free', settings?.plan_names);
 
     const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
 
     const mainTabs = [
-        { id: 'documents', label: t('tenant_dashboard.documents'), icon: FileText },
-        { id: 'compliance', label: 'Eficiencia & Industria', icon: Shield },
-        { id: 'templates', label: t('tenant_dashboard.templates'), icon: LayoutGrid, adminOnly: true },
-        { id: 'organization', label: t('tenant_dashboard.organization'), icon: Building2, adminOnly: true },
-        { id: 'affiliates', label: t('tenant_dashboard.affiliates'), icon: TrendingUp },
-        { id: 'settings', label: t('tenant_dashboard.settings'), icon: Settings, adminOnly: true },
+        { id: 'home', label: 'Mi Dashboard', icon: TrendingUp, category: 'Espacio de Trabajo' },
+        { id: 'documents', label: t('tenant_dashboard.documents'), icon: FileText, category: 'Espacio de Trabajo' },
+        { id: 'templates', label: t('tenant_dashboard.templates'), icon: LayoutGrid, adminOnly: true, category: 'Espacio de Trabajo' },
+        { id: 'compliance', label: 'Eficiencia Stark', icon: Shield, adminOnly: true, category: 'Recursos' },
+        { id: 'organization', label: t('tenant_dashboard.organization'), icon: Building2, adminOnly: true, category: 'Gestión' },
+        { id: 'affiliates', label: t('tenant_dashboard.affiliates'), icon: TrendingUp, category: 'Gestión' },
+        { id: 'settings', label: t('tenant_dashboard.settings'), icon: Settings, adminOnly: true, category: 'Sistema' },
     ];
 
     const organizationSubTabs = [
@@ -74,63 +81,56 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     });
 
     return (
-        <div className="min-h-screen bg-[#0a0f1d] pb-20 pt-12">
-            <div className="mx-auto max-w-6xl px-4 md:px-6">
-                {/* 1. Bloque Superior (Identidad y Contexto) */}
-                <div className="mb-10">
-                    <button
-                        onClick={onBack}
-                        className="mb-6 flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-white transition-colors group"
-                    >
-                        <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                        {t('tenant_dashboard.back')}
-                    </button>
+        <div className={cn(
+            "min-h-screen bg-[#0a0f1d] flex",
+            settings?.navigation_style === 'sidebar' ? "flex-row" : "flex-col pb-32 pt-32"
+        )}>
+            {settings?.navigation_style === 'sidebar' && (
+                <Sidebar 
+                    navItems={filteredTabs}
+                    activeTab={activeTab === 'home' ? 'documents' : activeTab}
+                    onTabChange={handleTabChange}
+                    user={user}
+                    profile={profile}
+                    tenant={tenant}
+                    planMetadata={planMetadata}
+                />
+            )}
 
-                    <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-3">
-                        {displayTenant.name}
-                    </h1>
-
-                    <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500/80">
-                        <div className="flex items-center gap-2">
-                            <span>{t('org_panel.headers.role') || 'Rol'}:</span>
-                            <span className="text-primary font-black uppercase">{isAdmin ? t('org_panel.role_admin') : t('org_panel.role_user')}</span>
-                        </div>
-                        <span className="hidden xs:inline opacity-20">|</span>
-                        <div className="flex items-center gap-2">
-                            <span>{t('tenant_dashboard.plan') || 'Plan'}:</span>
-                            <span className="text-white font-black uppercase">
-                                {t(`landing.pricing.plans.${(displayTenant.plan || 'free').toLowerCase()}.name`, { defaultValue: displayTenant.plan || 'Free' })}
-                            </span>
-                        </div>
-                        <span className="hidden xs:inline opacity-20">|</span>
-                        <span className="lowercase tracking-[0.11em] opacity-60 font-medium">{user?.email}</span>
-                    </div>
-                </div>
+            <div className={cn(
+                "flex-1 w-full min-w-0",
+                settings?.navigation_style === 'sidebar' ? "p-6 md:px-10 lg:px-16 pt-20" : "mx-auto max-w-[1400px] px-6"
+            )}>
 
                 {/* 2. Navegación Principal */}
-                <div className="mb-4 flex items-center gap-1 bg-[#0f172a] p-1.5 rounded-2xl border border-white/5 w-full overflow-x-auto scrollbar-hide no-scrollbar">
-                    {filteredTabs.map((tab) => (
+                {settings?.navigation_style !== 'sidebar' && (
+                    <div className="mb-12 flex items-center gap-1 p-1 bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-[2rem] w-full overflow-x-auto no-scrollbar shadow-2xl">
+                        {filteredTabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => handleTabChange(tab.id)}
                             className={cn(
-                                "flex-1 flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-[0.15em] transition-all relative overflow-hidden group min-w-[140px] md:min-w-0 md:max-w-none",
+                                "relative flex items-center justify-center gap-2 px-8 py-5 rounded-[1.5rem] text-[11px] font-black tracking-[0.2em] uppercase transition-all whitespace-nowrap overflow-hidden group min-w-[160px] flex-1",
                                 activeTab === tab.id
-                                    ? "text-primary bg-primary/10 shadow-[inset_0_0_12px_rgba(19,236,200,0.05)]"
-                                    : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                                    ? "bg-primary/10 text-primary shadow-sm"
+                                    : "text-slate-500 hover:text-white"
                             )}
                         >
                             <tab.icon size={16} className={cn(
                                 "transition-transform duration-300",
                                 activeTab === tab.id ? "scale-110" : "group-hover:scale-110"
                             )} />
-                            <span className="truncate whitespace-nowrap">{tab.label}</span>
+                            <span className="truncate">{tab.label}</span>
                             {activeTab === tab.id && (
-                                <div className="absolute bottom-0 left-2 right-2 h-0.5 bg-primary shadow-[0_0_8px_rgba(19,236,200,0.5)] rounded-full" />
+                                <motion.div 
+                                    layoutId="activeTabTenant"
+                                    className="absolute bottom-0 left-0 right-0 h-1 bg-primary"
+                                />
                             )}
                         </button>
                     ))}
-                </div>
+                    </div>
+                )}
 
                 {/* 3. Sub-Navegación para Organización */}
                 {activeTab === 'organization' && (
@@ -154,7 +154,8 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                 )}
 
                 {/* 4. Contenido Dinámico */}
-                <div className="page-enter">
+                <div>
+                    {activeTab === 'home' && <HomeView />}
                     {activeTab === 'documents' && <UserDocuments userId={user.id} />}
                     {activeTab === 'compliance' && <ComplianceTab tenantId={displayTenant.id} />}
                     {activeTab === 'templates' && <TemplateManager />}
@@ -165,22 +166,13 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                         />
                     )}
                     {activeTab === 'affiliates' && <AffiliatePanel />}
-                    {activeTab === 'settings' && (
-                        <div className="space-y-12">
-                            {user?.email === 'lsergiom76@gmail.com' && (
-                                <div className="mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
-                                    <BusinessSettingsPanel />
-                                    <div className="h-px bg-white/5 my-12" />
-                                </div>
-                            )}
-                            {tenant && (
-                                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <ConfigPanel
-                                        tenant={displayTenant}
-                                        refreshTenant={refreshTenant}
-                                    />
-                                </div>
-                            )}
+                    {activeTab === 'health' && <HealthMonitorPanel />}
+                    {activeTab === 'settings' && tenant && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <ConfigPanel
+                                tenant={displayTenant}
+                                refreshTenant={refreshTenant}
+                            />
                         </div>
                     )}
                 </div>
