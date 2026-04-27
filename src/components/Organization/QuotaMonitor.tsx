@@ -55,20 +55,20 @@ export const QuotaMonitor: React.FC<QuotaMonitorProps> = ({
     );
 
     return (
-        <div className="bg-[#0A0F1D]/40 backdrop-blur-2xl border border-white/5 rounded-[32px] p-8 relative overflow-hidden group">
+        <div className="bg-[#0A0F1D]/40 backdrop-blur-2xl border border-white/5 rounded-[32px] p-6 md:p-8 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-[0.02] pointer-events-none">
                 <BarChart3 size={120} className="text-primary" />
             </div>
 
             <div className="flex items-center justify-between mb-10">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)] shrink-0">
                         <Zap size={20} />
                     </div>
-                    <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-tighter">Estado de Suscripción</h3>
+                    <div className="min-w-0">
+                        <h3 className="text-xs md:text-sm font-black text-white uppercase tracking-tighter truncate">Estado de Suscripción</h3>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className={cn("text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border transition-all", 
+                            <span className={cn("text-[8px] md:text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border transition-all", 
                                 config.badgeClass)}>
                                 PLAN {config.commercialName}
                             </span>

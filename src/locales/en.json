@@ -719,6 +719,8 @@
         "generating": "Generating...",
         "generate_error": "Error generating bundle.",
         "users_list": "Organization Members",
+        "members_tab": "Members",
+        "trash_tab": "Trash",
         "role_admin": "Admin",
         "role_user": "Member",
         "actions": "Actions",
@@ -736,9 +738,21 @@
             "actions": "Actions"
         },
         "status_active": "Active",
+        "status_deleted": "Deleted",
+        "access_invite": "Invitation",
+        "access_direct": "Direct",
+        "delete_modal": {
+            "title_soft": "Move to Trash?",
+            "title_perm": "Delete Permanently?",
+            "desc_soft": "The client can be restored from the trash at any time.",
+            "desc_perm": "This action cannot be undone. All associated data will be lost.",
+            "confirm_soft": "Confirm Move",
+            "confirm_perm": "Delete Permanently",
+            "cancel": "Cancel"
+        },
         "tooltips": {
-            "edit_client": "Edit Client Profile",
-            "generate_doc": "Generate Official Document"
+            "edit_client": "Edit Client Details",
+            "generate_doc": "Generate PDF Document"
         }
     },
     "profile": {

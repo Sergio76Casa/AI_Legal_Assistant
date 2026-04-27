@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTenant } from '../lib/TenantContext';
 import { OrganizationPanel } from './OrganizationPanel';
 import { UserDocuments } from './UserDocuments';
 import { TemplateManager } from './TemplateManager';
 import { AffiliatePanel } from './AffiliatePanel';
-import { Building2, FileText, LayoutGrid, Settings, PenTool, Shield, TrendingUp } from 'lucide-react';
+import { Building2, FileText, LayoutGrid, Settings, PenTool, Shield, TrendingUp, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
 import { ComplianceTab } from './Admin/ComplianceTab';
@@ -35,6 +35,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     const { settings } = useAppSettings();
     const [activeTab, setActiveTab] = useState(initialTab);
     const [subTab, setSubTab] = useState('members');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     React.useEffect(() => {
         setActiveTab(initialTab);
@@ -44,6 +45,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
         setActiveTab(tabId);
         onNavigate?.(tabId);
         if (tabId === 'organization') setSubTab('members');
+        setIsMobileMenuOpen(false); // Close on selection
     };
 
     const virtualTenant = tenant || {
@@ -86,21 +88,62 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
             settings?.navigation_style === 'sidebar' ? "flex-row" : "flex-col pb-32 pt-32"
         )}>
             {settings?.navigation_style === 'sidebar' && (
-                <Sidebar 
-                    navItems={filteredTabs}
-                    activeTab={activeTab === 'home' ? 'documents' : activeTab}
-                    onTabChange={handleTabChange}
-                    user={user}
-                    profile={profile}
-                    tenant={tenant}
-                    planMetadata={planMetadata}
-                />
+                <>
+                    {/* Mobile Backdrop */}
+                    <AnimatePresence>
+                        {isMobileMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] md:hidden"
+                            />
+                        )}
+                    </AnimatePresence>
+
+                    <Sidebar 
+                        navItems={filteredTabs}
+                        activeTab={activeTab === 'home' ? 'documents' : activeTab}
+                        onTabChange={handleTabChange}
+                        user={user}
+                        profile={profile}
+                        tenant={tenant}
+                        planMetadata={planMetadata}
+                        isOpen={isMobileMenuOpen}
+                        onClose={() => setIsMobileMenuOpen(false)}
+                    />
+                </>
             )}
 
             <div className={cn(
-                "flex-1 w-full min-w-0",
-                settings?.navigation_style === 'sidebar' ? "p-6 md:px-10 lg:px-16 pt-20" : "mx-auto max-w-[1400px] px-6"
+                "flex-1 w-full min-w-0 flex flex-col",
+                settings?.navigation_style === 'sidebar' ? "p-0 md:p-6 md:px-10 lg:px-16 md:pt-20" : "mx-auto max-w-[1400px] px-6"
             )}>
+                {/* Mobile Header (Sidebar Style) */}
+                {settings?.navigation_style === 'sidebar' && (
+                    <header className="md:hidden sticky top-0 z-[80] bg-[#0a0f1d]/80 backdrop-blur-xl border-b border-white/5 px-6 h-20 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+                                <Building2 size={24} />
+                            </div>
+                            <span className="text-xs font-black uppercase tracking-widest text-white truncate max-w-[150px]">
+                                {tenant?.name || 'Legal AI'}
+                            </span>
+                        </div>
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="p-3 bg-white/5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-all active:scale-95"
+                        >
+                            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </header>
+                )}
+
+                <div className={cn(
+                    "flex-1 w-full min-w-0",
+                    settings?.navigation_style === 'sidebar' ? "p-6 md:p-0" : ""
+                )}>
 
                 {/* 2. Navegación Principal */}
                 {settings?.navigation_style !== 'sidebar' && (
@@ -186,6 +229,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
                             Protección <strong className="text-white">Iron Silo™</strong> Activa: Datos Físicamente Aislados
                         </span>
                     </div>
+                </div>
                 </div>
             </div>
         </div>

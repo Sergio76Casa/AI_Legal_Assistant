@@ -7,13 +7,16 @@
     @apply bg-[#0a0f1d] text-foreground font-sans antialiased overflow-x-hidden;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-serif;
+  h1 {
+    @apply font-serif text-2xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply font-serif text-xl md:text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply font-serif text-lg md:text-2xl;
   }
 
   :root {
@@ -38,6 +41,39 @@
     --input: 217 33% 17%;
     --ring: 170 85% 50%;
     --radius: 0.5rem;
+  }
+
+  /* Scrollbar utilities */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #475569; /* gray-600 roughly */
+    border-radius: 20px;
   }
 }
 

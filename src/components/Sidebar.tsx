@@ -20,9 +20,11 @@ interface SidebarProps {
     profile: any;
     tenant: any;
     planMetadata: any;
+    onClose?: () => void;
+    isOpen?: boolean;
 }
 
-export function Sidebar({ navItems, activeTab, onTabChange, user, profile, tenant, planMetadata }: SidebarProps) {
+export function Sidebar({ navItems, activeTab, onTabChange, user, profile, tenant, planMetadata, onClose, isOpen }: SidebarProps) {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const { t } = useTranslation();
     const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
@@ -46,15 +48,25 @@ export function Sidebar({ navItems, activeTab, onTabChange, user, profile, tenan
 
     return (
         <aside className={cn(
-            "flex-shrink-0 bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col min-h-screen sticky top-0 transition-all duration-300",
-            isCollapsed ? "w-20" : "w-64"
+            "flex-shrink-0 bg-[#0a0f1d]/95 md:bg-slate-900/50 backdrop-blur-xl border-r border-white/10 flex flex-col h-full md:min-h-screen sticky md:top-0 transition-all duration-300 z-[100]",
+            "fixed inset-y-0 left-0 md:relative transform md:translate-x-0",
+            isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+            isCollapsed ? "w-20" : "w-72 md:w-64"
         )}>
-            {/* Collapse Toggle */}
+            {/* Collapse Toggle (Desktop) */}
             <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="absolute -right-3 top-8 bg-slate-800 border border-white/10 rounded-full p-1 text-slate-400 hover:text-white hover:bg-slate-700 z-50 transition-colors shadow-lg"
+                className="hidden md:flex absolute -right-3 top-8 bg-slate-800 border border-white/10 rounded-full p-1 text-slate-400 hover:text-white hover:bg-slate-700 z-50 transition-colors shadow-lg"
             >
                 {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+            </button>
+
+            {/* Close Button (Mobile) */}
+            <button
+                onClick={onClose}
+                className="md:hidden absolute right-4 top-8 p-2 text-slate-400 hover:text-white"
+            >
+                <ChevronLeft size={24} />
             </button>
 
             {/* Header / Logo */}

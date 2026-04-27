@@ -16,14 +16,22 @@ export const useOrganizationMembers = (tenantId: string | undefined) => {
     const [loading, setLoading] = useState(false);
     const [updatingPlan, setUpdatingPlan] = useState<string | null>(null);
 
-    const fetchUsers = useCallback(async () => {
+    const fetchUsers = useCallback(async (includeDeleted: boolean = false) => {
         if (!tenantId) return;
         setLoading(true);
         try {
-            const { data: profiles, error } = await supabase
+            let query = supabase
                 .from('profiles')
                 .select('*')
                 .eq('tenant_id', tenantId);
+            
+            if (includeDeleted) {
+                query = query.not('deleted_at', 'is', null);
+            } else {
+                query = query.is('deleted_at', null);
+            }
+
+            const { data: profiles, error } = await query;
 
             if (error) throw error;
 
@@ -62,6 +70,54 @@ export const useOrganizationMembers = (tenantId: string | undefined) => {
             setLoading(false);
         }
     }, [tenantId]);
+
+    const softDelete = async (userId: string) => {
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ deleted_at: new Date().toISOString() })
+                .eq('id', userId);
+            
+            if (error) throw error;
+            setUsers(prev => prev.filter(u => u.id !== userId));
+            return { success: true };
+        } catch (error: any) {
+            console.error('Error in soft delete:', error);
+            return { success: false, error: error.message };
+        }
+    };
+
+    const restoreClient = async (userId: string) => {
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ deleted_at: null })
+                .eq('id', userId);
+            
+            if (error) throw error;
+            setUsers(prev => prev.filter(u => u.id !== userId));
+            return { success: true };
+        } catch (error: any) {
+            console.error('Error in restore:', error);
+            return { success: false, error: error.message };
+        }
+    };
+
+    const permanentDelete = async (userId: string) => {
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .delete()
+                .eq('id', userId);
+            
+            if (error) throw error;
+            setUsers(prev => prev.filter(u => u.id !== userId));
+            return { success: true };
+        } catch (error: any) {
+            console.error('Error in permanent delete:', error);
+            return { success: false, error: error.message };
+        }
+    };
 
     const handleUpdatePlan = async (userId: string, newTier: string) => {
         setUpdatingPlan(userId);
@@ -107,6 +163,9 @@ export const useOrganizationMembers = (tenantId: string | undefined) => {
         updatingPlan,
         fetchUsers,
         handleUpdatePlan,
-        logActivity
+        logActivity,
+        softDelete,
+        restoreClient,
+        permanentDelete
     };
 };

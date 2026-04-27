@@ -718,6 +718,8 @@
         "generating": "Generando...",
         "generate_error": "Error al generar el pack.",
         "users_list": "Miembros de la Organización",
+        "members_tab": "Miembros",
+        "trash_tab": "Papelera",
         "role_admin": "Administrador",
         "role_user": "Miembro",
         "actions": "Acciones",
@@ -727,17 +729,27 @@
         "loading_users": "Cargando usuarios...",
         "headers": {
             "user": "Usuario",
-            "role": "Rol",
             "plan": "Plan",
             "access": "Acceso",
-            "join_date": "Fecha Unión",
             "status": "Estado",
             "actions": "Acciones"
         },
         "status_active": "Activo",
+        "status_deleted": "Eliminado",
+        "access_invite": "Invitación",
+        "access_direct": "Directo",
         "tooltips": {
             "edit_client": "Editar Ficha Cliente",
-            "generate_doc": "Generar Documento Oficial"
+            "generate_doc": "Generar Documento PDF"
+        },
+        "delete_modal": {
+            "title_soft": "¿Enviar a la Papelera?",
+            "title_perm": "¿Eliminar Permanentemente?",
+            "desc_soft": "El cliente podrá ser recuperado desde la papelera en cualquier momento.",
+            "desc_perm": "Esta acción no se puede deshacer. Todos los datos asociados se perderán.",
+            "confirm_soft": "Confirmar Envío",
+            "confirm_perm": "Borrar Definitivamente",
+            "cancel": "Cancelar"
         }
     },
     "profile": {

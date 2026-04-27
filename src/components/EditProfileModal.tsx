@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useTenant } from '../lib/TenantContext'; // Conector multi-tenant
 import { X, Save, User, MapPin, Users, FileText, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose, userId, onProfileUpdated }) => {
     const { t } = useTranslation();
+    const { tenant, profile, loading: tenantLoading } = useTenant(); // Datos del tenant y perfil actual
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [activeTab, setActiveTab] = useState<'basic' | 'address' | 'filiation' | 'representation'>('basic');
@@ -48,22 +49,53 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
         representative_nie: ''
     });
 
+    // ─── Efecto de Carga Reactiva ──────────────────────────────────────────
+    // Se dispara cuando el modal abre, el usuario cambia o el tenant termina de cargar.
     useEffect(() => {
-        if (isOpen && userId) {
+        if (isOpen && userId && !tenantLoading) {
+            console.log('[EditProfileModal] Triggering fetch...', { userId, tenantId: tenant?.id, role: profile?.role });
             fetchProfile();
         }
-    }, [isOpen, userId]);
+    }, [isOpen, userId, tenantLoading, tenant?.id, profile?.role]);
 
     const fetchProfile = async () => {
+        if (!userId) return;
         setLoading(true);
-        const { data } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single();
 
-        if (data) {
-            setFormData({
+        const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+        const isSuperAdmin = profile?.role === 'superadmin' || tenant?.id === NIL_UUID;
+
+        try {
+            console.log(`[EditProfileModal] Fetching metadata for client: ${userId}`);
+            console.log(`[EditProfileModal] Context: isSuperAdmin=${isSuperAdmin}, activeTenant=${tenant?.id}`);
+            
+            let query = supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId);
+
+            // LOGICA CRITICA: Solo aplicamos filtro de tenant si NO somos superadmin.
+            if (!isSuperAdmin && tenant?.id) {
+                console.log(`[EditProfileModal] Applying tenant filter: ${tenant.id}`);
+                query = query.eq('tenant_id', tenant.id);
+            } else {
+                console.log('[EditProfileModal] Bypassing tenant filter (Superadmin or no tenant)');
+            }
+
+            const { data, error } = await query.maybeSingle();
+
+            if (error) {
+                console.error('[EditProfileModal] Error fetching profile:', error);
+            }
+
+            if (data) {
+                console.log('[EditProfileModal] Data retrieved successfully:', { 
+                    id: data.id, 
+                    first_name: data.first_name, 
+                    last_name: data.last_name,
+                    tenant_id: data.tenant_id 
+                });
+                setFormData({
                 first_name: data.first_name || '',
                 last_name: data.last_name || '',
                 second_last_name: data.second_last_name || '',
@@ -88,10 +120,16 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                 mother_name: data.mother_name || '',
 
                 representative_name: data.representative_name || '',
-                representative_nie: data.representative_nie || ''
-            });
+                    representative_nie: data.representative_nie || ''
+                });
+            } else {
+                console.warn(`[EditProfileModal] No se encontró el perfil para ID: ${userId}. Probablemente restricción RLS o ID inexistente.`);
+            }
+        } catch (err) {
+            console.error('[EditProfileModal] Fatal error in fetch:', err);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -110,10 +148,20 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
                 birth_date: formData.birth_date ? formData.birth_date : null,
             };
 
-            const { error } = await supabase
+            const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+            const isSuperAdmin = profile?.role === 'superadmin' || tenant?.id === NIL_UUID;
+
+            let query = supabase
                 .from('profiles')
                 .update(payload)
                 .eq('id', userId);
+
+            // Solo aplicamos el filtro de tenant_id si no es superadmin
+            if (!isSuperAdmin && tenant?.id) {
+                query = query.eq('tenant_id', tenant.id);
+            }
+
+            const { error } = await query;
 
             if (error) throw error;
 

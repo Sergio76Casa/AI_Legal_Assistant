@@ -30,8 +30,9 @@ export function useGlobalContent() {
                 setActiveTenantId(currentTenantId);
             }
 
+            const NULL_TENANT = '00000000-0000-0000-0000-000000000000';
             let lawSettings: any[] = [];
-            if (currentTenantId) {
+            if (currentTenantId && currentTenantId !== NULL_TENANT) {
                 const { data: settingsData } = await supabase
                     .from('tenant_law_settings')
                     .select('document_id, is_enabled')
@@ -68,7 +69,7 @@ export function useGlobalContent() {
         }, 5000);
 
         return () => clearTimeout(timer);
-    }, [globalDocuments, fetchGlobalDocuments]);
+    }, [globalDocuments]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleUpload = async (file: File, country: string) => {
         if (!file) return;

@@ -1,239 +1,61 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Document, Page } from 'react-pdf';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../../lib/supabase';
-import {
-    Loader2, MousePointerClick, X, Eye, Trash2,
-    ArrowLeft, ArrowRight, Minus, Plus, Settings,
-    CheckSquare, Type, DownloadCloud
-} from 'lucide-react';
+import { Loader2, ArrowLeft, ArrowRight, Minus, Plus, List, Settings as SettingsIcon, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import '../../lib/pdf-worker'; // Import worker config
+
+import '../../lib/pdf-worker';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+
 import { generateFilledPDF } from '../../lib/pdf-generator';
 import { cn } from '../../lib/utils';
 import { useTenant } from '../../lib/TenantContext';
 
-interface FieldMapping {
-    id?: string;
-    field_key: string;
-    page_number: number;
-    x_coordinate: number;
-    y_coordinate: number;
-    width?: number;
-    height?: number;
-    field_type: 'text' | 'checkbox' | 'signature';
-    trigger_value?: string;
-    font_size?: number;
-}
+import { usePDFMappings }   from '../../hooks/usePDFMappings';
+import { getAvailableFields } from './constants';
+import { PDFEditorHeader }   from './PDFEditorHeader';
+import { MappingInspector }  from './MappingInspector';
+import type { PDFEditorProps } from './types';
 
-export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onClose: () => void }> = ({ templateId, templateUrl, onClose }) => {
-    const { t } = useTranslation();
-    const { tenant } = useTenant();
-    const [numPages, setNumPages] = useState<number>(0);
-    const [pageNumber, setPageNumber] = useState(1);
-    const [mappings, setMappings] = useState<FieldMapping[]>([]);
-    const [scale, setScale] = useState(1.0);
+export const PDFEditor: React.FC<PDFEditorProps> = ({ templateId, templateUrl, onClose }) => {
+    const { t }       = useTranslation();
+    const { tenant }  = useTenant();
+
+    // ─── Estado local de canvas ────────────────────────────────────────────
+    const [numPages,          setNumPages]          = useState(0);
+    const [pageNumber,        setPageNumber]        = useState(1);
+    const [scale,             setScale]             = useState(1.0);
     const [generatingPreview, setGeneratingPreview] = useState(false);
-    const [selectedMappingId, setSelectedMappingId] = useState<string | null>(null);
-    const [selectedPoint, setSelectedPoint] = useState<{ x: number, y: number } | null>(null);
-    const [isImporting, setIsImporting] = useState(false);
+    const [mobileLayer,       setMobileLayer]       = useState<'pdf' | 'fields' | 'config'>('pdf');
 
-    // Interaction State
-    const [isDragging, setIsDragging] = useState(false);
-    const [isResizing, setIsResizing] = useState(false);
-    const [dragStart, setDragStart] = useState<{ x: number, y: number } | null>(null);
-    const [initialRect, setInitialRect] = useState<{ x: number, y: number, w: number, h: number } | null>(null);
-
+    // ref vinculado al div que envuelve el <Page> del PDF
     const pdfWrapperRef = useRef<HTMLDivElement>(null);
 
-    const AVAILABLE_FIELDS = React.useMemo(() => [
-        // Personal
-        { group: 'Datos Personales', key: 'first_name', label: t('fields.first_name') },
-        { group: 'Datos Personales', key: 'last_name', label: t('fields.last_name') },
-        { group: 'Datos Personales', key: 'second_last_name', label: t('fields.second_last_name') },
-        { group: 'Datos Personales', key: 'nie', label: t('fields.nie') },
-        { group: 'Datos Personales', key: 'passport_num', label: t('fields.passport_num') },
-        { group: 'Datos Personales', key: 'birth_date', label: t('fields.birth_date') },
-        { group: 'Datos Personales', key: 'birth_day', label: t('fields.birth_day') },
-        { group: 'Datos Personales', key: 'birth_month', label: t('fields.birth_month') },
-        { group: 'Datos Personales', key: 'birth_year', label: t('fields.birth_year') },
-        { group: 'Datos Personales', key: 'birth_place', label: t('fields.birth_place') },
-        { group: 'Datos Personales', key: 'birth_country', label: t('fields.birth_country') },
-        { group: 'Datos Personales', key: 'nationality', label: t('fields.nationality') },
-        { group: 'Datos Personales', key: 'sex', label: t('fields.sex') },
-        { group: 'Datos Personales', key: 'sex_male', label: t('fields.sex_male') },
-        { group: 'Datos Personales', key: 'sex_female', label: t('fields.sex_female') },
-        { group: 'Datos Personales', key: 'sex_x', label: t('fields.sex_x') },
-        { group: 'Datos Personales', key: 'civil_status', label: t('fields.civil_status') },
+    // ─── Hook central ──────────────────────────────────────────────────────
+    const {
+        mappings, selectedMappingId, selectedPoint,
+        isImporting, isDragging, isResizing,
+        setSelectedMappingId, setSelectedPoint,
+        addMapping, updateMapping, deleteMapping,
+        handleImportMaster,
+        handleMouseDown, handleMouseMove, handleMouseUp,
+    } = usePDFMappings({ templateId, scale });
 
-        // Family
-        { group: 'Filiación', key: 'father_name', label: t('fields.father_name') },
-        { group: 'Filiación', key: 'mother_name', label: t('fields.mother_name') },
+    const availableFields  = useMemo(() => getAvailableFields(t), [t]);
+    const selectedMapping  = mappings.find(m => m.id === selectedMappingId);
 
-        // Contact & Address
-        { group: 'Contacto y Dirección', key: 'email', label: t('fields.email') },
-        { group: 'Contacto y Dirección', key: 'phone', label: t('fields.phone') },
-        { group: 'Contacto y Dirección', key: 'address', label: t('fields.address') },
-        { group: 'Contacto y Dirección', key: 'address_street', label: t('fields.address_street') },
-        { group: 'Contacto y Dirección', key: 'address_number', label: t('fields.address_number') },
-        { group: 'Contacto y Dirección', key: 'address_floor', label: t('fields.address_floor') },
-        { group: 'Contacto y Dirección', key: 'city', label: t('fields.city') },
-        { group: 'Contacto y Dirección', key: 'postal_code', label: t('fields.postal_code') },
-        { group: 'Contacto y Dirección', key: 'address_province', label: t('fields.address_province') },
+    // Agrupar campos para la lista de referencia
+    const fieldGroups = useMemo(() => {
+        const groups: Record<string, typeof availableFields> = {};
+        availableFields.forEach(f => {
+            if (!groups[f.group]) groups[f.group] = [];
+            groups[f.group].push(f);
+        });
+        return groups;
+    }, [availableFields]);
 
-        // Representation
-        { group: 'Representación', key: 'representative_name', label: t('fields.representative_name') },
-        { group: 'Representación', key: 'representative_nie', label: t('fields.representative_nie') },
-
-        // System
-        { group: 'Sistema', key: 'today_date', label: t('fields.today_date') },
-        { group: 'Sistema', key: 'today_day', label: t('fields.today_day') },
-        { group: 'Sistema', key: 'today_month', label: t('fields.today_month') },
-        { group: 'Sistema', key: 'today_year', label: t('fields.today_year') },
-
-        // Actions
-        { group: 'Acciones', key: 'client_signature', label: 'Firma del Cliente' },
-    ], [t]);
-
-    useEffect(() => {
-        fetchMappings();
-    }, [templateId]);
-
-    // Keyboard shortcuts for fine-tuning
-    useEffect(() => {
-        const handleKeyDown = async (e: KeyboardEvent) => {
-            if (!selectedMappingId || isDragging || isResizing) return;
-
-            const step = e.shiftKey ? 10 : 1;
-            let dx = 0;
-            let dy = 0;
-
-            if (e.key === 'ArrowLeft') dx = -step;
-            else if (e.key === 'ArrowRight') dx = step;
-            else if (e.key === 'ArrowUp') dy = -step;
-            else if (e.key === 'ArrowDown') dy = step;
-            else return;
-
-            e.preventDefault();
-
-            setMappings(prev => prev.map(m => {
-                if (m.id === selectedMappingId) {
-                    const newX = m.x_coordinate + dx;
-                    const newY = m.y_coordinate + dy;
-                    // Auto-save to DB (debounced or immediate)
-                    updateMapping(m.id!, { x_coordinate: newX, y_coordinate: newY });
-                    return { ...m, x_coordinate: newX, y_coordinate: newY };
-                }
-                return m;
-            }));
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [selectedMappingId, isDragging, isResizing]);
-
-    const fetchMappings = async () => {
-        const { data } = await supabase
-            .from('form_fields_mapping')
-            .select('*')
-            .eq('template_id', templateId);
-
-        if (data) setMappings(data as FieldMapping[]);
-    };
-
-    const updateMapping = async (id: string, updates: Partial<FieldMapping>) => {
-        await supabase.from('form_fields_mapping').update(updates).eq('id', id);
-        setMappings(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m as FieldMapping));
-    };
-
-    const addMapping = async (fieldKey: string) => {
-        if (!selectedPoint) return;
-
-        const isSignature = fieldKey === 'client_signature';
-        const isSexMale = fieldKey === 'sex_male';
-        const isSexFemale = fieldKey === 'sex_female';
-        const isSexX = fieldKey === 'sex_x';
-
-        const newMapping: any = {
-            template_id: templateId,
-            field_key: (isSexMale || isSexFemale || isSexX) ? 'sex' : fieldKey,
-            page_number: pageNumber,
-            x_coordinate: selectedPoint.x,
-            y_coordinate: selectedPoint.y,
-            width: isSignature ? 200 : (isSexMale || isSexFemale || isSexX ? 20 : 150),
-            height: isSignature ? 60 : (isSexMale || isSexFemale || isSexX ? 20 : 20),
-            field_type: isSignature ? 'signature' : ((isSexMale || isSexFemale || isSexX) ? 'checkbox' : 'text'),
-            trigger_value: isSexMale ? 'male' : (isSexFemale ? 'female' : (isSexX ? 'other' : undefined))
-        };
-
-        const { data } = await supabase.from('form_fields_mapping').insert(newMapping).select().single();
-        if (data) {
-            setMappings([...mappings, data as FieldMapping]);
-            setSelectedPoint(null);
-            setSelectedMappingId(data.id);
-        }
-    };
-
-    const handleImportMaster = async () => {
-        if (!confirm('¿Importar mapeo maestro para este formulario? Se añadirán campos preconfigurados.')) return;
-        setIsImporting(true);
-        try {
-            // Check for a master template by name or common categories
-            const { data: masterFields } = await supabase
-                .from('form_fields_mapping')
-                .select('*')
-                .eq('template_id', '00000000-0000-0000-0000-000000000000'); // Simulated global ID
-
-            if (masterFields && masterFields.length > 0) {
-                const clones = masterFields.map(f => ({
-                    ...f,
-                    id: undefined,
-                    template_id: templateId
-                }));
-                await supabase.from('form_fields_mapping').insert(clones);
-                await fetchMappings();
-            } else {
-                alert('No se encontró un mapeo maestro para este modelo.');
-            }
-        } catch (e) { console.error(e); }
-        finally { setIsImporting(false); }
-    };
-
-    const handleMouseDown = (e: React.MouseEvent, text: FieldMapping, action: 'drag' | 'resize') => {
-        e.stopPropagation();
-        setSelectedMappingId(text.id!);
-        setSelectedPoint(null);
-        setIsDragging(action === 'drag');
-        setIsResizing(action === 'resize');
-        setDragStart({ x: e.clientX, y: e.clientY });
-        setInitialRect({ x: text.x_coordinate, y: text.y_coordinate, w: text.width || 100, h: text.height || 20 });
-    };
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if ((!isDragging && !isResizing) || !dragStart || !initialRect || !selectedMappingId) return;
-        const deltaX = (e.clientX - dragStart.x) / scale;
-        const deltaY = (e.clientY - dragStart.y) / scale;
-        const idx = mappings.findIndex(m => m.id === selectedMappingId);
-        if (idx === -1) return;
-        const updated = [...mappings];
-        if (isDragging) {
-            updated[idx] = { ...updated[idx], x_coordinate: initialRect.x + deltaX, y_coordinate: initialRect.y + deltaY };
-        } else {
-            updated[idx] = { ...updated[idx], width: Math.max(20, initialRect.w + deltaX) };
-        }
-        setMappings(updated);
-    };
-
-    const handleMouseUp = async () => {
-        if ((isDragging || isResizing) && selectedMappingId) {
-            const m = mappings.find(m => m.id === selectedMappingId);
-            if (m) await updateMapping(m.id!, { x_coordinate: m.x_coordinate, y_coordinate: m.y_coordinate, width: m.width });
-        }
-        setIsDragging(false); setIsResizing(false);
-    };
-
+    // ─── Preview PDF ───────────────────────────────────────────────────────
     const handlePreview = async () => {
         setGeneratingPreview(true);
         try {
@@ -241,96 +63,173 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
                 templateId,
                 clientId: 'preview',
                 clientProfile: {
-                    first_name: 'JUAN',
-                    last_name: 'PÉREZ',
-                    second_last_name: 'GARCÍA',
-                    full_name: 'JUAN PÉREZ GARCÍA',
-                    nie: 'X12345678L',
-                    sex: 'male',
-                    signature_date: new Date().toISOString()
+                    first_name: 'JUAN', last_name: 'PÉREZ',
+                    second_last_name: 'GARCÍA', full_name: 'JUAN PÉREZ GARCÍA',
+                    nie: 'X12345678L', sex: 'male',
+                    signature_date: new Date().toISOString(),
                 },
                 tenantProfile: tenant,
-                customMappings: mappings
+                customMappings: mappings,
             });
             if (pdfBytes) {
                 const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
                 window.open(URL.createObjectURL(blob), '_blank');
             }
-        } finally { setGeneratingPreview(false); }
+        } finally {
+            setGeneratingPreview(false);
+        }
     };
 
-    const selectedMapping = mappings.find(m => m.id === selectedMappingId);
+    // ─── Click en canvas → seleccionar punto para nuevo campo ─────────────
+    const handleCanvasClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (isDragging || isResizing) return;
+        const rect = pdfWrapperRef.current!.getBoundingClientRect();
+        setSelectedPoint({
+            x: (e.clientX - rect.left) / scale,
+            y: (e.clientY - rect.top)  / scale,
+        });
+        setSelectedMappingId(null);
+    };
 
+    const clearSelection = () => {
+        setSelectedMappingId(null);
+        setSelectedPoint(null);
+    };
+
+    // ─── Render ────────────────────────────────────────────────────────────
     return (
-        <div className="fixed inset-0 bg-[#020617] z-[60] flex flex-col overflow-hidden" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-            {/* Header */}
-            <header className="h-16 bg-[#0f172a]/95 border-b border-white/5 px-6 flex items-center justify-between z-20">
-                <div className="flex items-center gap-4">
-                    <button onClick={onClose} className="p-2 text-slate-400 hover:text-white transition-colors"><X size={20} /></button>
-                    <h2 className="text-white font-bold flex items-center gap-2">PDF Mapper <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded border border-primary/20">v2.0</span></h2>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button onClick={handleImportMaster} disabled={isImporting} className="bg-white/5 text-indigo-400 px-4 py-2 rounded-xl text-xs font-black uppercase flex items-center gap-2 hover:bg-white/10 transition-all">
-                        {isImporting ? <Loader2 className="animate-spin" size={14} /> : <DownloadCloud size={14} />}
-                        Importar Mapeo Maestro
-                    </button>
-                    <button onClick={handlePreview} className="bg-white/5 text-primary px-4 py-2 rounded-xl text-xs font-black uppercase flex items-center gap-2 hover:bg-white/10 transition-all">
-                        {generatingPreview ? <Loader2 className="animate-spin" size={14} /> : <Eye size={14} />}
-                        Preview
-                    </button>
-                    <button onClick={onClose} className="bg-primary text-slate-950 px-6 py-2 rounded-xl text-xs font-black uppercase shadow-lg shadow-primary/20">Guardar Plantilla</button>
-                </div>
-            </header>
+        <div
+            className="fixed inset-0 bg-[#020617] z-[110] flex flex-col overflow-hidden"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+        >
+            <PDFEditorHeader
+                onClose={onClose}
+                onPreview={handlePreview}
+                onImportMaster={handleImportMaster}
+                generatingPreview={generatingPreview}
+                isImporting={isImporting}
+            />
 
-            <div className="flex-1 flex overflow-hidden relative">
-                {/* PDF Canvas area */}
-                <div className="flex-1 bg-slate-900 overflow-auto flex justify-center p-20 scrollbar-hide" onClick={() => { setSelectedMappingId(null); setSelectedPoint(null); }}>
-                    <div className="relative shadow-2xl" ref={pdfWrapperRef}>
-                        <Document file={templateUrl} onLoadSuccess={({ numPages }) => setNumPages(numPages)} loading={<Loader2 className="animate-spin text-primary" size={40} />}>
-                            <Page pageNumber={pageNumber} scale={scale} onClick={(e) => {
-                                e.stopPropagation();
-                                if (isDragging || isResizing) return;
-                                const rect = pdfWrapperRef.current!.getBoundingClientRect();
-                                setSelectedPoint({ x: (e.clientX - rect.left) / scale, y: (e.clientY - rect.top) / scale });
-                                setSelectedMappingId(null);
-                            }} renderTextLayer={false} renderAnnotationLayer={false} className="cursor-crosshair" />
+            <div className="flex-1 flex overflow-hidden lg:h-[calc(100vh-64px)] relative">
+                
+                {/* ── Columna Izquierda: Referencia de Campos (Desktop o Layer fields) ── */}
+                <aside className={cn(
+                    "w-72 bg-[#0A0F1D]/60 border-r border-white/5 flex flex-col transition-all duration-300",
+                    mobileLayer === 'fields' ? "flex fixed inset-0 z-40 bg-[#020617] pt-16" : "hidden xl:flex h-full"
+                )}>
+                    <div className="p-6 border-b border-white/5 shrink-0">
+                        <h3 className="text-white font-bold text-sm tracking-tight mb-1">Diccionario de Campos</h3>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">Smart Binding Available</p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto px-4 py-6 space-y-8 scrollbar-thin">
+                        {Object.entries(fieldGroups).map(([group, fields]) => (
+                            <div key={group} className="space-y-2">
+                                <h4 className="px-2 text-[9px] font-black text-primary/50 uppercase tracking-[0.2em]">{group}</h4>
+                                <div className="space-y-1">
+                                    {fields.map(f => (
+                                        <div key={f.key} className="px-3 py-2 rounded-xl bg-white/5 border border-white/5 text-[11px] font-bold text-slate-300 hover:border-primary/20 hover:bg-primary/5 transition-all cursor-default">
+                                            {f.label}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                        <div className="h-32 lg:h-10" /> {/* Spacer */}
+                    </div>
+                </aside>
+
+                {/* ── Centro: Canvas PDF ───────────────────────────── */}
+                <main 
+                    className={cn(
+                        "flex-1 bg-[#0A0F1D] overflow-y-auto overflow-x-auto flex flex-col items-center scrollbar-thin relative transition-all duration-300 h-full",
+                        mobileLayer !== 'pdf' && "hidden lg:flex",
+                        "px-4 py-6 lg:px-8 lg:py-6"
+                    )}
+                    onClick={clearSelection}
+                >
+                    <div className="relative shadow-[0_0_100px_rgba(0,0,0,0.6)] border border-white/5 bg-[#020617] shrink-0 m-auto" ref={pdfWrapperRef}>
+                        <Document
+                            file={templateUrl}
+                            onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                            loading={<Loader2 className="animate-spin text-primary" size={40} />}
+                        >
+                            <Page
+                                pageNumber={pageNumber}
+                                scale={scale}
+                                onClick={handleCanvasClick}
+                                renderTextLayer={false}
+                                renderAnnotationLayer={false}
+                                className="cursor-crosshair shadow-2xl"
+                            />
                         </Document>
 
-                        {/* Mappings Layer */}
+                        {/* Overlays de campos */}
                         {mappings.filter(m => m.page_number === pageNumber).map(m => (
                             <div
                                 key={m.id}
-                                onMouseDown={(e) => handleMouseDown(e, m, 'drag')}
-                                onClick={(e) => e.stopPropagation()}
+                                onMouseDown={e => handleMouseDown(e, m, 'drag')}
+                                onClick={e => {
+                                    e.stopPropagation();
+                                    setSelectedMappingId(m.id!);
+                                    if (window.innerWidth < 1024) setMobileLayer('config');
+                                }}
                                 className={cn(
-                                    "absolute rounded-sm border transition-all cursor-move group",
-                                    selectedMappingId === m.id ? "bg-primary/20 border-primary ring-2 ring-primary/20 z-30 shadow-xl" : "bg-primary/5 border-primary/30 z-10"
+                                    'absolute rounded-sm border transition-all cursor-move group',
+                                    selectedMappingId === m.id
+                                        ? 'bg-primary/20 border-primary ring-2 ring-primary/20 z-30 shadow-xl scale-[1.02]'
+                                        : 'bg-primary/5 border-primary/30 z-10'
                                 )}
-                                style={{ left: m.x_coordinate * scale, top: m.y_coordinate * scale, width: (m.width || 100) * scale, height: (m.height || 20) * scale }}
+                                style={{
+                                    left:   m.x_coordinate  * scale,
+                                    top:    m.y_coordinate  * scale,
+                                    width:  (m.width  ?? 100) * scale,
+                                    height: (m.height ?? 20)  * scale,
+                                }}
                             >
-                                <div className="absolute -top-6 left-0 text-[9px] font-black text-white bg-slate-950 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                    {AVAILABLE_FIELDS.find(f => f.key === m.field_key)?.label || m.field_key}
+                                <div className="absolute -top-6 left-0 text-[9px] font-black text-white bg-slate-950 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 border border-white/10 shadow-xl">
+                                    {availableFields.find(f => f.key === m.field_key)?.label ?? m.field_key}
                                 </div>
                                 {selectedMappingId === m.id && (
-                                    <div onMouseDown={(e) => handleMouseDown(e, m, 'resize')} className="absolute right-0 top-0 bottom-0 w-2 cursor-e-resize hover:bg-primary/50" />
+                                    <div
+                                        onMouseDown={e => handleMouseDown(e, m, 'resize')}
+                                        className="absolute right-0 top-0 bottom-0 w-2 cursor-e-resize hover:bg-primary/50"
+                                    />
                                 )}
                             </div>
                         ))}
 
-                        {/* Point Selector Popup */}
+                        {/* Popover de selección de campo */}
                         <AnimatePresence>
                             {selectedPoint && (
                                 <motion.div
-                                    initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-                                    className="absolute bg-slate-950 border border-white/10 rounded-2xl p-4 shadow-2xl z-50 w-64"
-                                    style={{ left: selectedPoint.x * scale, top: selectedPoint.y * scale + 10 }}
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    animate={{ scale: 1,   opacity: 1 }}
+                                    exit={{   scale: 0.9, opacity: 0 }}
+                                    className="absolute bg-[#020617] border border-white/10 rounded-2xl p-4 shadow-2xl z-[120] w-64 backdrop-blur-3xl"
+                                    style={{ 
+                                        left: Math.min(selectedPoint.x * scale, (pdfWrapperRef.current?.offsetWidth || 0) - 260), 
+                                        top: selectedPoint.y * scale + 10 
+                                    }}
                                     onClick={e => e.stopPropagation()}
                                 >
-                                    <h4 className="text-[10px] font-black uppercase text-slate-500 mb-2">Asignar Campo</h4>
-                                    <div className="max-h-60 overflow-y-auto space-y-1 custom-scrollbar">
-                                        {AVAILABLE_FIELDS.map(f => (
-                                            <button key={f.key} onClick={() => addMapping(f.key)} className="w-full text-left p-2 rounded-lg text-[11px] font-bold text-slate-300 hover:bg-primary/10 hover:text-primary transition-all flex items-center justify-between group">
-                                                {f.label} <Plus size={10} className="opacity-0 group-hover:opacity-100" />
+                                    <h4 className="text-[10px] font-black uppercase text-slate-500 mb-3 tracking-widest flex items-center gap-2">
+                                        <Plus size={10} className="text-primary" />
+                                        Asignar Campo
+                                    </h4>
+                                    <div className="max-h-60 overflow-y-auto space-y-1 custom-scrollbar pr-2">
+                                        {availableFields.map(f => (
+                                            <button
+                                                key={f.key}
+                                                onClick={() => {
+                                                    addMapping(f.key, pageNumber);
+                                                    if (window.innerWidth < 1024) setMobileLayer('pdf');
+                                                }}
+                                                className="w-full text-left p-2.5 rounded-xl text-[11px] font-bold text-slate-300 hover:bg-primary/10 hover:text-primary transition-all flex items-center justify-between group border border-transparent hover:border-primary/10"
+                                            >
+                                                {f.label}
+                                                <Plus size={10} className="opacity-40 group-hover:opacity-100 transition-opacity" />
                                             </button>
                                         ))}
                                     </div>
@@ -338,124 +237,97 @@ export const PDFEditor: React.FC<{ templateId: string, templateUrl: string, onCl
                             )}
                         </AnimatePresence>
                     </div>
-                </div>
 
-                <AnimatePresence>
-                    {selectedMapping && (
-                        <motion.aside
-                            initial={{ x: 320, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: 320, opacity: 0 }}
-                            onClick={(e) => e.stopPropagation()}
-                            className="absolute top-0 right-0 h-full w-80 bg-[#0f172a]/95 border-l border-white/10 p-6 flex flex-col z-50 backdrop-blur-xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)]"
-                        >
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                                    <Settings size={14} className="text-primary" /> Inspector de Campo
-                                </h3>
-                                <button onClick={() => setSelectedMappingId(null)} className="text-slate-500 hover:text-white"><X size={18} /></button>
-                            </div>
+                    {/* Spacer bottom to ignore toolbar visibility issues */}
+                    <div className="h-40 shrink-0" />
 
-                            <div className="space-y-6 flex-1">
-                                {/* Type Selector */}
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tipo de Lógica</label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <button
-                                            onClick={() => updateMapping(selectedMapping.id!, { field_type: 'text' })}
-                                            className={cn("p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all", selectedMapping.field_type === 'text' ? "bg-primary/10 border-primary text-primary" : "bg-white/5 border-white/5 text-slate-500")}
-                                        >
-                                            <Type size={18} /> <span className="text-[9px] font-black uppercase">Texto</span>
-                                        </button>
-                                        <button
-                                            onClick={() => updateMapping(selectedMapping.id!, { field_type: 'checkbox', trigger_value: selectedMapping.trigger_value || 'true' })}
-                                            className={cn("p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all", selectedMapping.field_type === 'checkbox' ? "bg-primary/10 border-primary text-primary" : "bg-white/5 border-white/5 text-slate-500")}
-                                        >
-                                            <CheckSquare size={18} /> <span className="text-[9px] font-black uppercase">Checkbox</span>
-                                        </button>
-                                        <button
-                                            onClick={() => updateMapping(selectedMapping.id!, { field_type: 'signature' })}
-                                            className={cn("p-4 rounded-2xl border flex flex-col items-center gap-2 transition-all", selectedMapping.field_type === 'signature' ? "bg-primary/10 border-primary text-primary" : "bg-white/5 border-white/5 text-slate-500")}
-                                        >
-                                            <MousePointerClick size={18} /> <span className="text-[9px] font-black uppercase">Firma</span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Binding Selector */}
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Vinculación (Smart Binding)</label>
-                                    <select
-                                        value={selectedMapping.field_key}
-                                        onChange={(e) => updateMapping(selectedMapping.id!, { field_key: e.target.value })}
-                                        className="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-primary"
-                                    >
-                                        {AVAILABLE_FIELDS.map(f => <option key={f.key} value={f.key}>{f.label}</option>)}
-                                    </select>
-                                </div>
-
-                                {/* Trigger Value (only for checkboxes) */}
-                                {selectedMapping.field_type === 'checkbox' && (
-                                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Valor de Activación</label>
-                                        <input
-                                            type="text" value={selectedMapping.trigger_value || ''}
-                                            onChange={(e) => updateMapping(selectedMapping.id!, { trigger_value: e.target.value })}
-                                            placeholder="Ej: true, male, soltero..."
-                                            className="w-full bg-slate-900 border border-white/10 rounded-xl p-3 text-xs text-white outline-none focus:border-primary"
-                                        />
-                                        <p className="text-[9px] text-slate-600 italic">Si el campo en la DB es igual a este valor, se marcará una 'X'.</p>
-                                    </motion.div>
-                                )}
-
-                                {/* Geometry */}
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Posición Precisa (PDF Points)</label>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                                            <div className="text-[9px] text-slate-500 mb-1">X</div>
-                                            <div className="text-xs font-mono text-white">{Math.round(selectedMapping.x_coordinate)}pt</div>
-                                        </div>
-                                        <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                                            <div className="text-[9px] text-slate-500 mb-1">Y</div>
-                                            <div className="text-xs font-mono text-white">{Math.round(selectedMapping.y_coordinate)}pt</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => { if (confirm('¿Borrar mapeo?')) { setSelectedMappingId(null); supabase.from('form_fields_mapping').delete().eq('id', selectedMapping.id).then(() => fetchMappings()); } }}
-                                className="w-full py-4 border border-red-500/30 text-red-500 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 transition-all mt-auto"
+                    {/* ── Toolbar Flotante (Glassmorphism) ── */}
+                    <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2 bg-[#0A0F1D]/80 backdrop-blur-2xl border border-white/10 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[130]">
+                        
+                        {/* Navegación Páginas */}
+                        <div className="flex items-center gap-1 bg-white/5 rounded-full px-1 p-0.5">
+                            <button 
+                                onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+                                className="p-2.5 text-slate-400 hover:text-white transition-colors disabled:opacity-20"
+                                disabled={pageNumber === 1}
                             >
-                                <Trash2 size={12} className="inline mr-2" /> Eliminar Campo
+                                <ArrowLeft size={18} />
                             </button>
-                        </motion.aside>
-                    )}
-                </AnimatePresence>
+                            <div className="px-4 text-[11px] font-black text-white min-w-[80px] text-center border-x border-white/5">
+                                {pageNumber} / {numPages}
+                            </div>
+                            <button 
+                                onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
+                                className="p-2.5 text-slate-400 hover:text-white transition-colors disabled:opacity-20"
+                                disabled={pageNumber === numPages}
+                            >
+                                <ArrowRight size={18} />
+                            </button>
+                        </div>
 
-                {/* Left Mini Sidebar - Tool Tips */}
-                <div className="absolute left-6 bottom-6 flex flex-col gap-2 z-10">
-                    <div className="bg-slate-950/80 border border-white/5 rounded-2xl p-4 backdrop-blur-md">
-                        <div className="flex items-center gap-3 text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                            <span className="flex items-center gap-1.5"><kbd className="bg-white/10 px-1.5 py-0.5 rounded border border-white/10">S</kbd> Escala</span>
-                            <div className="w-px h-3 bg-white/10 mx-1" />
-                            <span className="flex items-center gap-1.5"><kbd className="bg-white/10 px-1.5 py-0.5 rounded border border-white/10">Arrows</kbd> Ajuste Fino</span>
+                        <div className="w-px h-6 bg-white/10 mx-1 lg:mx-2" />
+
+                        {/* Zoom */}
+                        <div className="flex items-center gap-1">
+                            <button onClick={() => setScale(s => Math.max(0.2, s - 0.1))} className="p-2.5 text-slate-400 hover:text-white transition-colors bg-white/5 rounded-full hover:bg-white/10"><Minus size={18} /></button>
+                            <span className="text-[10px] font-black text-white w-14 text-center uppercase tracking-tighter">{Math.round(scale * 100)}%</span>
+                            <button onClick={() => setScale(s => Math.min(3.0, s + 0.1))} className="p-2.5 text-slate-400 hover:text-white transition-colors bg-white/5 rounded-full hover:bg-white/10"><Plus size={18} /></button>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <button onClick={() => setPageNumber(p => Math.max(1, p - 1))} className="p-3 bg-slate-950 text-white rounded-xl border border-white/10 hover:bg-primary hover:text-slate-950 transition-all shadow-xl"><ArrowLeft size={16} /></button>
-                        <div className="bg-slate-950 border border-white/10 rounded-xl px-4 py-2 text-xs font-black text-white">{pageNumber} / {numPages}</div>
-                        <button onClick={() => setPageNumber(p => Math.min(numPages, p + 1))} className="p-3 bg-slate-950 text-white rounded-xl border border-white/10 hover:bg-primary hover:text-slate-950 transition-all shadow-xl"><ArrowRight size={16} /></button>
+                </main>
+
+                {/* ── Columna Derecha: Inspector Panel (Desktop o Layer config) ── */}
+                <aside className={cn(
+                    "w-80 bg-[#020617] border-l border-white/5 shrink-0 transition-all duration-300 h-full",
+                    mobileLayer === 'config' ? "flex fixed inset-0 z-40 pt-16 h-screen" : "hidden lg:flex"
+                )}>
+                    <div className="flex-1 overflow-y-auto scrollbar-thin h-full">
+                        <AnimatePresence mode="wait">
+                            {selectedMapping ? (
+                                <MappingInspector
+                                    key={selectedMapping.id}
+                                    mapping={selectedMapping}
+                                    availableFields={availableFields}
+                                    onUpdate={updateMapping}
+                                    onDelete={deleteMapping}
+                                    onClose={clearSelection}
+                                />
+                            ) : (
+                                <div className="flex-1 h-full flex flex-col items-center justify-center p-12 text-center opacity-20">
+                                    <SettingsIcon size={48} className="text-slate-700 mb-4" />
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 leading-relaxed">Selecciona un elemento<br/>para configurar</p>
+                                </div>
+                            )}
+                        </AnimatePresence>
                     </div>
+                </aside>
+
+                {/* ── Mobile Layer Selector (Only visible on < lg) ── */}
+                <div className="lg:hidden fixed bottom-6 left-6 right-6 h-16 bg-[#0A0F1D]/90 backdrop-blur-3xl border border-white/10 rounded-[28px] overflow-hidden flex z-[140] shadow-2xl">
+                    {[
+                        { id: 'fields', icon: List, label: 'Campos' },
+                        { id: 'pdf',    icon: FileText, label: 'Documento' },
+                        { id: 'config', icon: SettingsIcon, label: 'Ajustes' }
+                    ].map((btn) => (
+                        <button
+                            key={btn.id}
+                            onClick={() => setMobileLayer(btn.id as any)}
+                            className={cn(
+                                "flex-1 flex flex-col items-center justify-center gap-1 transition-all",
+                                mobileLayer === btn.id ? "text-primary bg-primary/5" : "text-slate-500"
+                            )}
+                        >
+                            <btn.icon size={20} className={mobileLayer === btn.id ? "scale-110" : ""} />
+                            <span className="text-[9px] font-black uppercase tracking-widest">{btn.label}</span>
+                        </button>
+                    ))}
                 </div>
 
-                {/* Zoom Controls */}
-                <div className="absolute right-6 bottom-6 flex items-center gap-1 bg-slate-950 border border-white/10 p-1 rounded-2xl z-10">
-                    <button onClick={() => setScale(s => Math.max(0.5, s - 0.1))} className="p-3 text-white hover:bg-white/5 rounded-xl"><Minus size={16} /></button>
-                    <span className="text-[10px] font-black text-white w-10 text-center">{Math.round(scale * 100)}%</span>
-                    <button onClick={() => setScale(s => Math.min(2.0, s + 0.1))} className="p-3 text-white hover:bg-white/5 rounded-xl"><Plus size={16} /></button>
+                {/* Atajos de teclado ayuda (Desktop) */}
+                <div className="hidden 2xl:block fixed left-[295px] bottom-10 px-4 py-2 bg-[#020617]/80 backdrop-blur-xl rounded-xl border border-white/10 text-[9px] font-black text-slate-500 uppercase tracking-widest z-10">
+                    <span className="text-primary mr-2 opacity-60">Tip:</span> Flechas para ajuste fino
                 </div>
+
             </div>
         </div>
     );

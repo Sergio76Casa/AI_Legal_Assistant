@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { Globe, RefreshCw, Building, Users, TrendingUp, Settings2, Shield, FileText, LayoutGrid } from 'lucide-react';
+import { Globe, RefreshCw, Building, Users, TrendingUp, Settings2, Shield, FileText, LayoutGrid, Menu, X, Building2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 // Shared Components
@@ -32,6 +32,7 @@ export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }
     const [activeTab, setActiveTab] = useState<string>(
         initialTab === 'admin' ? 'earnings' : (initialTab || 'earnings')
     );
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Sync state with prop changes (browser navigation)
     useEffect(() => {
@@ -127,21 +128,65 @@ export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }
             settings?.navigation_style === 'sidebar' ? "flex-row" : "flex-col pb-24 pt-24"
         )}>
             {settings?.navigation_style === 'sidebar' && (
-                <Sidebar 
-                    navItems={navItems}
-                    activeTab={activeTab}
-                    onTabChange={(id) => setActiveTab(id as any)}
-                    user={user}
-                    profile={userProfile}
-                    tenant={tenant}
-                    planMetadata={planMetadata}
-                />
+                <>
+                    {/* Mobile Backdrop */}
+                    <AnimatePresence>
+                        {isMobileMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] md:hidden"
+                            />
+                        )}
+                    </AnimatePresence>
+
+                    <Sidebar 
+                        navItems={navItems}
+                        activeTab={activeTab}
+                        onTabChange={(id) => {
+                            setActiveTab(id as any);
+                            setIsMobileMenuOpen(false);
+                        }}
+                        user={user}
+                        profile={userProfile}
+                        tenant={tenant}
+                        planMetadata={planMetadata}
+                        isOpen={isMobileMenuOpen}
+                        onClose={() => setIsMobileMenuOpen(false)}
+                    />
+                </>
             )}
             
             <div className={cn(
-                "flex-1 w-full min-w-0",
-                settings?.navigation_style === 'sidebar' ? "p-6 md:px-10 lg:px-16 pt-20" : "mx-auto max-w-[1400px] px-6"
+                "flex-1 w-full min-w-0 flex flex-col",
+                settings?.navigation_style === 'sidebar' ? "p-0 md:p-6 md:px-10 lg:px-16 md:pt-20" : "mx-auto max-w-[1400px] px-6"
             )}>
+                {/* Mobile Header (Sidebar Style) */}
+                {settings?.navigation_style === 'sidebar' && (
+                    <header className="md:hidden sticky top-0 z-[80] bg-[#0a0f1d]/80 backdrop-blur-xl border-b border-white/5 px-6 h-20 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 border border-amber-500/20">
+                                <Shield size={24} />
+                            </div>
+                            <span className="text-xs font-black uppercase tracking-widest text-white">
+                                Superadmin Panel
+                            </span>
+                        </div>
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="p-3 bg-white/5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-all active:scale-95"
+                        >
+                            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
+                    </header>
+                )}
+
+                <div className={cn(
+                    "flex-1 w-full min-w-0",
+                    settings?.navigation_style === 'sidebar' ? "p-6 md:p-0" : ""
+                )}>
                 {/* Tabs Navigation and Sync Button */}
                 <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                     {settings?.navigation_style !== 'sidebar' ? (
@@ -238,6 +283,7 @@ export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }
                     {activeTab === 'settings' && <ConfigPanel tenant={tenant} refreshTenant={async () => {}} />}
                 </div>
             </div>
+        </div>
 
             {/* Modals */}
             <ViewContentModal doc={viewingDoc} onClose={() => setViewingDoc(null)} />
