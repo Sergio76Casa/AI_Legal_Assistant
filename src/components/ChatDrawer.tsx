@@ -1,172 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Bot, MessageSquare, FileText } from 'lucide-react';
+import { useEffect } from 'react';
+import { X, Bot, MessageSquare } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '../lib/supabase';
 import { useChat } from '../lib/ChatContext';
 import { useTranslation } from 'react-i18next';
-import { useUsageLimits } from '../lib/useUsageLimits';
+import { useChatLogic } from '../hooks/useChatLogic';
+import { ChatMessageList } from './Chat/ChatMessageList';
+import { ChatInput } from './Chat/ChatInput';
 import { UpgradeModal } from './UpgradeModal';
-import ReactMarkdown from 'react-markdown';
-
-interface Source {
-    title: string;
-    similarity: number;
-}
-
-interface Message {
-    id: string;
-    role: 'user' | 'assistant';
-    content: string;
-    sources?: Source[];
-}
 
 export function ChatDrawer() {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const { isOpen, setIsOpen, query, setQuery } = useChat();
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '1',
-            role: 'assistant',
-            content: t('chat.welcome_msg')
-        }
-    ]);
-    const [inputValue, setInputValue] = useState('');
-    const [user, setUser] = useState<any>(null);
-    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-    const [isTyping, setIsTyping] = useState(false);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages, isOpen]);
-
-    useEffect(() => {
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        supabase.auth.getUser().then(({ data }) => {
-            setUser(data.user);
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
-
-    const { canPerformAction, incrementUsage } = useUsageLimits(
-        user?.id || null,
-        'chat_query'
-    );
+    const chat = useChatLogic({ query, setQuery });
 
     const toggleDrawer = () => setIsOpen(!isOpen);
 
     useEffect(() => {
-        if (query) {
-            setInputValue(query);
-            setQuery('');
-        }
-    }, [query, setQuery]);
-
-    const handleSendMessage = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!inputValue.trim()) return;
-
-        if (!canPerformAction) {
-            setShowUpgradeModal(true);
-            return;
-        }
-
-        const newMessage: Message = {
-            id: Date.now().toString(),
-            role: 'user',
-            content: inputValue
-        };
-
-        // Capturar el historial ANTES de añadir el nuevo mensaje para enviarlo al backend
-        // Excluye el mensaje de bienvenida (id='1') y limita a últimos 8 (4 intercambios)
-        const historyToSend = messages
-            .filter(m => m.id !== '1' && m.content.trim())
-            .slice(-8)
-            .map(m => ({ id: m.id, role: m.role, content: m.content }));
-
-        setMessages(prev => [...prev, newMessage]);
-        const userQuery = inputValue;
-        setInputValue('');
-
-        try {
-            setIsTyping(true);
-
-            const { data, error } = await supabase.functions.invoke('chat', {
-                body: {
-                    query: userQuery,
-                    lang: i18n.language,
-                    user_id: user?.id,
-                    history: historyToSend   // ← historial de la conversación
-                }
-            });
-
-            setIsTyping(false);
-            if (error) throw error;
-
-            const fullResponse = data.answer || t('hero.subtitle');
-            const sources: Source[] = data.sources || [];
-            const assistantMsgId = Date.now().toString();
-
-            // Añadir mensaje del asistente (con fuentes ya disponibles desde el inicio)
-            setMessages(prev => [...prev, {
-                id: assistantMsgId,
-                role: 'assistant',
-                content: '',
-                sources: sources.filter(s => s.similarity > 0)  // solo fuentes con similitud
-            }]);
-
-            // Cancelar cualquier intervalo de escritura anterior antes de iniciar uno nuevo
-            if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
-
-            // Efecto de escritura palabra por palabra
-            let currentContent = '';
-            const words = fullResponse.split(' ');
-            let wordIndex = 0;
-
-            typingIntervalRef.current = setInterval(() => {
-                if (wordIndex < words.length) {
-                    currentContent += (wordIndex === 0 ? '' : ' ') + words[wordIndex];
-                    setMessages((prev: Message[]) => prev.map((msg: Message) =>
-                        msg.id === assistantMsgId ? { ...msg, content: currentContent } : msg
-                    ));
-                    wordIndex++;
-                } else {
-                    clearInterval(typingIntervalRef.current!);
-                    typingIntervalRef.current = null;
-                }
-            }, 80);
-
-            await incrementUsage();
-
-        } catch (error: any) {
-            console.error('Error al contactar con el asistente:', error);
-
-            let errorMessage = t('chat.error_fallback');
-
-            if (error.context?.message) {
-                errorMessage = error.context.message;
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-
-            setIsTyping(false);
-            setMessages((prev: Message[]) => prev.concat({
-                id: Date.now().toString(),
-                role: 'assistant',
-                content: t('chat.error_prefix', { message: errorMessage })
-            }));
-        }
-    };
+        chat.scrollToBottom();
+    }, [chat.messages, isOpen]);
 
     return (
         <>
@@ -174,8 +26,10 @@ export function ChatDrawer() {
             <button
                 onClick={toggleDrawer}
                 className={cn(
-                    "fixed bottom-6 right-6 z-40 p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95",
-                    isOpen ? "bg-slate-800 text-slate-300 rotate-90 border border-white/10" : "bg-primary text-slate-900 shadow-primary/30"
+                    'fixed bottom-6 right-6 z-40 p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95',
+                    isOpen
+                        ? 'bg-slate-800 text-slate-300 rotate-90 border border-white/10'
+                        : 'bg-primary text-slate-900 shadow-primary/30'
                 )}
             >
                 {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
@@ -215,108 +69,32 @@ export function ChatDrawer() {
                                     <p className="text-xs text-primary font-medium">{t('chat.status_verified')}</p>
                                 </div>
                             </div>
-                            <button onClick={toggleDrawer} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400">
+                            <button
+                                onClick={toggleDrawer}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400"
+                            >
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
 
-                        {/* Messages Area */}
-                        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#0b1120]">
-                            {messages.map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={cn(
-                                        "flex w-full",
-                                        msg.role === 'user' ? "justify-end" : "justify-start"
-                                    )}
-                                >
-                                    <div className={cn(
-                                        "max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed shadow-sm",
-                                        msg.role === 'user'
-                                            ? "bg-primary text-slate-900 rounded-tr-none"
-                                            : "bg-white/5 text-slate-200 border border-white/10 rounded-tl-none"
-                                    )}>
-                                        {msg.role === 'user' ? (
-                                            msg.content
-                                        ) : (
-                                            <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-li:my-0.5 prose-ul:my-1 prose-strong:text-white">
-                                                <ReactMarkdown>
-                                                    {msg.content}
-                                                </ReactMarkdown>
-                                            </div>
-                                        )}
+                        <ChatMessageList
+                            messages={chat.messages}
+                            isTyping={chat.isTyping}
+                            messagesEndRef={chat.messagesEndRef}
+                        />
 
-                                        {/* Fuentes citadas — solo en mensajes del asistente con fuentes */}
-                                        {msg.role === 'assistant' && msg.sources && msg.sources.length > 0 && (
-                                            <div className="mt-3 pt-2 border-t border-white/10 flex flex-wrap gap-x-3 gap-y-1">
-                                                {msg.sources.map((source, idx) => (
-                                                    <span
-                                                        key={idx}
-                                                        className="flex items-center gap-1 text-[10px] text-slate-500 font-medium"
-                                                        title={`Similitud: ${source.similarity}%`}
-                                                    >
-                                                        <FileText size={9} className="text-primary/50" />
-                                                        {source.title
-                                                            .replace(/^\d+_/, '')           // quitar timestamp al inicio
-                                                            .replace(/\s*\(\d+\/\d+\)$/, '') // quitar (n/total)
-                                                            .replace(/\.pdf$/i, '')          // quitar extensión
-                                                            .replace(/_/g, ' ')              // guiones por espacios
-                                                            .trim()
-                                                            .substring(0, 40)               // máximo 40 chars
-                                                        }
-                                                        {source.similarity > 0 && (
-                                                            <span className="text-primary/50">· {source.similarity}%</span>
-                                                        )}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-
-                            {isTyping && (
-                                <div className="flex justify-start animate-in fade-in slide-in-from-left-2 duration-300">
-                                    <div className="bg-white/5 text-slate-200 border border-white/10 rounded-2xl rounded-tl-none p-4 shadow-sm flex items-center gap-1.5">
-                                        <div className="w-1.5 h-1.5 bg-primary/60 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-                                        <div className="w-1.5 h-1.5 bg-primary/80 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-                                        <div className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div ref={messagesEndRef} />
-                        </div>
-
-                        {/* Input Area */}
-                        <div className="p-4 bg-slate-900/80 border-t border-white/10">
-                            <form onSubmit={handleSendMessage} className="relative flex items-center">
-                                <input
-                                    type="text"
-                                    value={inputValue}
-                                    onChange={(e) => setInputValue(e.target.value)}
-                                    placeholder={t('hero.search_placeholder')}
-                                    className="w-full py-4 pl-6 pr-14 bg-white/5 border border-white/10 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 transition-all placeholder:text-slate-500 text-white"
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={!inputValue.trim()}
-                                    className="absolute right-2 p-2 bg-primary text-slate-900 rounded-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
-                                >
-                                    <Send className="w-5 h-5" />
-                                </button>
-                            </form>
-                            <p className="text-center text-[10px] text-slate-600 mt-3">
-                                {t('chat.disclaimer')}
-                            </p>
-                        </div>
+                        <ChatInput
+                            value={chat.inputValue}
+                            onChange={chat.setInputValue}
+                            onSubmit={chat.handleSendMessage}
+                        />
                     </motion.div>
                 )}
             </AnimatePresence>
 
             <UpgradeModal
-                isOpen={showUpgradeModal}
-                onClose={() => setShowUpgradeModal(false)}
+                isOpen={chat.showUpgradeModal}
+                onClose={() => chat.setShowUpgradeModal(false)}
                 limitType="chat_query"
             />
         </>

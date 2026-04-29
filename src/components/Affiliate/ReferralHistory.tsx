@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, CreditCard, ChevronRight, Filter } from 'lucide-react';
+import { Calendar, ChevronRight, Filter } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { getPlanMetadata } from '../../lib/constants/plans';
 import { useAppSettings } from '../../lib/AppSettingsContext';

@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, AlertCircle, X, Loader2, Sparkles, HelpCircle } from 'lucide-react';
-import { cn } from '../lib/utils';
-
 // Hooks
 import { useAffiliateStats } from '../hooks/affiliate/useAffiliateStats';
 import { useAffiliateActions } from '../hooks/affiliate/useAffiliateActions';
@@ -24,10 +22,10 @@ export const AffiliatePanel: React.FC = () => {
     const [initialLoading, setInitialLoading] = useState(true);
 
     // Hooks
-    const { loading: statsLoading, stats, referrals, chartData, refreshStats } = useAffiliateStats(affiliate?.id);
-    const { 
-        joining, updating, copied, error, setError, 
-        handleJoin, handleUpdateCode, handleCopyLink 
+    const { stats, referrals, chartData } = useAffiliateStats(affiliate?.id);
+    const {
+        joining, updating, copied, error,
+        handleJoin, handleUpdateCode, handleCopyLink
     } = useAffiliateActions(user?.id, profile);
 
     useEffect(() => {

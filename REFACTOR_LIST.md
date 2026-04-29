@@ -6,11 +6,11 @@ Este documento sirve para trackear los archivos que exceden las 300 líneas de c
 - [x] ~~`src/components/PDFMapper/PDFEditor.tsx` (462 líneas)~~ → Refactorizado en 5 módulos ✅ ajusta el centrado 
 - [x] ~~`src/components/PDFMapper/SignatureManager.tsx` (413 líneas)~~ → Refactorizado en 4 módulos ✅
 - [x] ~~`src/components/SignatureRequestModal.tsx` (403 líneas)~~ → Refactorizado en 4 módulos ✅
-- [ ] `src/components/SignaturePage.tsx` (372 líneas)
-- [ ] `src/components/ChatDrawer.tsx` (324 líneas)
-- [ ] `src/components/LegalProcedures.tsx` (320 líneas)
-- [ ] `src/components/EditProfileModal.tsx` (316 líneas)
-- [ ] `src/components/DynamicFooter.tsx` (313 líneas)
+- [x] ~~`src/components/SignaturePage.tsx` (372 líneas)~~ → Refactorizado en 3 módulos (Orquestador de 145 líneas) ✅
+- [x] ~~`src/components/ChatDrawer.tsx` (324 líneas)~~ → Refactorizado en 4 módulos (Orquestador de 101 líneas) ✅
+- [x] ~~`src/components/LegalProcedures.tsx` (320 líneas)~~ → Refactorizado en 5 módulos (Orquestador de 48 líneas) ✅
+- [x] ~~`src/components/EditProfileModal.tsx` (316 líneas)~~ → Refactorizado en 4 módulos (Orquestador de 79 líneas) ✅
+- [x] ~~`src/components/DynamicFooter.tsx` (313 líneas)~~ → Refactorizado en 6 módulos (Orquestador de 65 líneas) ✅
 
 ## 🌐 Internacionalización (i18n)
 *Nota: Los archivos JSON son extensos por naturaleza, pero se listan para referencia.*

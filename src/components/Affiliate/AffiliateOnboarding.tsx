@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, DollarSign, Clock, ShieldCheck, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '../../lib/utils';
 

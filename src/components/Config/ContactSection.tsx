@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, MapPin, Plus, Trash2, Facebook, Twitter, Instagram, Linkedin, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Plus, Trash2, Facebook, Twitter, Instagram, Linkedin, MessageCircle, Building } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface ContactSectionProps {

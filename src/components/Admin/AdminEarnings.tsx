@@ -6,7 +6,7 @@ import { EarningsCharts } from './EarningsCharts';
 import { AffiliateRanking } from './AffiliateRanking';
 import { TransactionMonitor } from './TransactionMonitor';
 import { ViewHeader } from './ViewHeader';
-import { TrendingUp, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 
 interface AdminStats {
     mrr: number;

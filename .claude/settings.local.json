@@ -19,7 +19,8 @@
       "Bash(npm run *)",
       "Bash(npx tsc *)",
       "Bash(node -e ' *)",
-      "Bash(supabase db *)"
+      "Bash(supabase db *)",
+      "Bash(xargs wc *)"
     ]
   }
 }

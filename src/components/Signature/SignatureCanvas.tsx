@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import SignatureCanvas from 'react-signature-canvas';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, Check, X, Shield, Sparkles, PenTool } from 'lucide-react';
+import { RotateCcw, Check, Shield, PenTool } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface SignatureCanvasProps {

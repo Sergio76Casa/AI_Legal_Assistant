@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 interface UserProfile {
     id: string;
     role: string;
+    tenant_id?: string;
     subscription_tier?: string;
     tenants?: {
         slug: string;

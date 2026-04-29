@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Trash2, ExternalLink, Plus, FolderOpen, Loader2, AlertCircle, X, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { FileText, Trash2, ExternalLink, Plus, FolderOpen, Loader2, AlertCircle, X, CheckCircle2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { FileUploader } from './FileUploader';
 import { useTranslation } from 'react-i18next';

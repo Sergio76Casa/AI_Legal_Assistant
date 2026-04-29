@@ -14,8 +14,8 @@ interface ComplianceTabProps {
 }
 
 export const ComplianceTab: React.FC<ComplianceTabProps> = ({ tenantId }) => {
-    const { assets, loading: loadingAssets, fetchAssets, analyzeWithAI } = useCompliance(tenantId);
-    const { documents, loading: loadingDocs, fetchDocuments } = useComplianceDocs();
+    const { assets, loading: loadingAssets, analyzeWithAI } = useCompliance(tenantId);
+    const { documents, fetchDocuments } = useComplianceDocs();
     const { generateEvidencePDF } = useSignatureEvents();
     
     const [analyzingId, setAnalyzingId] = useState<string | null>(null);

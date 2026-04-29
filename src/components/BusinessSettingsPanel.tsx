@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAppSettings } from '../lib/AppSettingsContext';
-import { Save, Settings2, ShieldCheck, Percent, HelpCircle, Loader2, CheckCircle2, AlertCircle, Lock, Briefcase } from 'lucide-react';
+import { Save, ShieldCheck, Percent, HelpCircle, Loader2, CheckCircle2, AlertCircle, Lock, Briefcase } from 'lucide-react';
 import { ViewHeader } from './Admin/ViewHeader';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';

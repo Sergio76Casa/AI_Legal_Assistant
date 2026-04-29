@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutGrid, Plus, Trash2, Sparkles, Loader2, CheckCircle2, MessageSquare, Info } from 'lucide-react';
+import { LayoutGrid, Plus, Trash2, Sparkles, Loader2, CheckCircle2, MessageSquare } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 interface FooterSectionProps {

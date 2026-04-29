@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { Globe, RefreshCw, Building, Users, TrendingUp, Settings2, Shield, FileText, LayoutGrid, Menu, X, Building2 } from 'lucide-react';
+import { Globe, RefreshCw, Building, Users, TrendingUp, Settings2, Shield, FileText, LayoutGrid, Menu, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 // Shared Components

@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { BarChart3, TrendingUp, Zap, HelpCircle } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { getPlanMetadata } from '../../lib/constants/plans';
@@ -24,7 +23,7 @@ export const QuotaMonitor: React.FC<QuotaMonitorProps> = ({
 
     const config = getPlanMetadata(planTier);
 
-    const ProgressBar = ({ label, current, total, pct, icon: Icon, glowClass }: any) => (
+    const ProgressBar = ({ label, current, total, pct, icon: Icon }: any) => (
         <div className="space-y-3 group/bar">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

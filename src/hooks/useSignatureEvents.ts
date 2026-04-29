@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { supabase } from '../lib/supabase';
-import { useSessionObserver } from './useSessionObserver';
 
 export function useSignatureEvents() {
-    const { profile } = useSessionObserver();
     const [isGenerating, setIsGenerating] = useState(false);
 
     const generateEvidencePDF = async (signatureDataUrl: string, metadata: {
@@ -86,7 +83,6 @@ export function useSignatureEvents() {
             // 5. Embed Signature Image
             const signatureImageBytes = await fetch(signatureDataUrl).then(res => res.arrayBuffer());
             const signatureImage = await pdfDoc.embedPng(signatureImageBytes);
-            const sigDims = signatureImage.scale(0.5);
 
             currentY -= 150;
             page.drawText('FIRMA DEL REPRESENTANTE', { x: 50, y: currentY + 100, size: 8, font: fontBold, color: rgb(0.5, 0.5, 0.5) });
@@ -109,7 +105,7 @@ export function useSignatureEvents() {
 
             // 6. Save and Download
             const pdfBytes = await pdfDoc.save();
-            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const blob = new Blob([pdfBytes.slice(0)], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             
             const link = document.createElement('a');

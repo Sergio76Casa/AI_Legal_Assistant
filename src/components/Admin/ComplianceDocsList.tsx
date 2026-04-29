@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Calendar, AlertCircle, ShieldCheck, ExternalLink, PenSquare, ArrowRight } from 'lucide-react';
+import { FileText, Calendar, ShieldCheck, ExternalLink, PenSquare, ArrowRight } from 'lucide-react';
 import { ComplianceDocument } from '../../hooks/useComplianceDocs';
 import { cn } from '../../lib/utils';
 import { format, parseISO, isBefore, addDays } from 'date-fns';
