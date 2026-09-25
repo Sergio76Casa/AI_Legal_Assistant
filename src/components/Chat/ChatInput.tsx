@@ -11,7 +11,7 @@ interface ChatInputProps {
 export const ChatInput: React.FC<ChatInputProps> = ({ value, onChange, onSubmit }) => {
     const { t } = useTranslation();
     return (
-        <div className="p-4 bg-slate-900/80 border-t border-white/10">
+        <div className="p-4 bg-slate-900/80 border-t border-white/10 shrink-0">
             <form onSubmit={onSubmit} className="relative flex items-center">
                 <input
                     type="text"

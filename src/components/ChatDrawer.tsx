@@ -22,15 +22,17 @@ export function ChatDrawer() {
 
     return (
         <>
-            {/* Floating Button */}
+            {/* Floating Button (Always visible on top right/bottom with high z-index & safe area) */}
             <button
                 onClick={toggleDrawer}
+                style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}
                 className={cn(
-                    'fixed bottom-6 right-6 z-40 p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95',
+                    'fixed right-5 sm:right-6 z-[999] p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center',
                     isOpen
-                        ? 'bg-slate-800 text-slate-300 rotate-90 border border-white/10'
-                        : 'bg-primary text-slate-900 shadow-primary/30'
+                        ? 'bg-slate-800 text-slate-300 rotate-90 border border-white/10 hidden md:flex'
+                        : 'bg-primary text-slate-900 shadow-primary/40 shadow-lg'
                 )}
+                aria-label="Abrir asistente de IA"
             >
                 {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
             </button>
@@ -43,7 +45,7 @@ export function ChatDrawer() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={toggleDrawer}
-                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[1000]"
                     />
                 )}
             </AnimatePresence>
@@ -56,10 +58,10 @@ export function ChatDrawer() {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed top-0 right-0 h-full w-full md:w-[450px] bg-slate-900/95 backdrop-blur-xl shadow-2xl z-50 flex flex-col border-l border-white/10"
+                        className="fixed inset-y-0 right-0 h-screen max-h-screen w-full md:w-[450px] bg-slate-900/95 backdrop-blur-xl shadow-2xl z-[1001] flex flex-col border-l border-white/10 overflow-hidden"
                     >
                         {/* Chat Header */}
-                        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-slate-900/50">
+                        <div className="p-6 border-b border-white/10 flex items-center justify-between bg-slate-900/50 shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-primary/15 rounded-lg border border-primary/20">
                                     <Bot className="w-6 h-6 text-primary" />

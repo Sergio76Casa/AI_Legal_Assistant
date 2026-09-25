@@ -1,3 +1,5 @@
+import React from 'react';
+import { createPortal } from 'react-dom';
 import { X, Zap, Crown, Rocket, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { PLAN_IDS, getPlanMetadata } from '../lib/constants/plans';
@@ -43,9 +45,9 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
     const message = limitMessages[limitType];
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" >
-            <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in duration-200 border border-white/10">
+    return createPortal(
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in zoom-in duration-200 border border-white/10 my-auto">
                 {/* Header */}
                 <div className="relative p-6 border-b border-white/10">
                     <button
@@ -73,7 +75,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
 
                     {/* Comparison */}
                     <div className="grid md:grid-cols-2 gap-4 mb-6">
-                        {/* Plan Pro (Comercial: Business) */}
+                        {/* Plan Pro */}
                         <div className="border-2 border-primary/50 rounded-xl p-6 bg-primary/5 relative">
                             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-slate-900 px-3 py-1 rounded-full text-xs font-semibold">
                                 {t('pricing.recommended')}
@@ -120,7 +122,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                             </button>
                         </div>
 
-                        {/* Plan Business (Comercial: Enterprise) */}
+                        {/* Plan Enterprise */}
                         <div className="border-2 border-purple-500/30 rounded-xl p-6 bg-purple-500/5">
                             <div className="flex items-center gap-2 mb-4">
                                 <Rocket className="w-6 h-6 text-purple-400" />
@@ -173,6 +175,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({
                     </div>
                 </div>
             </div>
-        </div >
+        </div>,
+        document.body
     );
 };

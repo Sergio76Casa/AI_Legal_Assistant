@@ -11,7 +11,7 @@ interface ChatMessageListProps {
 }
 
 export const ChatMessageList: React.FC<ChatMessageListProps> = ({ messages, isTyping, messagesEndRef }) => (
-    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#0b1120]">
+    <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6 bg-[#0b1120] custom-scrollbar">
         {messages.map((msg) => (
             <div
                 key={msg.id}
