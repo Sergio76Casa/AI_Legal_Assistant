@@ -120,7 +120,7 @@ CONTEXTO EXTRAÍDO:
 ${contextText}`;
 
         const chatModel = genAI.getGenerativeModel(
-            { model: 'gemini-2.0-flash', systemInstruction },
+            { model: 'gemini-flash-latest', systemInstruction },
             { apiVersion: 'v1beta' }
         );
 
