@@ -3,6 +3,7 @@ import { cn } from '../lib/utils';
 import { LogOut, ChevronLeft, ChevronRight, Globe, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
+import { isSuperAdminEmail } from '../lib/constants/auth';
 
 interface NavItem {
     id: string;
@@ -27,7 +28,7 @@ interface SidebarProps {
 export function Sidebar({ navItems, activeTab, onTabChange, user, profile, tenant, planMetadata, onClose, isOpen }: SidebarProps) {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const { t } = useTranslation();
-    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
+    const isSuperAdmin = isSuperAdminEmail(user?.email) || profile?.role === 'superadmin';
     const isAdmin = isSuperAdmin || profile?.role === 'admin';
     const isSubUser = profile?.role === 'subuser';
     const isPublicUser = profile?.role === 'public_user';

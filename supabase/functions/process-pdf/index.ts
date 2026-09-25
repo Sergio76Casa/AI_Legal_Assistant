@@ -218,7 +218,18 @@ Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
     try {
+        // ── Validación JWT ────────────────────────────────────────────────────
+        const authHeader = req.headers.get('authorization')
+        if (!authHeader?.startsWith('Bearer ')) {
+            return new Response(
+                JSON.stringify({ error: 'No autorizado. Token JWT requerido.' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            )
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
         const body = await req.json()
+
         const { text, bucket_id, file_path, tenant_id } = body
 
         console.log(`=== PROCESS-PDF START === bucket:${bucket_id} file:${file_path} tenant:${tenant_id}`)

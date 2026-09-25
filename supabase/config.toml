@@ -2,34 +2,34 @@
 enabled = true
 verify_jwt = true
 import_map = "./functions/accept-invite/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/accept-invite/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/accept-invite/*.html" ]
 
 [functions.create-organization]
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/create-organization/index.ts"
+# verify_jwt=false: función de registro inicial, el usuario aún no tiene sesión activa
 
 [functions.invite-user]
 enabled = true
-verify_jwt = false
+verify_jwt = true
 entrypoint = "./functions/invite-user/index.ts"
+# Validación manual de JWT ya implementada en línea 32 (userClient.auth.getUser())
 
 [functions.process-pdf]
 enabled = true
-verify_jwt = false
+verify_jwt = true
 entrypoint = "./functions/process-pdf/index.ts"
+# Validación JWT añadida en el handler (Sprint Semana 2 - 25 sep 2026)
 
 [functions.chat]
 enabled = true
-verify_jwt = false
+verify_jwt = true
 entrypoint = "./functions/chat/index.ts"
+# Validación JWT añadida en el handler (Sprint Semana 2 - 25 sep 2026)
 
 [functions.delete-document]
 enabled = true
-verify_jwt = false
+verify_jwt = true
 entrypoint = "./functions/delete-document/index.ts"
+# Validación manual de JWT ya implementada en línea 28-42

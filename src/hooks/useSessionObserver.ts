@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+import { isSuperAdminEmail } from '../lib/constants/auth';
 
 interface UserProfile {
     id: string;
@@ -94,7 +95,7 @@ export function useSessionObserver() {
     }, []);
 
     const user = session?.user || null;
-    const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
+    const isAdmin = isSuperAdminEmail(user?.email) || profile?.role === 'admin' || profile?.role === 'superadmin';
 
     return { user, profile, isAdmin, loading };
 }

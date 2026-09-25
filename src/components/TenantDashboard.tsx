@@ -13,6 +13,7 @@ import { ConfigPanel } from './ConfigPanel';
 import { HealthMonitorPanel } from './HealthMonitorPanel';
 import { Sidebar } from './Sidebar';
 import { useAppSettings } from '../lib/AppSettingsContext';
+import { isSuperAdminEmail } from '../lib/constants/auth';
 import { getPlanMetadata } from '../lib/constants/plans';
 import { HomeView } from './HomeView';
 
@@ -59,7 +60,7 @@ export const TenantDashboard: React.FC<TenantDashboardProps> = ({
     const displayTenant = virtualTenant;
     const planMetadata = getPlanMetadata(profile?.subscription_tier || tenant?.plan || 'free', settings?.plan_names);
 
-    const isAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
+    const isAdmin = isSuperAdminEmail(user?.email) || profile?.role === 'admin' || profile?.role === 'superadmin';
 
     const mainTabs = [
         { id: 'home', label: 'Mi Dashboard', icon: TrendingUp, category: 'Espacio de Trabajo' },

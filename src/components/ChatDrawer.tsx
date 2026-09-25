@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { X, Bot, MessageSquare } from 'lucide-react';
+import { X, Bot, MessageSquare, Trash2, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../lib/ChatContext';
@@ -69,12 +69,24 @@ export function ChatDrawer() {
                                     <p className="text-xs text-primary font-medium">{t('chat.status_verified')}</p>
                                 </div>
                             </div>
-                            <button
-                                onClick={toggleDrawer}
-                                className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
+                            <div className="flex items-center gap-2">
+                                {chat.messages.length > 1 && (
+                                    <button
+                                        onClick={chat.handleClearHistory}
+                                        disabled={chat.isClearing}
+                                        className="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-full transition-colors text-slate-400 disabled:opacity-50"
+                                        title="Vaciar historial de chat"
+                                    >
+                                        {chat.isClearing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                                    </button>
+                                )}
+                                <button
+                                    onClick={toggleDrawer}
+                                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
                         </div>
 
                         <ChatMessageList

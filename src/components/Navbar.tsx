@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase';
 import { useTenant } from '../lib/TenantContext';
 import { useAppSettings } from '../lib/AppSettingsContext';
 import { getPlanMetadata } from '../lib/constants/plans';
+import { isSuperAdminEmail } from '../lib/constants/auth';
 
 interface NavbarProps {
     className?: string;
@@ -24,7 +25,7 @@ export function Navbar({ className, user, profile, currentView: _cv }: NavbarPro
     const location = useLocation();
 
     const currentPath = location.pathname;
-    const isSuperAdmin = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'superadmin';
+    const isSuperAdmin = isSuperAdminEmail(user?.email) || profile?.role === 'superadmin';
     const username = user?.user_metadata?.username || user?.email?.split('@')[0] || t('nav.user_fallback');
     const basePlan = profile?.subscription_tier || tenant?.plan || 'free';
     const displayPlan = getPlanMetadata(basePlan, settings?.plan_names).commercialName;

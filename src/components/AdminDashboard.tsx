@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { Globe, RefreshCw, Building, Users, TrendingUp, Settings2, Shield, FileText, LayoutGrid, Menu, X } from 'lucide-react';
+import { Globe, Building, Users, TrendingUp, Settings2, Shield, FileText, LayoutGrid, Menu, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 // Shared Components
@@ -26,6 +26,9 @@ import { ComplianceTab } from './Admin/ComplianceTab';
 import { useGlobalContent } from '../hooks/useGlobalContent';
 import { useTenantControl } from '../hooks/useTenantControl';
 import { useTenant } from '../lib/TenantContext';
+import { isSuperAdminEmail } from '../lib/constants/auth';
+
+import { AdminNavTabs, NavItem } from './Admin/AdminNavTabs';
 
 export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }) => {
     const { settings } = useAppSettings();
@@ -61,9 +64,9 @@ export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }
 
     const planMetadata = getPlanMetadata(userProfile?.subscription_tier || tenant?.plan || 'free', settings?.plan_names);
 
-    const isSuperAdmin = userProfile?.role === 'superadmin' || user?.email === 'lsergiom76@gmail.com';
+    const isSuperAdmin = userProfile?.role === 'superadmin' || isSuperAdminEmail(user?.email);
 
-    const navItems = [
+    const navItems: NavItem[] = [
         { id: 'earnings', icon: TrendingUp, label: 'MI DASHBOARD', category: 'Espacio de Trabajo' },
         { id: 'documents', icon: FileText, label: 'MIS DOCUMENTOS', category: 'Espacio de Trabajo' },
         { id: 'templates', icon: LayoutGrid, label: 'PLANTILLAS', category: 'Espacio de Trabajo' },
@@ -117,10 +120,6 @@ export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }
             console.error('Error viewing doc:', error.message);
         }
     };
-
-    // UI Logic for status notifications could go here, but currently unused globally inside the return
-    // const status = contentStatus || tenantStatus;
-    // const setStatus = contentStatus ? setContentStatus : setTenantStatus;
 
     return (
         <div className={cn(
@@ -187,63 +186,20 @@ export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }
                     "flex-1 w-full min-w-0",
                     settings?.navigation_style === 'sidebar' ? "p-6 md:p-0" : ""
                 )}>
-                {/* Tabs Navigation and Sync Button */}
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-                    {settings?.navigation_style !== 'sidebar' ? (
-                        <div className="flex flex-wrap items-center gap-1 p-1 bg-slate-900/50 backdrop-blur-xl border border-white/5 rounded-[2rem] w-full lg:w-fit overflow-hidden shadow-2xl">
-                            {navItems.map(tab => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id as any)}
-                                    className={cn(
-                                        "relative flex items-center gap-2 px-8 py-4 rounded-[1.5rem] text-[11px] font-black tracking-[0.2em] uppercase transition-all whitespace-nowrap overflow-hidden group",
-                                        activeTab === tab.id
-                                            ? "bg-primary/10 text-primary shadow-sm"
-                                            : "text-slate-500 hover:text-white"
-                                    )}
-                                >
-                                    <tab.icon size={18} />
-                                    <span>{tab.label}</span>
-                                    {activeTab === tab.id && (
-                                        <motion.div 
-                                            layoutId="activeTab"
-                                            className="absolute bottom-0 left-0 right-0 h-1 bg-primary"
-                                        />
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-                    ) : <div />}
-                    {/* Botón Sincronizar */}
-                    <div className="flex justify-end">
-                        <button
-                            onClick={handleSync}
-                            disabled={isSyncing}
-                            className="flex items-center gap-2 px-4 py-3 text-slate-400 hover:text-white hover:bg-white/10 rounded-2xl transition-all border border-white/5 group bg-slate-900/30 backdrop-blur-sm disabled:opacity-50"
-                            title="Sincronizar datos"
-                        >
-                            <RefreshCw size={20} className={cn("transition-transform duration-700", isSyncing ? "animate-spin text-primary" : "group-hover:rotate-180")} />
-                            <span className="text-[11px] font-black uppercase tracking-widest leading-none">
-                                {isSyncing ? 'Sincronizando...' : 'Sincronizar'}
-                            </span>
-                        </button>
-                    </div>
-                    {syncStatus && (
-                        <div className="flex justify-end mt-2 animate-in slide-in-from-right fade-in">
-                             <span className={cn(
-                                 "text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border",
-                                 syncStatus.type === 'success' ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" : "text-rose-400 bg-rose-500/10 border-rose-500/20"
-                             )}>
-                                {syncStatus.message}
-                             </span>
-                        </div>
-                    )}
-                </div>
+                <AdminNavTabs
+                    navItems={navItems}
+                    activeTab={activeTab}
+                    onTabChange={(id) => setActiveTab(id)}
+                    isSidebarStyle={settings?.navigation_style === 'sidebar'}
+                    isSyncing={isSyncing}
+                    syncStatus={syncStatus}
+                    onSync={() => handleSync(true)}
+                />  </div>
 
                 {/* 3. Contenido Dinámico */}
                 <div key={refreshKey} className="space-y-10">
                     {activeTab === 'earnings' && <AdminEarnings />}
-                    {activeTab === 'documents' && <UserDocuments userId={user?.id} />}
+                    {activeTab === 'documents' && <UserDocuments userId={user?.id ?? ''} />}
                     {activeTab === 'templates' && <TemplateManager />}
                     
                     {activeTab === 'content' && (
@@ -283,7 +239,6 @@ export const AdminDashboard: React.FC<{ initialTab?: string }> = ({ initialTab }
                     {activeTab === 'settings' && <ConfigPanel tenant={tenant} refreshTenant={async () => {}} />}
                 </div>
             </div>
-        </div>
 
             {/* Modals */}
             <ViewContentModal doc={viewingDoc} onClose={() => setViewingDoc(null)} />

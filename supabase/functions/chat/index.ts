@@ -10,7 +10,18 @@ Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
     try {
+        // ── Validación JWT ────────────────────────────────────────────────────
+        const authHeader = req.headers.get('authorization')
+        if (!authHeader?.startsWith('Bearer ')) {
+            return new Response(
+                JSON.stringify({ error: 'No autorizado. Token JWT requerido.' }),
+                { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            )
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
         console.log("--- INICIO PETICIÓN CHAT ---");
+
         const text = await req.text();
         if (!text) throw new Error("Cuerpo de petición vacío.");
 

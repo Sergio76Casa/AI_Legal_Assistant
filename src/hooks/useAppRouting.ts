@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { isSuperAdminEmail } from '../lib/constants/auth';
 
 export type AppView = 
     | 'home' | 'dashboard' | 'admin' | 'login' | 'create-org' 
@@ -130,7 +131,7 @@ export function useAppRouting(user: any, profile: any) {
         }
 
         // 5. Final View Resolution
-        const isAdminProfile = user?.email === 'lsergiom76@gmail.com' || profile?.role === 'admin' || profile?.role === 'superadmin';
+        const isAdminProfile = isSuperAdminEmail(user?.email) || profile?.role === 'admin' || profile?.role === 'superadmin';
         const adminOnlyViews = ['admin', 'organization', 'settings', 'templates', 'signatures'];
 
         if (path === '' || path === 'home') {

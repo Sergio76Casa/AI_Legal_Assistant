@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, FormEvent } from 'react';
+import { useState, useEffect, useRef, FormEvent, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { useUsageLimits } from '../lib/useUsageLimits';
+import logger from '../lib/logger';
 
 export interface Source {
     title: string;
@@ -28,10 +29,12 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [isClearing, setIsClearing] = useState(false);
     const [showUpgradeModal, setShowUpgradeModal] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const typingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+    // Carga de usuario y sesión
     useEffect(() => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
@@ -39,6 +42,44 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
         supabase.auth.getUser().then(({ data }) => setUser(data.user));
         return () => subscription.unsubscribe();
     }, []);
+
+    // Cargar historial persistido desde Supabase cuando se detecta usuario
+    const loadChatHistory = useCallback(async (userId: string) => {
+        try {
+            const { data, error } = await supabase
+                .from('chat_messages')
+                .select('*')
+                .eq('user_id', userId)
+                .order('created_at', { ascending: true })
+                .limit(50);
+
+            if (error) {
+                logger.error('Error cargando historial de chat:', error);
+                return;
+            }
+
+            if (data && data.length > 0) {
+                const loadedMessages: Message[] = data.map((msg: any) => ({
+                    id: msg.id,
+                    role: msg.role as 'user' | 'assistant',
+                    content: msg.content,
+                    sources: msg.sources || []
+                }));
+                setMessages([
+                    { id: '1', role: 'assistant', content: t('chat.welcome_msg') },
+                    ...loadedMessages
+                ]);
+            }
+        } catch (err) {
+            logger.error('Excepción al recuperar chat history:', err);
+        }
+    }, [t]);
+
+    useEffect(() => {
+        if (user?.id) {
+            loadChatHistory(user.id);
+        }
+    }, [user?.id, loadChatHistory]);
 
     useEffect(() => {
         if (query) {
@@ -51,6 +92,48 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
 
     const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 
+    // Guardar mensaje en Supabase
+    const saveMessageToDB = async (role: 'user' | 'assistant', content: string, sources: Source[] = []) => {
+        if (!user?.id) return;
+        try {
+            const { error } = await supabase
+                .from('chat_messages')
+                .insert({
+                    user_id: user.id,
+                    role,
+                    content,
+                    sources
+                });
+            if (error) {
+                logger.error('Error persistiendo mensaje en DB:', error);
+            }
+        } catch (err) {
+            logger.error('Error en saveMessageToDB:', err);
+        }
+    };
+
+    // Vaciar historial del usuario
+    const handleClearHistory = async () => {
+        if (!user?.id || isClearing) return;
+        setIsClearing(true);
+        try {
+            const { error } = await supabase
+                .from('chat_messages')
+                .delete()
+                .eq('user_id', user.id);
+
+            if (error) throw error;
+
+            setMessages([
+                { id: '1', role: 'assistant', content: t('chat.welcome_msg') }
+            ]);
+        } catch (err: any) {
+            logger.error('Error al limpiar historial:', err);
+        } finally {
+            setIsClearing(false);
+        }
+    };
+
     const handleSendMessage = async (e: FormEvent) => {
         e.preventDefault();
         if (!inputValue.trim()) return;
@@ -60,17 +143,20 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
             return;
         }
 
-        const newMessage: Message = { id: Date.now().toString(), role: 'user', content: inputValue };
+        const userQuery = inputValue.trim();
+        const newMessage: Message = { id: Date.now().toString(), role: 'user', content: userQuery };
 
-        // Excluye el mensaje de bienvenida (id='1') y limita a últimos 8 (4 intercambios)
+        // Excluye mensaje inicial '1' y limita historial enviado a Gemini
         const historyToSend = messages
             .filter(m => m.id !== '1' && m.content.trim())
             .slice(-8)
             .map(m => ({ id: m.id, role: m.role, content: m.content }));
 
         setMessages(prev => [...prev, newMessage]);
-        const userQuery = inputValue;
         setInputValue('');
+
+        // Persistir mensaje del usuario en DB
+        saveMessageToDB('user', userQuery);
 
         try {
             setIsTyping(true);
@@ -81,14 +167,14 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
             if (error) throw error;
 
             const fullResponse = data.answer || t('hero.subtitle');
-            const sources: Source[] = data.sources || [];
+            const sources: Source[] = (data.sources || []).filter((s: Source) => s.similarity > 0);
             const assistantMsgId = Date.now().toString();
 
             setMessages(prev => [...prev, {
                 id: assistantMsgId,
                 role: 'assistant',
                 content: '',
-                sources: sources.filter(s => s.similarity > 0)
+                sources
             }]);
 
             if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
@@ -107,12 +193,15 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
                 } else {
                     clearInterval(typingIntervalRef.current!);
                     typingIntervalRef.current = null;
+
+                    // Persistir respuesta final completa de la IA en DB
+                    saveMessageToDB('assistant', fullResponse, sources);
                 }
-            }, 80);
+            }, 60);
 
             await incrementUsage();
         } catch (error: any) {
-            console.error('Error al contactar con el asistente:', error);
+            logger.error('Error al contactar con el asistente:', error);
             let errorMessage = t('chat.error_fallback');
             if (error.context?.message) errorMessage = error.context.message;
             else if (error.message) errorMessage = error.message;
@@ -130,10 +219,12 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
         inputValue,
         setInputValue,
         isTyping,
+        isClearing,
         showUpgradeModal,
         setShowUpgradeModal,
         messagesEndRef,
         scrollToBottom,
         handleSendMessage,
+        handleClearHistory,
     };
 };
