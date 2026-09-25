@@ -44,11 +44,13 @@ export function useGlobalContent() {
                 const kbEntries = kbData?.filter(kb => kb.metadata?.source === doc.url) || [];
                 const setting = lawSettings.find(s => s.document_id === doc.url);
                 const isEnabled = setting ? setting.is_enabled : true;
+                const computedStatus = (doc.status === 'processing' && kbEntries.length > 0) ? 'completed' : doc.status;
 
                 return {
                     ...doc,
+                    status: computedStatus,
                     kbCount: kbEntries.length,
-                    aiTitle: kbEntries[0]?.title || (doc.status === 'processing' ? 'Procesando...' : 'Pendiente de procesar'),
+                    aiTitle: kbEntries[0]?.title || (computedStatus === 'processing' ? 'Procesando...' : 'Pendiente de procesar'),
                     isEnabled: isEnabled
                 };
             });
