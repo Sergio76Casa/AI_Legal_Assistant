@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Bot, MessageSquare, Trash2, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,14 +21,14 @@ export function ChatDrawer() {
         chat.scrollToBottom();
     }, [chat.messages, isOpen]);
 
-    return (
+    return createPortal(
         <>
-            {/* Floating Button (Always visible on top right/bottom with high z-index & safe area) */}
+            {/* Floating Button (Always visible on bottom right of screen/viewport) */}
             <button
                 onClick={toggleDrawer}
                 style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))' }}
                 className={cn(
-                    'fixed right-5 sm:right-6 z-[999] p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center',
+                    'fixed right-5 sm:right-6 z-[9999] p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center',
                     isOpen
                         ? 'bg-slate-800 text-slate-300 rotate-90 border border-white/10 hidden md:flex'
                         : 'bg-primary text-slate-900 shadow-primary/40 shadow-lg'
@@ -45,7 +46,7 @@ export function ChatDrawer() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={toggleDrawer}
-                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[1000]"
+                        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[10000]"
                     />
                 )}
             </AnimatePresence>
@@ -58,7 +59,7 @@ export function ChatDrawer() {
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed inset-y-0 right-0 h-screen max-h-screen w-full md:w-[450px] bg-slate-900/95 backdrop-blur-xl shadow-2xl z-[1001] flex flex-col border-l border-white/10 overflow-hidden"
+                        className="fixed inset-y-0 right-0 h-screen max-h-screen w-full md:w-[450px] bg-slate-900/95 backdrop-blur-xl shadow-2xl z-[10001] flex flex-col border-l border-white/10 overflow-hidden"
                     >
                         {/* Chat Header */}
                         <div className="p-6 border-b border-white/10 flex items-center justify-between bg-slate-900/50 shrink-0">
@@ -111,6 +112,7 @@ export function ChatDrawer() {
                 onClose={() => chat.setShowUpgradeModal(false)}
                 limitType="chat_query"
             />
-        </>
+        </>,
+        document.body
     );
 }
