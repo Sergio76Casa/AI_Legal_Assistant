@@ -164,7 +164,16 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
                 body: { query: userQuery, lang: i18n.language, user_id: user?.id, history: historyToSend }
             });
             setIsTyping(false);
-            if (error) throw error;
+            if (error) {
+                let detailedMessage = error.message;
+                if (error.context && typeof error.context.json === 'function') {
+                    try {
+                        const body = await error.context.json();
+                        if (body?.error) detailedMessage = body.error;
+                    } catch (ignore) { /* use default message */ }
+                }
+                throw new Error(detailedMessage);
+            }
 
             const fullResponse = data.answer || t('hero.subtitle');
             const sources: Source[] = (data.sources || []).filter((s: Source) => s.similarity > 0);
@@ -202,9 +211,7 @@ export const useChatLogic = ({ query, setQuery }: UseChatLogicParams) => {
             await incrementUsage();
         } catch (error: any) {
             logger.error('Error al contactar con el asistente:', error);
-            let errorMessage = t('chat.error_fallback');
-            if (error.context?.message) errorMessage = error.context.message;
-            else if (error.message) errorMessage = error.message;
+            let errorMessage = error?.message || t('chat.error_fallback');
             setIsTyping(false);
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),
