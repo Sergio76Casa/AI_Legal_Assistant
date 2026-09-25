@@ -151,45 +151,46 @@ async function processDocument(body: any): Promise<object> {
         .replace(/^\d+_/, '')
         .replace(/\.pdf$/i, '')
 
-    for (let i = 0; i < chunks.length; i++) {
-        const chunkText = chunks[i]
-        const chunkTitle = chunks.length > 1
-            ? `${cleanDocumentTitle} (${i + 1}/${chunks.length})`
-            : cleanDocumentTitle
+    const BATCH_SIZE = 5
+    for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
+        const batch = chunks.slice(i, i + BATCH_SIZE)
+        await Promise.all(batch.map(async (chunkText, batchIdx) => {
+            const index = i + batchIdx
+            const chunkTitle = chunks.length > 1
+                ? `${cleanDocumentTitle} (${index + 1}/${chunks.length})`
+                : cleanDocumentTitle
 
-        try {
-            const chunkEmbedding = await embedWithRetry(apiKey, chunkText)
+            try {
+                const chunkEmbedding = await embedWithRetry(apiKey, chunkText)
+                const { error: insertError } = await supabase.from('knowledge_base').insert({
+                    content: chunkText,
+                    title: chunkTitle,
+                    metadata: {
+                        ...metadata,
+                        source: file_path,
+                        type: 'document',
+                        chunk_index: index,
+                        total_chunks: chunks.length
+                    },
+                    user_id: user_id || null,
+                    tenant_id: tenant_id,
+                    embedding: chunkEmbedding
+                })
 
-            const { error: insertError } = await supabase.from('knowledge_base').insert({
-                content: chunkText,
-                title: chunkTitle,
-                metadata: {
-                    ...metadata,
-                    source: file_path,
-                    type: 'document',
-                    chunk_index: i,
-                    total_chunks: chunks.length
-                },
-                user_id: user_id || null,
-                tenant_id: tenant_id,
-                embedding: chunkEmbedding
-            })
+                if (insertError) throw new Error(`Supabase Insert Error: ${insertError.message}`)
+                successCount++
+            } catch (err: any) {
+                console.error(`[CHUNK FAIL] índice ${index}: ${err.message}`)
+                failedChunks.push({ index, reason: err.message })
+            }
+        }))
 
-            if (insertError) throw new Error(`Supabase Insert Error: ${insertError.message}`)
-            successCount++
-        } catch (err: any) {
-            console.error(`[CHUNK FAIL] índice ${i}: ${err.message}`)
-            failedChunks.push({ index: i, reason: err.message })
+        if ((i + BATCH_SIZE) % 25 === 0 || i + BATCH_SIZE >= chunks.length) {
+            console.log(`Progreso: ${Math.min(i + BATCH_SIZE, chunks.length)}/${chunks.length} — OK: ${successCount} | Fallos: ${failedChunks.length}`)
         }
 
-        // Log de progreso cada 25 fragmentos
-        if ((i + 1) % 25 === 0 || i === chunks.length - 1) {
-            console.log(`Progreso: ${i + 1}/${chunks.length} — OK: ${successCount} | Fallos: ${failedChunks.length}`)
-        }
-
-        // Pausa entre fragmentos para respetar rate limit de Gemini (~120 req/min)
-        if (i < chunks.length - 1) {
-            await new Promise(r => setTimeout(r, 500))
+        if (i + BATCH_SIZE < chunks.length) {
+            await new Promise(r => setTimeout(r, 200))
         }
     }
 

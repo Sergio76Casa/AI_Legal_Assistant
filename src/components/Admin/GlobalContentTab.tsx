@@ -133,7 +133,7 @@ export const GlobalContentTab: React.FC<GlobalContentTabProps> = ({
                                                 {doc.status === 'processing' ? (
                                                     <span className="flex items-center gap-1.5 text-amber-400 animate-pulse">
                                                         <Loader2 size={14} className="animate-spin" />
-                                                        Procesando fragmentos...
+                                                        Procesando fragmentos {doc.kbCount > 0 ? `(${doc.kbCount}${doc.totalChunks ? `/${doc.totalChunks}` : ''})` : ''}...
                                                     </span>
                                                 ) : doc.status === 'failed' ? (
                                                     <span className="flex items-center gap-1.5 text-red-400">
